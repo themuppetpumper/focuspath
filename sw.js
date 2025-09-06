@@ -1,44 +1,47 @@
-// Basic offline caching service worker for FocusPath
-const CACHE_NAME = 'focuspath-cache-v1';
-const CORE_ASSETS = [
-  'index.html',
-  'flashcards.html',
-  'test.html',
-  'games.html',
-  'dictionary.html',
-  'stats.html',
-  'themes.js',
-  'quotes.js',
-  'achievements.js'
-];
+// This is the "Offline page" service worker
 
-self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(CORE_ASSETS)).then(() => self.skipWaiting())
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js');
+
+const CACHE = "pwabuilder-page";
+
+// TODO: replace the following with the correct offline fallback page i.e.: const offlineFallbackPage = "offline.html";
+const offlineFallbackPage = "ToDo-replace-this-name.html";
+
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+});
+
+self.addEventListener('install', async (event) => {
+  event.waitUntil(
+    caches.open(CACHE)
+      .then((cache) => cache.add(offlineFallbackPage))
   );
 });
 
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))).then(() => self.clients.claim())
-  );
-});
+if (workbox.navigationPreload.isSupported()) {
+  workbox.navigationPreload.enable();
+}
 
-self.addEventListener('fetch', (e) => {
-  const req = e.request;
-  // Only handle GET
-  if (req.method !== 'GET') return;
-  e.respondWith(
-    caches.match(req).then(cached => {
-      if (cached) return cached;
-      return fetch(req).then(resp => {
-        // Stale-while-revalidate for same-origin
-        if (resp.ok && req.url.startsWith(self.location.origin)) {
-          const clone = resp.clone();
-          caches.open(CACHE_NAME).then(c => c.put(req, clone));
+self.addEventListener('fetch', (event) => {
+  if (event.request.mode === 'navigate') {
+    event.respondWith((async () => {
+      try {
+        const preloadResp = await event.preloadResponse;
+
+        if (preloadResp) {
+          return preloadResp;
         }
-        return resp;
-      }).catch(() => caches.match('index.html'));
-    })
-  );
+
+        const networkResp = await fetch(event.request);
+        return networkResp;
+      } catch (error) {
+
+        const cache = await caches.open(CACHE);
+        const cachedResp = await cache.match(offlineFallbackPage);
+        return cachedResp;
+      }
+    })());
+  }
 });

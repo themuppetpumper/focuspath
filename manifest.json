@@ -1,54 +1,13 @@
 {
-  "name": "FocusPath",
-  "short_name": "FocusPath",
-  "description": "Privacy-focused study companion: flash cards, tests, games, stats, and planner—all stored locally.",
-  "lang": "en",
-  "id": "/",
-  "start_url": "index.html",
-  "scope": "./",
-  "display": "standalone",
-  "orientation": "any",
-  "background_color": "#f0f2f5",
-  "theme_color": "#0d78f2",
-  "categories": ["education", "productivity"],
+  "background_color": "#ffffff",
   "dir": "ltr",
-  "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
-  ],
-  "screenshots": [
-    {
-      "src": "icons/screenshot-1.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide"
-    }
-  ],
-  "features": [
-    "flashcards",
-    "tests",
-    "statistics",
-    "games",
-    "achievements"
-  ],
-  "shortcuts": [
-    {
-      "name": "Flash Cards",
-      "short_name": "Cards",
-      "url": "flashcards.html",
-      "description": "Jump to your flash cards"
-    },
-    {
-      "name": "Tests",
-      "short_name": "Tests",
-      "url": "test.html",
-      "description": "Take a practice test"
-    },
-    {
-      "name": "Games",
-      "short_name": "Games",
-      "url": "games.html",
-      "description": "Play study mini‑games"
-    }
-  ]
+  "display": "standalone",
+  "name": "FocusPath",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "FPL",
+  "start_url": "/",
+  "theme_color": "#ffffff",
+  "description": "FocusPath is a study companion designed to help learners of all ages stay focused, organized, and motivated on their educational journey. We believe knowledge should be accessible to everyone, which is why FocusPath is completely free — no subscriptions, no hidden costs, just powerful tools to support healthy learning habits.\n\nWhether you’re preparing for exams, building new skills, or simply exploring topics that interest you, FocusPath provides a clean and distraction-free space to learn at your own pace. With features designed around clarity, structure, and simplicity, FocusPath keeps your studies on track and your mind engaged.",
+  "id": "FP Learning"
 }
