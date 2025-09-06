@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FocusPath - Study Application</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style type="text/tailwindcss">
+      :root {
+        --primary-color: #0d78f2;
+        --background-color: #f0f2f5;
+        --text-primary: #111418;
+        --text-secondary: #60748a;
+        --white: #ffffff;
+        --border-color: #e5e7eb;
+      }
+      body {
+        font-family: 'Lexend', sans-serif;
+      }
+      .hover-bg-primary-light:hover {
+        background-color: #e6f2ff;
+      }
+      .group:focus .group-focus\:block {
+        display: block;
+      }
+      .group:focus .group-focus\:hidden {
+        display: none;
+      }
+    </style>
+</head>
+<body class="bg-[var(--background-color)]">
+<div id="fpLandingModal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+  <div class="bg-white rounded-2xl shadow-2xl p-12 w-full max-w-3xl min-h-[80vh] flex flex-col items-center justify-center">
+    <h2 class="text-4xl font-bold text-[var(--primary-color)] mb-6">Welcome to FocusPath!</h2>
+    <p class="text-xl text-[var(--text-primary)] mb-6 text-center">Knowledge and growth fuel innovation. Every step you take in learning brings you closer to new ideas, opportunities, and personal transformation. We're here to support your journey.</p>
+    <p class="text-lg text-[var(--text-secondary)] mb-4">Your privacy-focused study companion.</p>
+    <ul class="list-disc pl-8 text-lg text-[var(--text-primary)] mb-8 text-left w-full max-w-xl">
+      <li>This app does <strong>not</strong> require any personal information.</li>
+      <li>All your study data is stored <strong>locally</strong> in your browser.</li>
+      <li>You never need the internet to access your notes, cards, or progress.</li>
+    </ul>
+    <p class="text-xl text-[var(--text-secondary)] mb-8">Thank you for choosing FocusPath!</p>
+    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded mb-6 w-full max-w-xl text-left">
+      <p class="text-sm text-[var(--text-secondary)]"><strong>Disclaimer:</strong> FocusPath is in early development. We welcome your suggestions and feedback to help improve the app! Please reach out via the contact info in the Help section.</p>
+    </div>
+    <button id="fpLandingClose" class="px-8 py-4 rounded bg-[var(--primary-color)] text-white text-xl font-semibold shadow">Enter</button>
+  </div>
+</div>
+<script>
+  window.addEventListener('DOMContentLoaded', function() {
+    var modal = document.getElementById('fpLandingModal');
+    var closeBtn = document.getElementById('fpLandingClose');
+    var hasSeen = localStorage.getItem('fpLandingSeen');
+    if (hasSeen) {
+      if (modal) modal.style.display = 'none';
+      return;
+    }
+    if (modal && closeBtn) {
+      closeBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+        localStorage.setItem('fpLandingSeen', '1');
+      });
+    }
+  });
+</script>
+<div class="flex min-h-screen">
+<aside class="w-64 bg-[var(--white)] shadow-md flex-col justify-between hidden md:flex">
+<div class="p-6 flex flex-col h-full">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-8 h-8 text-[var(--primary-color)]">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"></path>
+</svg>
+</div>
+<h1 class="text-[var(--text-primary)] text-2xl font-bold">FocusPath</h1>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded-md text-[var(--text-secondary)] hover-bg-primary-light hover:text-[var(--primary-color)] font-medium transition-colors" href="flashcards.html">
+<svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg">
+<rect height="144" rx="16" width="176" x="24" y="72"></rect>
+<path d="M216,40H64a8,8,0,0,0,0,16H216V176a8,8,0,0,0,16,0V56A16,16,0,0,0,216,40Z"></path>
+</svg>
+<span>Flash Cards</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-md text-[var(--text-secondary)] hover-bg-primary-light hover:text-[var(--primary-color)] font-medium transition-colors" href="test.html">
+<svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Z"></path>
+</svg>
+<span>Tests</span>
+</a>
+<a href="games.html" class="flex items-center gap-3 px-4 py-3 rounded-md text-[var(--text-secondary)] hover-bg-primary-light hover:text-[var(--primary-color)] font-medium transition-colors">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6 3h12a3 3 0 0 1 3 3v9.5a3 3 0 0 1-4.34 2.65l-1.97-.99a1 1 0 0 0-.89 0l-1.97.99a3 3 0 0 1-2.66 0l-1.97-.99a1 1 0 0 0-.89 0l-1.97.99A3 3 0 0 1 3 15.5V6a3 3 0 0 1 3-3Zm2.5 5A1.5 1.5 0 1 0 8.5 8 1.5 1.5 0 0 0 8.5 8Zm7 0A1.5 1.5 0 1 0 15.5 8 1.5 1.5 0 0 0 15.5 8Z"/></svg>
+  <span>Games</span>
+</a>
+<a href="dictionary.html" class="flex items-center gap-3 px-4 py-3 rounded-md text-[var(--text-secondary)] hover-bg-primary-light hover:text-[var(--primary-color)] font-medium transition-colors">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6 2h9.5a4.5 4.5 0 0 1 0 9H8v9a1 1 0 0 1-2 0V3a1 1 0 0 1 1-1Zm2 2v5h7.5a2.5 2.5 0 0 0 0-5H8Z"/><path d="M18 6v13a3 3 0 0 1-3 3H7.5a1.5 1.5 0 0 1 0-3H15a1 1 0 0 0 1-1V6h2Z"/></svg>
+<span>Dictionary</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-md text-[var(--text-secondary)] hover-bg-primary-light hover:text-[var(--primary-color)] font-medium transition-colors" href="stats.html">
+<svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M216,40H136V24a8,8,0,0,0-16,0V40H40A16,16,0,0,0,24,56V176a16,16,0,0,0,16,16H79.36L57.75,219a8,8,0,0,0,12.5,10l29.59-37h56.32l29.59,37a8,8,0,1,0,12.5-10l-21.61-27H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,136H40V56H216V176ZM104,120v24a8,8,0,0,1-16,0V120a8,8,0,0,1,16,0Zm32-16v40a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm32-16v56a8,8,0,0,1-16,0V88a8,8,0,0,1,16,0Z"></path>
+</svg>
+<span>Statistics</span>
+</a>
+</nav>
+</div>
+  <div class="mt-auto pt-6 flex flex-col items-center">
+    <a href="helper.html" class="text-xs text-[var(--text-secondary)] hover:text-[var(--primary-color)] px-4 py-2 rounded transition-colors border border-transparent hover:border-[var(--primary-color)]">Help</a>
+  </div>
+</aside>
+<div class="flex-1 flex flex-col">
+<header class="bg-[var(--white)] shadow-sm flex items-center justify-between p-4">
+<button class="md:hidden text-[var(--text-primary)]">
+<svg fill="currentColor" height="28" viewBox="0 0 256 256" width="28" xmlns="http://www.w3.org/2000/svg">
+<path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"></path>
+</svg>
+</button>
+<div class="flex-1 flex justify-center items-center">
+<p id="quoteLine" class="text-center text-[var(--text-secondary)] text-sm italic"></p>
+</div>
+<div class="relative">
+  <button id="themeToggle" class="p-2 rounded-md hover:bg-[var(--background-color)] text-[var(--text-secondary)]" aria-haspopup="true" aria-expanded="false" aria-controls="themeMenu" title="Theme">
+    <span class="sr-only">Theme</span>
+    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 3c-5 0-9 3.8-9 8.5S6 20 10 20c.8 0 1.5-.7 1.5-1.5S10.7 17 10 17H9a3 3 0 1 1 0-6h4a4 4 0 0 0 4-4c0-2-2-4-5-4Z"/>
+      <circle cx="7.5" cy="12" r="1"/>
+      <circle cx="10.5" cy="9" r="1"/>
+      <circle cx="14" cy="11" r="1"/>
+      <circle cx="8.5" cy="15" r="1"/>
+    </svg>
+  </button>
+  <div id="themeMenu" class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border border-[var(--border-color)] py-1 z-50 hidden"></div>
+  </div>
+</header>
+<main class="flex-1 p-6 lg:p-8">
+<div class="mb-8">
+  <h2 class="text-[var(--text-primary)] text-3xl font-bold">Welcome to FocusPath!</h2>
+  <p class="mt-1 text-[var(--text-secondary)] font-medium tracking-tight">Where Studying Shouldnt Break the Bank.</p>
+</div>
+<div class="grid grid-cols-1 gap-8">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-2 bg-[var(--white)] rounded-lg shadow p-6">
+<div class="flex items-center justify-between mb-4">
+<h3 id="calTitle" class="text-[var(--text-primary)] text-xl font-semibold">&nbsp;</h3>
+<div class="flex items-center gap-2">
+<button id="calPrev" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)] p-2 rounded-md hover:bg-[var(--background-color)]" aria-label="Previous month">
+<svg fill="currentColor" height="20" viewBox="0 0 256 256" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"></path>
+</svg>
+</button>
+<button id="calNext" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)] p-2 rounded-md hover:bg-[var(--background-color)]" aria-label="Next month">
+<svg fill="currentColor" height="20" viewBox="0 0 256 256" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"></path>
+</svg>
+</button>
+</div>
+</div>
+<div id="calGrid" class="grid grid-cols-7 gap-1 text-center"></div>
+</div>
+<div class="lg:col-span-1 bg-[var(--white)] rounded-lg shadow p-6">
+  <h3 class="text-[var(--text-primary)] text-xl font-semibold mb-4">Upcoming Events</h3>
+  <div id="upcomingList" class="space-y-4 overflow-auto pr-1" style="height: 360px; overflow: auto;"></div>
+</div>
+  <!-- Moved Create Event here so it matches calendar width (span 2 cols) -->
+  <div class="lg:col-span-2 bg-white rounded-lg shadow p-6">
+  <h3 class="text-xl font-semibold mb-6 text-[var(--text-primary)]">Create Event</h3>
+  <p class="text-sm text-[var(--text-secondary)] mb-4">Double-click a date on the calendar to autofill the date.</p>
+    <style>
+      /* Unified dark theme override for all Create Event form fields */
+      [data-theme="dark"] #eventForm input,
+      [data-theme="dark"] #eventForm select,
+      [data-theme="dark"] #eventForm textarea {
+        background:#1f2937 !important;
+        color:#ffffff !important;
+        border-color:#334155 !important;
+      }
+      /* Specific readonly mini-fields (day/month/year) */
+      [data-theme="dark"] #evDay,
+      [data-theme="dark"] #evMonth,
+      [data-theme="dark"] #evYear { background:#1f2937 !important; color:#ffffff !important; }
+      /* Date/time native parts */
+      [data-theme="dark"] #evDate,
+      [data-theme="dark"] #evFrom,
+      [data-theme="dark"] #evTo { -webkit-appearance:none; appearance:none; }
+      [data-theme="dark"] #evDate::-webkit-datetime-edit,
+      [data-theme="dark"] #evFrom::-webkit-datetime-edit,
+      [data-theme="dark"] #evTo::-webkit-datetime-edit { color:#ffffff !important; }
+      [data-theme="dark"] #evDate::-webkit-calendar-picker-indicator,
+      [data-theme="dark"] #evFrom::-webkit-calendar-picker-indicator,
+      [data-theme="dark"] #evTo::-webkit-calendar-picker-indicator { filter: invert(0.85); opacity:0.85; }
+      /* Placeholders */
+      [data-theme="dark"] #eventForm input::placeholder,
+      [data-theme="dark"] #eventForm textarea::placeholder { color:#94a3b8 !important; opacity:.6; }
+      /* Focus ring */
+      [data-theme="dark"] #eventForm input:focus,
+      [data-theme="dark"] #eventForm select:focus,
+      [data-theme="dark"] #eventForm textarea:focus { box-shadow:0 0 0 3px rgba(96,165,250,0.35) !important; }
+      /* Extra specificity + webkit text fill for readonly day/month/year */
+      [data-theme="dark"] #evDay[readonly],
+      [data-theme="dark"] #evMonth[readonly],
+      [data-theme="dark"] #evYear[readonly] {
+        background:#1f2937 !important;
+        color:#ffffff !important;
+        -webkit-text-fill-color:#ffffff !important;
+        border-color:#334155 !important;
+      }
+    </style>
+  <form id="eventForm" class="grid sm:grid-cols-2 gap-4">
+    <div class="sm:col-span-1">
+      <label for="evDate" class="block text-sm font-medium text-[var(--text-primary)] mb-1">Date</label>
+      <input type="date" id="evDate" class="w-full rounded border border-[var(--border-color)] p-2" />
+      <div class="mt-2 flex flex-wrap items-end gap-3 text-xs text-[var(--text-secondary)]" id="eventDatePartsRow">
+        <div class="flex items-center gap-1">Day: <input id="evDay" class="w-12 border rounded p-1 text-center ev-mini" readonly></div>
+        <div class="flex items-center gap-1">Month: <input id="evMonth" class="w-12 border rounded p-1 text-center ev-mini" readonly></div>
+        <div class="flex items-center gap-1">Year: <input id="evYear" class="w-16 border rounded p-1 text-center ev-mini" readonly></div>
+        <div class="flex items-center gap-2 ml-2">
+          <span class="text-[var(--text-secondary)]">Time:</span>
+          <label for="evFrom" class="sr-only">From</label>
+          <span>From:</span>
+          <input type="time" id="evFrom" class="w-28 rounded border border-[var(--border-color)] p-1" />
+          <label for="evTo" class="sr-only">To</label>
+          <span>To:</span>
+          <input type="time" id="evTo" class="w-28 rounded border border-[var(--border-color)] p-1" />
+        </div>
+      </div>
+    </div>
+    <div class="sm:col-span-1">
+      <label class="block text-sm font-medium text-[var(--text-primary)] mb-1">All Day</label>
+      <div class="flex items-center gap-2">
+        <input type="checkbox" id="evAllDay" class="rounded border-gray-300" />
+        <label for="evAllDay" class="text-[var(--text-secondary)]">Mark as all day</label>
+      </div>
+    </div>
+    <div class="sm:col-span-2 grid sm:grid-cols-3 gap-3 items-end">
+    <div>
+        <label for="evType" class="block text-sm font-medium text-[var(--text-primary)] mb-1">Event Type</label>
+        <select id="evType" class="w-full rounded border border-[var(--border-color)] p-2 bg-white">
+          <option value="Test/Exam">Test/Exam</option>
+          <option value="Study Time">Study Time</option>
+          <option value="Group Activity">Group Activity</option>
+          <option value="Practice">Practice</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="sm:col-span-2">
+        <label for="evSubject" class="block text-sm font-medium text-[var(--text-primary)] mb-1">Subject</label>
+        <input type="text" id="evSubject" class="w-full rounded border border-[var(--border-color)] p-2" placeholder="Event subject" />
+      </div>
+    </div>
+    <div class="sm:col-span-2">
+      <label for="evDesc" class="block text-sm font-medium text-[var(--text-primary)] mb-1">Description</label>
+      <textarea id="evDesc" rows="3" class="w-full rounded border border-[var(--border-color)] p-2" placeholder="Short description (optional)"></textarea>
+    </div>
+    <div class="sm:col-span-2">
+      <label for="evLocation" class="block text-sm font-medium text-[var(--text-primary)] mb-1">Location</label>
+      <input type="text" id="evLocation" class="w-full rounded border border-[var(--border-color)] p-2" placeholder="Where is this event?" />
+    </div>
+    <div class="sm:col-span-2 flex gap-3">
+      <button id="evSave" type="submit" class="px-4 py-2 bg-[var(--primary-color)] text-white rounded shadow hover:opacity-90">Save Event</button>
+      <button id="evClear" type="button" class="px-4 py-2 bg-gray-200 text-[var(--text-primary)] rounded shadow hover:bg-gray-300">Clear</button>
+    </div>
+  </form>
+  </div>
+</div>
+</main>
+</div>
+ </div>
+
+ <script src="themes.js"></script>
+ <script src="achievements.js"></script>
+ <script src="quotes.js"></script>
+ <script>
+ // Adaptive styling: Only Day / Month / Year mini inputs change per theme tint; full dark override still applies in dark/system dark.
+ (function(){
+   function currentTheme(){ try { return window.ThemeManager?.getTheme?.()||'system'; } catch { return 'system'; } }
+   function systemPrefersDark(){ return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; }
+   function isTrueDark(){ const t=currentTheme(); return t==='dark' || (t==='system' && systemPrefersDark()); }
+   const MINI_IDS=['evDay','evMonth','evYear'];
+   const DARK_EXTRA_IDS=['evDate','evFrom','evTo'];
+   const MINI_THEME_STYLES={
+     light:  { bg:'#ffffff',  color:'#111418', border:'#e5e7eb' },
+     ocean:  { bg:'#d6ebf5', color:'#0d1724', border:'#94c3d4' },
+     forest: { bg:'#ddece5', color:'#072616', border:'#a6ccb8' },
+     sunset: { bg:'#ffe1cc', color:'#1a2532', border:'#f7c8a3' },
+     'high-contrast': { bg:'#ffffff', color:'#000000', border:'#000000' },
+     'star-wars': { bg:'#14181e', color:'#ffe81f', border:'#1f2933' },
+     system: null, // resolved dynamically
+     dark: null    // handled separately
+   };
+   function resolveMiniStyle(){
+     const t=currentTheme();
+     if(isTrueDark()) return null; // dark handled elsewhere
+     if(t==='system') return systemPrefersDark()? null : MINI_THEME_STYLES.light;
+     return MINI_THEME_STYLES[t] || MINI_THEME_STYLES.light;
+   }
+   function apply(){
+     const dark=isTrueDark();
+     // Handle dark mode: apply dark palette to mini + time/date
+     if(dark){
+       [...MINI_IDS, ...DARK_EXTRA_IDS].forEach(id=>{
+         const el=document.getElementById(id); if(!el) return;
+         el.style.background='#1f2937';
+         el.style.color='#ffffff';
+         el.style.borderColor='#334155';
+         el.style.webkitTextFillColor='#ffffff';
+         el.style.caretColor='#ffffff';
+         el.style.colorScheme='dark';
+       });
+       return;
+     }
+     // Non-dark: clear dark overrides from extra fields
+     DARK_EXTRA_IDS.forEach(id=>{
+       const el=document.getElementById(id); if(!el) return;
+       ['background','color','borderColor','webkitTextFillColor','caretColor','colorScheme'].forEach(p=>{ try { el.style[p]=''; } catch{} });
+     });
+     // Apply per-theme tint to mini fields
+     const style=resolveMiniStyle();
+     MINI_IDS.forEach(id=>{
+       const el=document.getElementById(id); if(!el) return;
+       if(style){
+         el.style.background=style.bg;
+         el.style.color=style.color;
+         el.style.borderColor=style.border;
+         el.style.webkitTextFillColor=style.color;
+       } else {
+         // Should not happen for non-dark, but reset anyway
+         ['background','color','borderColor','webkitTextFillColor'].forEach(p=>{ try { el.style[p]=''; } catch{} });
+       }
+     });
+   }
+   window.addEventListener('fpThemeChanged', ()=> setTimeout(apply,35));
+   window.addEventListener('DOMContentLoaded', ()=> setTimeout(apply,55));
+   if(window.matchMedia){
+     const mq=window.matchMedia('(prefers-color-scheme: dark)');
+     if(mq.addEventListener){ mq.addEventListener('change', ()=>apply()); } else if(mq.addListener){ mq.addListener(()=>apply()); }
+   }
+ })();
+ </script>
+ <script>
+  (function() {
+    const titleEl = document.getElementById('calTitle');
+    const gridEl = document.getElementById('calGrid');
+    const btnPrev = document.getElementById('calPrev');
+    const btnNext = document.getElementById('calNext');
+    // Theme dropdown toggle and basic selection wiring (no routing yet)
+    const themeBtn = document.getElementById('themeToggle');
+    const themeMenu = document.getElementById('themeMenu');
+    if (themeBtn && themeMenu) {
+      const hideMenu = () => themeMenu.classList.add('hidden');
+      const showMenu = () => { buildThemeMenu(); themeMenu.classList.remove('hidden'); };
+      themeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (themeMenu.classList.contains('hidden')) showMenu(); else hideMenu();
+      });
+      document.addEventListener('click', (e) => {
+        if (!themeMenu.contains(e.target) && e.target !== themeBtn) hideMenu();
+      });
+      function buildThemeMenu(){
+        const current = (window.ThemeManager && window.ThemeManager.getTheme && window.ThemeManager.getTheme()) || 'system';
+        const list = window.ThemeManager?.listThemes ? window.ThemeManager.listThemes() : [];
+        const unlockedStarWars = list.includes('star-wars');
+        themeMenu.innerHTML = '';
+        list.forEach((key,idx) => {
+          if(idx===3){ // after dark add divider
+            const div=document.createElement('div'); div.className='my-1 h-px bg-[var(--border-color)]'; themeMenu.appendChild(div);
+          }
+          const btn=document.createElement('button');
+          btn.className='w-full flex items-center justify-between gap-2 text-left px-3 py-2 text-sm hover:bg-[var(--background-color)]';
+          btn.setAttribute('data-theme', key);
+          let label = key==='system'?'System Default': key.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+          if(key==='star-wars') label = 'Star Wars (Secret)';
+          btn.innerHTML = `<span>${label}</span>${current===key?'<span class="text-[var(--primary-color)]">✔</span>':''}`;
+          btn.addEventListener('click', () => { window.ThemeManager?.setTheme(key); hideMenu(); });
+          themeMenu.appendChild(btn);
+        });
+        if(!unlockedStarWars){
+          // Show subtle locked hint only if not yet earned
+          const hint=document.createElement('div');
+          hint.className='px-3 py-2 text-[10px] leading-snug text-[var(--text-secondary)] border-t border-[var(--border-color)]';
+          hint.textContent='Unlock all achievements to reveal a secret theme.';
+          themeMenu.appendChild(hint);
+        }
+      }
+    }
+    // Random quote injection
+    function currentTheme(){ return (window.ThemeManager && window.ThemeManager.getTheme && window.ThemeManager.getTheme()) || 'system'; }
+    function baseQuoteList(){
+  if(currentTheme()==='star-wars') return (window.FP_QUOTES_STAR_WARS||[]);
+      return (window.FP_QUOTES && Array.isArray(window.FP_QUOTES) && window.FP_QUOTES.length)
+        ? window.FP_QUOTES
+        : [{ text: 'Focus on progress, not perfection.' }];
+    }
+    function setRandomQuote(force){
+      const qEl=document.getElementById('quoteLine'); if(!qEl) return;
+      const list=baseQuoteList();
+      const pick=list[Math.floor(Math.random()*list.length)];
+      const text=typeof pick==='string'? pick : (pick?.text||'');
+      const author=pick && typeof pick==='object' && pick.author? ` — ${pick.author}`:'';
+      qEl.textContent=`${text}${author}`;
+    }
+    // --- Timed Rotation with Fade ---
+    let quoteInterval=null; let quoteFading=false;
+    function applyQuoteStyles(){ const qEl=document.getElementById('quoteLine'); if(qEl){ qEl.style.transition='opacity .6s ease'; qEl.style.opacity='1'; } }
+    function rotateQuoteImmediate(){ const qEl=document.getElementById('quoteLine'); if(!qEl) return; if(quoteFading) return; quoteFading=true; qEl.style.opacity='0'; setTimeout(()=>{ setRandomQuote(); qEl.style.opacity='1'; quoteFading=false; },600); }
+    function startQuoteRotation(){ clearInterval(quoteInterval); applyQuoteStyles(); // set first quote instantly then cycle
+      setRandomQuote(); quoteInterval=setInterval(()=> rotateQuoteImmediate(), 15000); }
+    window.addEventListener('fpThemeChanged', e=>{ if(e.detail?.theme){ // restart rotation with new list
+        startQuoteRotation();
+      }});
+    startQuoteRotation();
+  const form = document.getElementById('eventForm');
+  const evDate = document.getElementById('evDate');
+  const evMonth = document.getElementById('evMonth');
+  const evDay = document.getElementById('evDay');
+  const evYear = document.getElementById('evYear');
+  const evAllDay = document.getElementById('evAllDay');
+  const evFrom = document.getElementById('evFrom');
+  const evTo = document.getElementById('evTo');
+  const evSubject = document.getElementById('evSubject');
+  const evType = document.getElementById('evType');
+  const evDesc = document.getElementById('evDesc');
+  const evLocation = document.getElementById('evLocation');
+  const btnClear = document.getElementById('evClear');
+  const upcomingList = document.getElementById('upcomingList');
+    if (!titleEl || !gridEl || !btnPrev || !btnNext) return;
+
+    const today = new Date();
+    let viewYear = today.getFullYear();
+    let viewMonth = today.getMonth(); // 0-11
+
+    function formatMonthYear(y, m) {
+      return new Date(y, m, 1).toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+    }
+
+    function render() {
+      titleEl.textContent = formatMonthYear(viewYear, viewMonth);
+      gridEl.innerHTML = '';
+
+      // Weekday headers (Sun..Sat)
+      const weekdays = Array.from({length:7}, (_,i) => new Date(2021,7, i+1).toLocaleDateString(undefined, { weekday: 'narrow' }));
+      weekdays.forEach(w => {
+        const el = document.createElement('div');
+        el.className = 'font-semibold text-[var(--text-secondary)] text-sm py-2';
+        el.textContent = w; gridEl.appendChild(el);
+      });
+
+      const firstOfMonth = new Date(viewYear, viewMonth, 1);
+      const startWeekday = firstOfMonth.getDay(); // 0=Sun
+      const daysInMonth = new Date(viewYear, viewMonth+1, 0).getDate();
+
+      // Fill leading blanks
+      for (let i=0; i<startWeekday; i++) {
+        const blank = document.createElement('div');
+        blank.className = 'py-2';
+        gridEl.appendChild(blank);
+      }
+
+      // Days
+      for (let d=1; d<=daysInMonth; d++) {
+        const cell = document.createElement('div');
+        const isToday = d === today.getDate() && viewMonth === today.getMonth() && viewYear === today.getFullYear();
+        cell.className = 'py-2 cursor-pointer select-none relative';
+        if (isToday) {
+          cell.innerHTML = '<div class="text-[var(--white)] bg-[var(--primary-color)] rounded-full w-8 h-8 flex items-center justify-center mx-auto">'+d+'</div>';
+        } else {
+          cell.textContent = d;
+        }
+
+        // Double-click to autofill event date
+        cell.ondblclick = () => {
+          const monthIdx = viewMonth; // 0-based
+          const year = viewYear;
+          const day = d;
+          const iso = new Date(year, monthIdx, day).toISOString().slice(0,10);
+          if (evDate) evDate.value = iso;
+          if (evMonth) evMonth.value = String(monthIdx+1).padStart(2,'0');
+          if (evDay) evDay.value = String(day).padStart(2,'0');
+          if (evYear) evYear.value = String(year);
+          evSubject?.focus();
+        };
+        // Add small color dots for events on this day (max 4)
+        const dayIso = `${viewYear}-${String(viewMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const dayEvents = loadEvents().filter(e => e.date === dayIso);
+        if (dayEvents.length) {
+          const dotWrap = document.createElement('div');
+          dotWrap.className = 'absolute inset-x-0 bottom-0 flex justify-center gap-1 pb-0.5';
+          dayEvents.slice(0,4).forEach(ev => {
+            const dot = document.createElement('span');
+            dot.className = 'inline-block w-1.5 h-1.5 rounded-full';
+            dot.style.backgroundColor = typeColor(ev.type);
+            dotWrap.appendChild(dot);
+          });
+          cell.appendChild(dotWrap);
+        }
+
+        gridEl.appendChild(cell);
+      }
+    }
+
+    btnPrev.addEventListener('click', () => {
+      viewMonth -= 1;
+      if (viewMonth < 0) { viewMonth = 11; viewYear -= 1; }
+      render();
+    });
+    btnNext.addEventListener('click', () => {
+      viewMonth += 1;
+      if (viewMonth > 11) { viewMonth = 0; viewYear += 1; }
+      render();
+    });
+
+    // Form helpers
+    if (evDate) {
+      evDate.addEventListener('change', () => {
+        const dt = evDate.value ? new Date(evDate.value + 'T00:00:00') : null;
+        if (dt) {
+          evMonth && (evMonth.value = String(dt.getMonth()+1).padStart(2,'0'));
+          evDay && (evDay.value = String(dt.getDate()).padStart(2,'0'));
+          evYear && (evYear.value = String(dt.getFullYear()));
+        } else {
+          evMonth && (evMonth.value = ''); evDay && (evDay.value = ''); evYear && (evYear.value = '');
+        }
+      });
+    }
+
+    if (evAllDay && evFrom && evTo) {
+      const toggleTimes = () => {
+        const disabled = evAllDay.checked;
+        evFrom.disabled = disabled; evTo.disabled = disabled;
+        if (disabled) { evFrom.value = ''; evTo.value = ''; }
+      };
+      evAllDay.addEventListener('change', toggleTimes);
+      toggleTimes();
+    }
+
+    function loadEvents() {
+      try { return JSON.parse(localStorage.getItem('fpEvents')||'[]'); } catch { return []; }
+    }
+    function saveEvents(list) {
+      localStorage.setItem('fpEvents', JSON.stringify(list));
+    }
+
+    // Map event types to fixed colors (inline style avoids Tailwind dynamic class issues)
+    function typeColor(type) {
+      switch ((type||'').toLowerCase()) {
+        case 'test/exam': return '#ef4444';    // red
+        case 'study time': return '#22c55e';   // green
+        case 'group activity': return '#eab308'; // yellow
+        case 'practice': return '#f97316';     // orange
+        case 'other': return '#a855f7';        // purple
+        default: return 'var(--primary-color)';
+      }
+    }
+
+    function renderUpcoming() {
+      const events = loadEvents();
+      // Sort by date+time
+      events.sort((a,b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+
+      // Keep next 10 upcoming (from today 00:00)
+      const now = new Date(); now.setHours(0,0,0,0);
+      const upcoming = events.filter(e => new Date(e.start) >= now).slice(0,10);
+      upcomingList.innerHTML = '';
+      if (!upcoming.length) {
+        const empty = document.createElement('div');
+        empty.className = 'text-[var(--text-secondary)] text-sm';
+        empty.textContent = 'No upcoming events.';
+        upcomingList.appendChild(empty);
+        return;
+      }
+
+      upcoming.forEach(e => {
+        const color = typeColor(e.type);
+        const time = e.allDay ? 'All day' : `${formatTime(e.from)} - ${formatTime(e.to)}`;
+        const item = document.createElement('div');
+        item.className = 'flex items-start gap-3';
+        item.innerHTML = `
+          <div class="w-1.5 h-10 rounded-full mt-1" style="background-color:${color}"></div>
+          <div class="flex-1 min-w-0">
+            <p class="text-[var(--text-primary)] font-medium">${escapeHtml(e.subject || '(No subject)')}</p>
+            <p class="text-[var(--text-secondary)] text-sm">${new Date(e.start).toLocaleDateString()} • ${time}</p>
+            ${e.location ? `<p class=\"text-[var(--text-secondary)] text-xs\">Location: ${escapeHtml(e.location)}</p>` : ''}
+            ${e.type ? `<p class=\"text-[var(--text-secondary)] text-xs\">${escapeHtml(e.type)}</p>` : ''}
+            ${e.desc ? `<p class=\"text-xs text-[var(--text-secondary)] mt-1\">${escapeHtml(e.desc)}</p>` : ''}
+          </div>
+          <button class="ml-auto p-1.5 rounded hover:bg-red-50 text-red-500 hover:text-red-700" data-id="${e.id}" aria-label="Delete event" title="Delete">
+            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"w-5 h-5\"><path fill-rule=\"evenodd\" d=\"M9 2a1 1 0 00-1 1v1H5.5a.5.5 0 000 1h9a.5.5 0 000-1H12V3a1 1 0 00-1-1H9zm-4 5h10l-.8 9.2A2 2 0 0112.21 18H7.79a2 2 0 01-1.99-1.8L5 7zm3 2a.75.75 0 011.5 0v5a.75.75 0 01-1.5 0V9zm4 0a.75.75 0 10-1.5 0v5a.75.75 0 001.5 0V9z\" clip-rule=\"evenodd\"/></svg>
+          </button>`;
+        upcomingList.appendChild(item);
+
+        const delBtn = item.querySelector('button[data-id]');
+        delBtn?.addEventListener('click', () => {
+          const list = loadEvents();
+          const next = list.filter(ev => ev.id !== e.id);
+          saveEvents(next);
+          renderUpcoming();
+          render();
+        });
+      });
+    }
+
+    function formatTime(t) {
+      if (!t) return '';
+      const [h,m] = t.split(':').map(Number);
+      const d = new Date(); d.setHours(h||0, m||0, 0, 0);
+      return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    }
+
+    function escapeHtml(str='') {
+      return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
+    }
+
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const dateVal = evDate?.value;
+        if (!dateVal) { alert('Please select a date.'); return; }
+        const allDay = !!evAllDay?.checked;
+        const fromVal = evFrom?.value || '';
+        const toVal = evTo?.value || '';
+        if (!allDay && (!fromVal || !toVal)) { alert('Please select From and To times, or mark All Day.'); return; }
+  const subj = (evSubject?.value || '').trim();
+  const type = (evType?.value || 'Other');
+        if (!subj) { alert('Please enter a subject.'); return; }
+
+        // Build event
+        const startIso = allDay ? `${dateVal}T00:00:00` : `${dateVal}T${fromVal}:00`;
+        const endIso = allDay ? `${dateVal}T23:59:59` : `${dateVal}T${toVal}:00`;
+        const event = {
+          id: Date.now().toString(36),
+          date: dateVal,
+          start: startIso,
+          end: endIso,
+          from: fromVal,
+          to: toVal,
+          allDay,
+          type,
+          subject: subj,
+          desc: evDesc?.value || '',
+          location: (evLocation?.value || '').trim()
+        };
+        const list = loadEvents();
+  list.push(event); saveEvents(list);
+  renderUpcoming();
+  render();
+        form.reset();
+        // Clear readonly fields
+        evMonth && (evMonth.value = ''); evDay && (evDay.value = ''); evYear && (evYear.value = '');
+      });
+    }
+
+    btnClear?.addEventListener('click', () => {
+      form?.reset();
+      evMonth && (evMonth.value = ''); evDay && (evDay.value = ''); evYear && (evYear.value = '');
+    });
+
+    render();
+    renderUpcoming();
+  })();
+ </script>
+<div id="fpFooter" style="font-size:11px; color:var(--text-secondary); text-align:center; position:absolute; left:16rem; right:0; bottom:0; z-index:9999; background:rgba(240,242,245,0.95); pointer-events:none; box-shadow:0 -2px 8px rgba(0,0,0,0.04);">© FocusPath 2025. 4a4152564953 Applications EST. 2025</div>
+</body>
+ </html>

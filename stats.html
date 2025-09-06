@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FocusPath — Statistics</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="themes.js"></script>
+<script src="achievements.js"></script>
+<style type="text/tailwindcss">
+  :root{--primary-color:#0d78f2;--background-color:#f0f2f5;--text-primary:#111418;--text-secondary:#60748a;--white:#ffffff;--border-color:#e5e7eb}
+  body{font-family:'Lexend',sans-serif}
+  .hover-bg-primary-light:hover{background-color:#e6f2ff}
+  .nav-btn-active{background:rgba(13,120,242,0.10); color:var(--primary-color);}  
+</style>
+</head>
+<body class="bg-[var(--background-color)]">
+<!-- Hard Reset now lives in sidebar bottom -->
+<div class="flex min-h-screen">
+  <!-- Sidebar -->
+  <aside class="w-64 bg-[var(--white)] shadow-md flex-col justify-between hidden md:flex">
+    <div class="p-6 flex flex-col h-full">
+      <div class="flex items-center gap-3 mb-8">
+        <div class="w-8 h-8 text-[var(--primary-color)]">
+          <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"/></svg>
+        </div>
+  <h1 class="text-[var(--text-primary)] text-2xl font-bold">FocusPath</h1>
+      </div>
+
+  <div class="flex flex-col gap-2 mb-6">
+        <button id="btnStatHome" class="flex items-center gap-3 px-4 py-3 rounded-md text-[var(--text-secondary)] hover:text-[var(--primary-color)] hover-bg-primary-light font-medium text-left nav-group">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-8.5z"/></svg>
+          <span>Stats Home</span>
+        </button>
+        <button id="btnStatTests" class="flex items-center gap-3 px-4 py-3 rounded-md text-[var(--text-secondary)] hover:text-[var(--primary-color)] hover-bg-primary-light font-medium text-left nav-group">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M5 9h3v10H5zM10.5 4h3v15h-3zM16 13h3v6h-3z"/></svg>
+          <span>Test Stats</span>
+        </button>
+        <button id="btnStatFlash" class="flex items-center gap-3 px-4 py-3 rounded-md text-[var(--text-secondary)] hover:text-[var(--primary-color)] hover-bg-primary-light font-medium text-left nav-group">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v12H4zM4 20h16v-2H4z"/></svg>
+          <span>Flashcard Stats</span>
+        </button>
+        <button id="btnStatDict" class="flex items-center gap-3 px-4 py-3 rounded-md text-[var(--text-secondary)] hover:text-[var(--primary-color)] hover-bg-primary-light font-medium text-left nav-group">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 2h9.5a4.5 4.5 0 0 1 0 9H8v9a1 1 0 0 1-2 0V3a1 1 0 0 1 1-1Zm2 2v5h7.5a2.5 2.5 0 0 0 0-5H8Z"/><path d="M18 6v13a3 3 0 0 1-3 3H7.5a1.5 1.5 0 0 1 0-3H15a1 1 0 0 0 1-1V6h2Z"/></svg>
+          <span>Dictionary Stats</span>
+        </button>
+        <button id="btnStatTrophies" class="flex items-center gap-3 px-4 py-3 rounded-md text-[var(--text-secondary)] hover:text-[var(--primary-color)] hover-bg-primary-light font-medium text-left nav-group">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3h14v3h2a1 1 0 0 1 1 1c0 4.418-2.239 8-5 8-1.357 0-2.59-.71-3.5-1.874A4.494 4.494 0 0 1 9 15C6.239 15 4 11.418 4 7a1 1 0 0 1 1-1h0V3Zm2 2v1c0 3.309 1.567 6 3 6 .42 0 1.362-.675 2-1.657V5H7Zm6 0v5.343C13.638 11.325 14.58 12 15 12c1.433 0 3-2.691 3-6V5h-5ZM8 17h8v2a4 4 0 0 1-4 4 4 4 0 0 1-4-4v-2Z"/></svg>
+          <span>Trophy Room</span>
+        </button>
+      </div>
+      <div class="mt-auto pt-6 flex flex-col items-center">
+        <button id="btnGlobalReset" title="Hard Reset: Erase tests, attempts, flashcards & subjects. Achievements stay." class="w-full px-4 py-2 rounded-md bg-red-600 text-white text-sm font-semibold shadow hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2">Hard Reset</button>
+        <a href="helper.html" class="mt-4 text-xs text-[var(--text-secondary)] hover:text-[var(--primary-color)] px-4 py-2 rounded transition-colors border border-transparent hover:border-[var(--primary-color)]">Help</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main column -->
+  <div class="flex-1 flex flex-col">
+    <!-- Top nav -->
+    <header class="bg-[var(--white)] shadow-sm flex items-center justify-between p-4">
+      <div class="flex-1 flex justify-center items-center">
+        <div class="flex gap-4">
+          <a href="index.html" title="Home" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11.5z"/></svg>
+          </a>
+          <a href="test.html" title="Tests" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M4 17.25V21h3.75L17.81 10.94l-3.75-3.75L4 17.25Zm14.71-8.04a1 1 0 0 0 0-1.41l-2.54-2.54a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 2.03-2.03Z"/></svg></a>
+          <a href="flashcards.html" title="Flashcards" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v12H4zM4 20h16v-2H4z"/></svg></a>
+          <a href="games.html" title="Games" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 3h12a3 3 0 0 1 3 3v9.5a3 3 0 0 1-4.34 2.65l-1.97-.99a1 1 0 0 0-.89 0l-1.97.99a3 3 0 0 1-2.66 0l-1.97-.99a1 1 0 0 0-.89 0l-1.97.99A3 3 0 0 1 3 15.5V6a3 3 0 0 1 3-3Zm2.5 5A1.5 1.5 0 1 0 8.5 8 1.5 1.5 0 0 0 8.5 8Zm7 0A1.5 1.5 0 1 0 15.5 8 1.5 1.5 0 0 0 15.5 8Z"/></svg></a>
+          <a href="dictionary.html" title="Dictionary" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 2h9.5a4.5 4.5 0 0 1 0 9H8v9a1 1 0 0 1-2 0V3a1 1 0 0 1 1-1Zm2 2v5h7.5a2.5 2.5 0 0 0 0-5H8Z"/><path d="M18 6v13a3 3 0 0 1-3 3H7.5a1.5 1.5 0 0 1 0-3H15a1 1 0 0 0 1-1V6h2Z"/></svg></a>
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCAMzclmWsDYh9STHWC4bYSZWCP2ZqUSi2Tv7hk1t__UQisqFXVQ847TNl6gP_A6HiQhQKr_CJBhEgo17C6MNYopaP4i-ShKU-5ZtGp3UlaHub43muyWTbIPvF09V7hMR6ttWWZOJlbuGFkda_-y7WD-UZj9QHUwjJmdGKiTPHxGhdQPd-ppbdiZGRGqmykWE5pGrwNm08sSVmw8vLTURway5Ulqo9Aw6Vcbldg3SiZ4WZxAvQTNxsRzlS3YRuejEy822RS");'></div>
+      </div>
+    </header>
+
+    <main class="flex-1 p-6 lg:p-8">
+      <h2 id="pageTitle" class="text-[var(--text-primary)] text-3xl font-bold mb-6">Statistics</h2>
+      <div id="primaryArea" class="rounded-lg p-6 bg-[var(--background-color)] min-h-[50vh]">
+        <!-- ...existing content... -->
+  <!-- Copyright footer moved to fixed position below -->
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+// --- Shared helpers ---
+let SUBJECT_COLORS={ 'Art':'#ef4444','English/Language':'#f59e0b','Math':'#0d78f2','Science':'#22c55e','Social Studies':'#8b5cf6','Other':'#14b8a6','(No Subject)':'#94a3b8'};
+// Merge in any custom user-defined subject colors
+try { const userMap = JSON.parse(localStorage.getItem('fpSubjectColors')||'{}'); SUBJECT_COLORS = {...SUBJECT_COLORS, ...userMap}; } catch {}
+// --- Purge deprecated secret achievement/theme artifacts ---
+try {
+  // Remove obsolete unlock flag
+  localStorage.removeItem('fpFocusMasterUnlocked');
+  // Filter out legacy secret badge id if present
+  const persisted = JSON.parse(localStorage.getItem('fpPersistedBadges')||'[]');
+  const filtered = Array.isArray(persisted)? persisted.filter(id=> id !== 'focus_master_secret') : [];
+  if(filtered.length !== persisted.length){
+    localStorage.setItem('fpPersistedBadges', JSON.stringify(filtered));
+  }
+} catch {}
+function loadTests(){ try { return JSON.parse(localStorage.getItem('tests')||'[]'); } catch { return []; } }
+function loadAttempts(){ try { return JSON.parse(localStorage.getItem('testAttempts')||'[]'); } catch { return []; } }
+function loadCardSets(){ try { return JSON.parse(localStorage.getItem('flashcardSets')||'[]'); } catch { return []; } }
+function loadFlashcardSessions(){ try { return JSON.parse(localStorage.getItem('flashcardSessions')||'[]'); } catch { return []; } }
+function dayKeyLocal(d){ const dt=new Date(d); return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`; }
+function fmtSecondsToHMS(sec){ if(!sec||sec<=0) return '0s'; const h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=Math.floor(sec%60); return [h?`${h}h`:null,m?`${m}m`:null,`${s}s`].filter(Boolean).join(' ');} 
+let __statsCharts=[]; function destroyStatsCharts(){ try{__statsCharts.forEach(c=>c && c.destroy && c.destroy());}catch{} __statsCharts=[]; }
+
+// --- Test Stats ---
+function renderTestStats(){ const primary=document.getElementById('primaryArea'); if(!primary) return; destroyStatsCharts(); const tests=loadTests(); const attempts=loadAttempts(); const testById=new Map(tests.map(t=>[String(t.id),t]));
+  const testsCreated=tests.length; const testsTaken=attempts.length; const daysStudied=attempts.length? new Set(attempts.map(a=>dayKeyLocal(a.date))).size:0; const avgTime=attempts.length? Math.round(attempts.reduce((s,a)=>s+(a.timeTaken||0),0)/attempts.length):0; const avgScorePct=attempts.length? (attempts.reduce((s,a)=>s + (a.total? (a.score/a.total)*100:0),0)/attempts.length):0;
+  const byDay=new Map(); attempts.forEach(a=>{ const t=testById.get(String(a.testId)); const subj=(t&&t.subject)||'(No Subject)'; const day=dayKeyLocal(a.date); const pct=a.total?(a.score/a.total)*100:0; if(!byDay.has(day)) byDay.set(day,new Map()); const sub=byDay.get(day); if(!sub.has(subj)) sub.set(subj,[]); sub.get(subj).push(pct); });
+  const base=new Date(); base.setHours(0,0,0,0); const last14=Array.from({length:14}).map((_,i)=>{ const d=new Date(base); d.setDate(d.getDate()-(13-i)); return dayKeyLocal(d); });
+  const subjectsSeen=new Set(); byDay.forEach(m=>m.forEach((_,s)=>subjectsSeen.add(s))); const lineDatasets=[...subjectsSeen].map(subj=>({ label:subj, data:last14.map(d=>{ const m=byDay.get(d); if(!m) return null; const arr=m.get(subj)||[]; return arr.length? arr.reduce((s,v)=>s+v,0)/arr.length:null; }), spanGaps:true, borderColor:SUBJECT_COLORS[subj]||'#6366f1', backgroundColor:(SUBJECT_COLORS[subj]||'#6366f1')+'26', tension:.35, fill:false, pointRadius:2 }));
+  const subjScores=new Map(); attempts.forEach(a=>{ const t=testById.get(String(a.testId)); const subj=(t&&t.subject)||'(No Subject)'; const pct=a.total?(a.score/a.total)*100:0; if(!subjScores.has(subj)) subjScores.set(subj,{sum:0,count:0}); const o=subjScores.get(subj); o.sum+=pct; o.count++; });
+  const subjLabels=[...subjScores.keys()]; const subjData=subjLabels.map(s=>subjScores.get(s).sum/subjScores.get(s).count); const subjColors=subjLabels.map(s=>SUBJECT_COLORS[s]||'#6366f1');
+  const lastAttempts=attempts.slice(-10); const timeLabels=lastAttempts.map(a=>new Date(a.date).toLocaleDateString()); const timeData=lastAttempts.map(a=>a.timeTaken||0); const timeColors=timeLabels.map((_,i)=>{ const a=lastAttempts[i]; const t=testById.get(String(a.testId)); const subj=(t&&t.subject)||'(No Subject)'; return SUBJECT_COLORS[subj]||'#6366f1'; });
+
+  // --- Extended Analysis ---
+  // Per subject detailed metrics
+  const subjectMetrics = {}; // subj -> {attempts, sumPct, minPct, maxPct, lastPct, lastDate}
+  attempts.forEach(a=>{ const t=testById.get(String(a.testId)); const subj=(t&&t.subject)||'(No Subject)'; const pct=a.total?(a.score/a.total)*100:0; if(!subjectMetrics[subj]) subjectMetrics[subj]={attempts:0,sumPct:0,minPct:101,maxPct:-1,lastDate:null,lastPct:null}; const m=subjectMetrics[subj]; m.attempts++; m.sumPct+=pct; if(pct<m.minPct) m.minPct=pct; if(pct>m.maxPct) m.maxPct=pct; if(!m.lastDate || new Date(a.date)>new Date(m.lastDate)){ m.lastDate=a.date; m.lastPct=pct; } });
+  Object.keys(subjectMetrics).forEach(s=>{ const m=subjectMetrics[s]; m.avgPct = m.attempts? m.sumPct/m.attempts : 0; m.range = (m.maxPct>=0 && m.minPct<=100)? (m.maxPct - m.minPct):0; });
+  // Best / Needs Improvement
+  let bestSubject=null, worstSubject=null; Object.entries(subjectMetrics).forEach(([subj,m])=>{ if(m.attempts===0) return; if(!bestSubject || m.avgPct>bestSubject.avgPct) bestSubject={subject:subj,...m}; if(!worstSubject || m.avgPct<worstSubject.avgPct) worstSubject={subject:subj,...m}; });
+  // Trend: last 5 vs previous 5
+  const sortedAttempts=[...attempts].sort((a,b)=> new Date(a.date)-new Date(b.date));
+  const last5=sortedAttempts.slice(-5); const prev5=sortedAttempts.slice(-10,-5);
+  function avg(list){ return list.length? list.reduce((s,a)=> s + (a.total? (a.score/a.total)*100:0),0)/list.length : 0; }
+  const last5Avg=avg(last5); const prev5Avg=avg(prev5); const trendDelta = last5.length && prev5.length? (last5Avg - prev5Avg):0;
+  // Overall consistency (std dev of all attempt %)
+  const allPcts = attempts.map(a=> a.total? (a.score/a.total)*100:0); const meanAll = allPcts.length? allPcts.reduce((s,v)=>s+v,0)/allPcts.length:0; const variance = allPcts.length? allPcts.reduce((s,v)=> s + Math.pow(v-meanAll,2),0)/allPcts.length:0; const stdDev = Math.sqrt(variance);
+  // Score distribution buckets (0-10,10-20,...)
+  const distBuckets = Array.from({length:10}).map(()=>0); allPcts.forEach(p=>{ const idx=Math.min(9, Math.floor(p/10)); distBuckets[idx]++; });
+  // Suggestions
+  const suggestions=[]; if(worstSubject && worstSubject.avgPct<70) suggestions.push(`Focus on ${worstSubject.subject} (avg ${(worstSubject.avgPct).toFixed(1)}%). Review mistakes and retake related tests.`);
+  if(trendDelta < -5) suggestions.push(`Recent performance dropped by ${Math.abs(trendDelta).toFixed(1)} pts. Revisit recent test materials.`);
+  if(stdDev>15) suggestions.push(`High score variability (σ=${stdDev.toFixed(1)}). Aim for more consistent practice sessions.`);
+  if(bestSubject && bestSubject.avgPct>=85) suggestions.push(`Great job in ${bestSubject.subject}. Consider increasing difficulty to keep progressing.`);
+  if(!suggestions.length) suggestions.push('Keep up the steady progress! Try scheduling regular review sessions to maintain momentum.');
+
+  primary.innerHTML=`<div class='space-y-6'>
+    <!-- In-Depth Analysis (moved to top) -->
+    <div class='bg-white rounded-xl shadow p-6 space-y-6'>
+      <div class='flex items-center justify-between flex-wrap gap-4'>
+        <h3 class='font-semibold text-[var(--text-primary)]'>In-Depth Analysis</h3>
+        <div class='flex gap-3 text-xs'>
+          <span class='px-2 py-1 rounded bg-[var(--background-color)]'>Best: ${bestSubject? bestSubject.subject+' '+bestSubject.avgPct.toFixed(1)+'%':'—'}</span>
+          <span class='px-2 py-1 rounded bg-[var(--background-color)]'>Needs Work: ${worstSubject? worstSubject.subject+' '+worstSubject.avgPct.toFixed(1)+'%':'—'}</span>
+          <span class='px-2 py-1 rounded bg-[var(--background-color)]'>Trend: ${ (last5.length && prev5.length)? (trendDelta>0? '+'+trendDelta.toFixed(1): trendDelta.toFixed(1))+' pts':'—' }</span>
+          <span class='px-2 py-1 rounded bg-[var(--background-color)]'>Consistency σ: ${stdDev.toFixed(1)}</span>
+        </div>
+      </div>
+      <div class='grid lg:grid-cols-3 gap-6'>
+        <div class='lg:col-span-2'>
+          <h4 class='text-sm font-medium mb-2 text-[var(--text-primary)]'>Subject Mastery</h4>
+          <div class='overflow-auto rounded-lg border border-[var(--border-color)]'>
+            <table class='min-w-full text-sm'>
+              <thead class='bg-[var(--background-color)] text-[var(--text-secondary)]'>
+                <tr><th class='text-left px-3 py-2 font-semibold'>Subject</th><th class='text-left px-3 py-2 font-semibold'>Attempts</th><th class='text-left px-3 py-2 font-semibold'>Avg %</th><th class='text-left px-3 py-2 font-semibold'>Best %</th><th class='text-left px-3 py-2 font-semibold'>Low %</th><th class='text-left px-3 py-2 font-semibold'>Last %</th><th class='text-left px-3 py-2 font-semibold'>Last Date</th><th class='text-left px-3 py-2 font-semibold'>Range</th></tr>
+              </thead>
+              <tbody>
+                ${Object.keys(subjectMetrics).length? Object.entries(subjectMetrics).sort((a,b)=> b[1].avgPct - a[1].avgPct).map(([subj,m])=>`<tr class='border-t border-[var(--border-color)]'>
+                  <td class='px-3 py-1 whitespace-nowrap'><span class='inline-flex items-center gap-1'><span class='w-2 h-2 rounded-full' style='background:${SUBJECT_COLORS[subj]||'#64748b'}'></span>${subj}</span></td>
+                  <td class='px-3 py-1'>${m.attempts}</td>
+                  <td class='px-3 py-1 font-medium'>${m.avgPct.toFixed(1)}%</td>
+                  <td class='px-3 py-1 text-green-600'>${m.maxPct>=0? m.maxPct.toFixed(1)+'%':'—'}</td>
+                  <td class='px-3 py-1 text-red-600'>${m.minPct<=100? m.minPct.toFixed(1)+'%':'—'}</td>
+                  <td class='px-3 py-1'>${m.lastPct!=null? m.lastPct.toFixed(1)+'%':'—'}</td>
+                  <td class='px-3 py-1 whitespace-nowrap'>${m.lastDate? new Date(m.lastDate).toLocaleDateString(): '—'}</td>
+                  <td class='px-3 py-1'>${m.range.toFixed(1)}</td>
+                </tr>`).join('') : `<tr><td colspan='8' class='px-3 py-4 text-center text-[var(--text-secondary)]'>No attempts yet.</td></tr>`}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <h4 class='text-sm font-medium mb-2 text-[var(--text-primary)]'>Score Distribution</h4>
+          <div class='h-52'><canvas id='scoreDistChart'></canvas></div>
+          <p class='mt-2 text-[var(--text-secondary)] text-xs leading-relaxed'>Each bar groups test attempt percentages into 10-point buckets (0–9, 10–19, ..., 90–100). Taller bars mean more attempts fell inside that score range. Use this to see if you're clustering in mid-ranges or pushing into higher performance bands.</p>
+        </div>
+      </div>
+      <div>
+        <h4 class='text-sm font-medium mb-2 text-[var(--text-primary)]'>Suggestions</h4>
+        <ul class='list-disc pl-5 space-y-1 text-xs text-[var(--text-secondary)]'>
+          ${suggestions.map(s=>`<li>${s}</li>`).join('')}
+        </ul>
+      </div>
+    </div>
+    <!-- Key Metrics -->
+    <div class='grid sm:grid-cols-2 lg:grid-cols-5 gap-4'>
+      <div class='bg-white rounded-xl shadow p-4'><div class='text-xs text-[var(--text-secondary)]'>Days Studied</div><div class='mt-1 text-2xl font-semibold text-[var(--text-primary)]'>${daysStudied}</div></div>
+      <div class='bg-white rounded-xl shadow p-4'><div class='text-xs text-[var(--text-secondary)]'>Tests Created</div><div class='mt-1 text-2xl font-semibold text-[var(--text-primary)]'>${testsCreated}</div></div>
+      <div class='bg-white rounded-xl shadow p-4'><div class='text-xs text-[var(--text-secondary)]'>Tests Taken</div><div class='mt-1 text-2xl font-semibold text-[var(--text-primary)]'>${testsTaken}</div></div>
+      <div class='bg-white rounded-xl shadow p-4'><div class='text-xs text-[var(--text-secondary)]'>Avg Time</div><div class='mt-1 text-2xl font-semibold text-[var(--text-primary)]'>${fmtSecondsToHMS(avgTime)}</div></div>
+      <div class='bg-white rounded-xl shadow p-4'><div class='text-xs text-[var(--text-secondary)]'>Avg Score</div><div class='mt-1 text-2xl font-semibold text-[var(--text-primary)]'>${avgScorePct.toFixed(0)}%</div></div>
+    </div>
+    <!-- Charts -->
+    <div class='grid lg:grid-cols-3 gap-6'>
+      <div class='bg-white rounded-xl shadow p-4 lg:col-span-2'><div class='flex items-center justify-between mb-2'><div class='font-semibold text-[var(--text-primary)]'>Scores Over Time (14d)</div><div class='text-xs text-[var(--text-secondary)]'>Daily avg</div></div><div class='h-56'><canvas id='scoresChart'></canvas></div></div>
+      <div class='bg-white rounded-xl shadow p-4'><div class='font-semibold text-[var(--text-primary)] mb-2'>Avg Score by Subject</div><div class='h-56'><canvas id='subjectsChart'></canvas></div></div>
+    </div>
+    <div class='bg-white rounded-xl shadow p-4'><div class='font-semibold text-[var(--text-primary)] mb-2'>Time per Attempt (last 10)</div><div class='h-56'><canvas id='timeChart'></canvas></div></div>
+  </div>`;
+  const scoresCtx=document.getElementById('scoresChart')?.getContext('2d'); if(scoresCtx){ __statsCharts.push(new Chart(scoresCtx,{type:'line',data:{labels:last14.map(d=>{const [y,m,dd]=d.split('-').map(Number);return new Date(y,m-1,dd).toLocaleDateString();}),datasets:lineDatasets},options:{responsive:true,maintainAspectRatio:false,scales:{y:{suggestedMin:0,suggestedMax:100,ticks:{callback:v=>v+'%'}}},plugins:{legend:{display:true,position:'bottom'},tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${(ctx.parsed.y??0).toFixed(1)}%`}}}}})); }
+  const subjCtx=document.getElementById('subjectsChart')?.getContext('2d'); if(subjCtx){ __statsCharts.push(new Chart(subjCtx,{type:'doughnut',data:{labels:subjLabels,datasets:[{data:subjData.map(v=>Number.isFinite(v)?Number(v.toFixed(1)):0),backgroundColor:subjColors,borderColor:subjColors,borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},cutout:'60%'}})); }
+  const timeCtx=document.getElementById('timeChart')?.getContext('2d'); if(timeCtx){ __statsCharts.push(new Chart(timeCtx,{type:'bar',data:{labels:timeLabels,datasets:[{label:'Seconds',data:timeData,backgroundColor:timeColors,borderColor:timeColors,borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(ctx)=>{ const a=lastAttempts[ctx.dataIndex]; const t=testById.get(String(a.testId)); const name=(t&&t.name)||a.testName||'Attempt'; return `${name}: ${fmtSecondsToHMS(ctx.parsed.y||0)}`; }}}},scales:{y:{beginAtZero:true}}}})); }
+  const distCtx=document.getElementById('scoreDistChart')?.getContext('2d'); if(distCtx){ __statsCharts.push(new Chart(distCtx,{type:'bar',data:{labels:distBuckets.map((_,i)=> i*10+'-'+(i===9? '100': (i*10+9))),datasets:[{label:'Attempts',data:distBuckets,backgroundColor:'#0d78f2'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,precision:0}}}})); }
+}
+
+// --- Flashcard Stats ---
+function renderFlashcardStats(){ const primary=document.getElementById('primaryArea'); if(!primary) return; destroyStatsCharts(); const sets=loadCardSets(); const sessions=loadFlashcardSessions(); const totalSets=sets.length; const totalSessions=sessions.length; const uniqueDays=sessions.length? new Set(sessions.map(s=>dayKeyLocal(s.date))).size:0; const totalCardsStudied=sessions.reduce((s,a)=>s+(a.cardsSeen||0),0); const avgSessionCards=sessions.length? Math.round(totalCardsStudied/sessions.length):0; const timeSpent=sessions.reduce((s,a)=>s+(a.durationSeconds||0),0); const avgSessionTime=sessions.length? Math.round(timeSpent/sessions.length):0; const subjectAgg={}; sets.forEach(set=>{ const subj=set.subject||'Other'; if(!subjectAgg[subj]) subjectAgg[subj]={cards:0,sessions:0}; subjectAgg[subj].cards+=(set.cards||[]).length; }); sessions.forEach(s=>{ const subj=s.subject||'Other'; if(!subjectAgg[subj]) subjectAgg[subj]={cards:0,sessions:0}; subjectAgg[subj].sessions++; });
+  // Extended analytics
+  const attempts = loadAttempts();
+  // Test performance per subject
+  const testPerf = {}; // subj -> {sumPct,count}
+  attempts.forEach(a=>{ const pct = a.total? (a.score/a.total)*100:0; const t = (loadTests().find(tst=>String(tst.id)===String(a.testId))||{}); const subj=(t.subject)||'(No Subject)'; if(!testPerf[subj]) testPerf[subj]={sumPct:0,count:0}; testPerf[subj].sumPct+=pct; testPerf[subj].count++; });
+  const subjMetrics={}; sessions.forEach(s=>{ const subj=s.subject||'Other'; if(!subjMetrics[subj]) subjMetrics[subj]={sessions:0,sumCards:0,sumDuration:0,maxCards:0,minCards:null,lastDate:null,lastCards:0}; const m=subjMetrics[subj]; m.sessions++; const cs=s.cardsSeen||0; m.sumCards+=cs; m.sumDuration+=(s.durationSeconds||0); if(cs>m.maxCards) m.maxCards=cs; if(m.minCards===null||cs<m.minCards) m.minCards=cs; if(!m.lastDate || new Date(s.date)>new Date(m.lastDate)){ m.lastDate=s.date; m.lastCards=cs; } });
+  Object.keys(subjMetrics).forEach(k=>{ const m=subjMetrics[k]; m.avgCards = m.sessions? m.sumCards/m.sessions : 0; m.avgDuration = m.sessions? m.sumDuration/m.sessions : 0; m.range = (m.minCards!=null)? (m.maxCards - m.minCards):0; });
+  let bestSubj=null, weakSubj=null; Object.entries(subjMetrics).forEach(([k,m])=>{ if(m.sessions===0) return; if(!bestSubj || m.avgCards>bestSubj.avgCards) bestSubj={subject:k,...m}; if(!weakSubj || m.avgCards<weakSubj.avgCards) weakSubj={subject:k,...m}; });
+  const sortedSessions=[...sessions].sort((a,b)=> new Date(a.date)-new Date(b.date)); const fcLast5=sortedSessions.slice(-5); const fcPrev5=sortedSessions.slice(-10,-5); function avgCards(list){ return list.length? list.reduce((s,a)=> s + (a.cardsSeen||0),0)/list.length : 0; } const fcLastAvg=avgCards(fcLast5); const fcPrevAvg=avgCards(fcPrev5); const fcTrendDelta = (fcLast5.length && fcPrev5.length)? (fcLastAvg - fcPrevAvg):0;
+  const cardCounts=sessions.map(s=>s.cardsSeen||0); const meanCards=cardCounts.length? cardCounts.reduce((s,v)=>s+v,0)/cardCounts.length:0; const varCards=cardCounts.length? cardCounts.reduce((s,v)=> s + Math.pow(v-meanCards,2),0)/cardCounts.length:0; const stdCards=Math.sqrt(varCards);
+  const bucketSize=5; const maxCardsObserved=Math.max(0,...cardCounts); const bucketCount=Math.min(12, Math.ceil(maxCardsObserved / bucketSize)+1); const sizeBuckets=Array.from({length:bucketCount}).map(()=>0); cardCounts.forEach(c=>{ const idx=Math.min(bucketCount-1, Math.floor(c / bucketSize)); sizeBuckets[idx]++; }); const sizeLabels=sizeBuckets.map((_,i)=> i===bucketCount-1? `${i*bucketSize}+` : `${i*bucketSize}-${i*bucketSize+bucketSize-1}`);
+  // Correlate study vs test performance
+  const studyFocusShare = {}; // subj -> % of total cards studied
+  Object.keys(subjMetrics).forEach(subj=>{ const m=subjMetrics[subj]; studyFocusShare[subj] = totalCardsStudied? (m.sumCards/totalCardsStudied)*100:0; });
+  const totalFocusAvg = Object.keys(studyFocusShare).length? Object.values(studyFocusShare).reduce((a,b)=>a+b,0)/Object.keys(studyFocusShare).length:0;
+  function testAvg(subj){ const tp=testPerf[subj]; return tp? tp.sumPct/tp.count : null; }
+  // Build correlation dataset (bubble: x = study focus %, y = test avg %, r = sessions)
+  const correlationPoints = Object.keys({...studyFocusShare, ...testPerf}).map(subj=>{ const x=studyFocusShare[subj]||0; const y=testAvg(subj); const m=subjMetrics[subj]; const r = m? Math.min(40, 8 + m.sessions*2):8; return (y==null)? null : { x, y, r, subj }; }).filter(Boolean);
+  // Status classification
+  const correlationStatus = {}; // subj -> string
+  correlationPoints.forEach(p=>{ const subj=p.subj; const m=subjMetrics[subj]||{}; const tAvg = p.y; const focus= p.x; let status='Balanced'; if(tAvg<70 && focus < totalFocusAvg*0.9) status='Understudied'; else if(tAvg<70 && focus >= totalFocusAvg*0.9) status='Review Effectiveness'; else if(tAvg>=85 && focus>=totalFocusAvg) status='Strong'; else if(tAvg>=70 && tAvg<80 && focus< totalFocusAvg*0.8) status='Could Increase Volume'; correlationStatus[subj]=status; });
+  // Suggestions augmented by correlation
+  const fcSuggestions=[]; Object.entries(correlationStatus).forEach(([subj,st])=>{ if(st==='Understudied') fcSuggestions.push(`Boost study time for ${subj}; low test performance with limited card coverage.`); if(st==='Review Effectiveness') fcSuggestions.push(`Refine strategies in ${subj}; study volume present but test scores lag.`); });
+  if(weakSubj && weakSubj.avgCards< (bestSubj? bestSubj.avgCards*0.6:5)) fcSuggestions.push(`Increase study depth for ${weakSubj.subject}. Average cards/session ${(weakSubj.avgCards).toFixed(1)} is low.`); if(fcTrendDelta < -3) fcSuggestions.push(`Recent sessions show fewer cards (${fcTrendDelta.toFixed(1)} vs previous). Consider longer sessions.`); if(stdCards > (meanCards*0.75) && meanCards>0) fcSuggestions.push(`High variability in session size (σ=${stdCards.toFixed(1)}). Set a baseline number of cards (e.g. ${Math.max(5, Math.round(meanCards*0.7))}).`); if(bestSubj && bestSubj.avgCards>=15) fcSuggestions.push(`Strong volume in ${bestSubj.subject}. Add spaced repetition to reinforce retention.`); if(!fcSuggestions.length) fcSuggestions.push('Consistent flashcard practice. Maintain rhythm and mix subjects to avoid plateau.');
+  // Enrich table with test average + focus + status
+  primary.innerHTML=`<div class='space-y-8'>
+    <div class='bg-white rounded-xl shadow p-6 space-y-6'>
+      <div class='flex items-center justify-between flex-wrap gap-4'>
+        <h3 class='font-semibold text-[var(--text-primary)]'>In-Depth Flashcard Analysis</h3>
+        <div class='flex gap-3 text-xs'>
+          <span class='px-2 py-1 rounded bg-[var(--background-color)]'>Best: ${bestSubj? bestSubj.subject+' '+bestSubj.avgCards.toFixed(1)+' avg cards':'—'}</span>
+          <span class='px-2 py-1 rounded bg-[var(--background-color)]'>Needs Work: ${weakSubj? weakSubj.subject+' '+weakSubj.avgCards.toFixed(1)+' avg cards':'—'}</span>
+          <span class='px-2 py-1 rounded bg-[var(--background-color)]'>Trend: ${(fcLast5.length && fcPrev5.length)? (fcTrendDelta>0? '+'+fcTrendDelta.toFixed(1): fcTrendDelta.toFixed(1))+' cards':'—'}</span>
+          <span class='px-2 py-1 rounded bg-[var(--background-color)]'>Consistency σ: ${stdCards.toFixed(1)}</span>
+        </div>
+      </div>
+      <div class='grid lg:grid-cols-3 gap-6'>
+        <div class='lg:col-span-2'>
+          <h4 class='text-sm font-medium mb-2 text-[var(--text-primary)]'>Subject Practice Depth & Performance Correlation</h4>
+          <div class='overflow-auto rounded-lg border border-[var(--border-color)]'>
+            <table class='min-w-full text-sm'>
+              <thead class='bg-[var(--background-color)] text-[var(--text-secondary)]'>
+                <tr><th class='text-left px-3 py-2 font-semibold'>Subject</th><th class='text-left px-3 py-2 font-semibold'>Sessions</th><th class='text-left px-3 py-2 font-semibold'>Avg Cards</th><th class='text-left px-3 py-2 font-semibold'>Study Focus %</th><th class='text-left px-3 py-2 font-semibold'>Test Avg %</th><th class='text-left px-3 py-2 font-semibold'>Status</th><th class='text-left px-3 py-2 font-semibold'>Best Cards</th><th class='text-left px-3 py-2 font-semibold'>Low Cards</th><th class='text-left px-3 py-2 font-semibold'>Last Cards</th><th class='text-left px-3 py-2 font-semibold'>Last Date</th><th class='text-left px-3 py-2 font-semibold'>Range</th></tr>
+              </thead>
+              <tbody>
+                ${Object.keys(subjMetrics).length? Object.entries(subjMetrics).sort((a,b)=> (testAvg(b[0])||0) - (testAvg(a[0])||0)).map(([subj,m])=>{ const tA=testAvg(subj); const focus=studyFocusShare[subj]||0; const status=correlationStatus[subj]||'—'; const badgeColor= status==='Understudied'?'bg-amber-100 text-amber-700': status==='Review Effectiveness'?'bg-red-100 text-red-600': status==='Strong'?'bg-emerald-100 text-emerald-600': status==='Could Increase Volume'?'bg-indigo-100 text-indigo-600':'bg-gray-100 text-gray-500'; return `<tr class='border-t border-[var(--border-color)]'>
+                  <td class='px-3 py-1 whitespace-nowrap'><span class='inline-flex items-center gap-1'><span class='w-2 h-2 rounded-full' style='background:${SUBJECT_COLORS[subj]||'#64748b'}'></span>${subj}</span></td>
+                  <td class='px-3 py-1'>${m.sessions}</td>
+                  <td class='px-3 py-1 font-medium'>${m.avgCards.toFixed(1)}</td>
+                  <td class='px-3 py-1'>${focus.toFixed(1)}%</td>
+                  <td class='px-3 py-1'>${tA!=null? tA.toFixed(1)+'%':'—'}</td>
+                  <td class='px-3 py-1'><span class='text-[10px] px-2 py-0.5 rounded-full inline-block ${badgeColor}'>${status}</span></td>
+                  <td class='px-3 py-1 text-green-600'>${m.maxCards}</td>
+                  <td class='px-3 py-1 text-red-600'>${m.minCards!=null? m.minCards: '—'}</td>
+                  <td class='px-3 py-1'>${m.lastCards}</td>
+                  <td class='px-3 py-1 whitespace-nowrap'>${m.lastDate? new Date(m.lastDate).toLocaleDateString(): '—'}</td>
+                  <td class='px-3 py-1'>${m.range}</td>
+                </tr>`}).join('') : `<tr><td colspan='11' class='px-3 py-4 text-center text-[var(--text-secondary)]'>No sessions yet.</td></tr>`}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <h4 class='text-sm font-medium mb-2 text-[var(--text-primary)]'>Study Focus vs Test Performance</h4>
+          <div class='h-52'><canvas id='fcCorrChart'></canvas></div>
+          <p class='mt-2 text-[var(--text-secondary)] text-xs leading-relaxed'>Bubble chart plots each subject (x: % of cards studied, y: test average %, bubble size = # flashcard sessions). Top-right indicates strong alignment; bottom-left reveals subjects needing more study. Aim to move critical subjects above 80% test average while maintaining balanced study focus.</p>
+        </div>
+      </div>
+      <div>
+        <h4 class='text-sm font-medium mb-2 text-[var(--text-primary)]'>Suggestions</h4>
+        <ul class='list-disc pl-5 space-y-1 text-xs text-[var(--text-secondary)]'>${fcSuggestions.map(s=>`<li>${s}</li>`).join('')}</ul>
+      </div>
+    </div>
+    <div class='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
+      <div class='p-4 bg-white rounded-xl shadow'><div class='text-xs text-[var(--text-secondary)] uppercase font-semibold'>Total Sets</div><div class='mt-2 text-2xl font-bold text-[var(--text-primary)]'>${totalSets}</div></div>
+      <div class='p-4 bg-white rounded-xl shadow'><div class='text-xs text-[var(--text-secondary)] uppercase font-semibold'>Study Sessions</div><div class='mt-2 text-2xl font-bold text-[var(--text-primary)]'>${totalSessions}</div></div>
+      <div class='p-4 bg-white rounded-xl shadow'><div class='text-xs text-[var(--text-secondary)] uppercase font-semibold'>Cards Studied</div><div class='mt-2 text-2xl font-bold text-[var(--text-primary)]'>${totalCardsStudied}</div></div>
+      <div class='p-4 bg-white rounded-xl shadow'><div class='text-xs text-[var(--text-secondary)] uppercase font-semibold'>Unique Days</div><div class='mt-2 text-2xl font-bold text-[var(--text-primary)]'>${uniqueDays}</div></div>
+    </div>
+    <div class='grid gap-6 lg:grid-cols-3'>
+      <div class='p-4 bg-white rounded-xl shadow lg:col-span-2'>
+        <h3 class='text-sm font-semibold text-[var(--text-primary)] mb-3'>Cards Studied Over Time</h3>
+        <canvas id='fcLine'></canvas>
+      </div>
+      <div class='p-4 bg-white rounded-xl shadow'>
+        <h3 class='text-sm font-semibold text-[var(--text-primary)] mb-3'>Sessions by Subject</h3>
+        <canvas id='fcDonut'></canvas>
+      </div>
+    </div>
+    <div class='grid gap-6 lg:grid-cols-3'>
+      <div class='p-4 bg-white rounded-xl shadow'><h3 class='text-sm font-semibold text-[var(--text-primary)] mb-3'>Avg Cards / Session</h3><div class='text-3xl font-bold text-[var(--text-primary)]'>${avgSessionCards}</div></div>
+      <div class='p-4 bg-white rounded-xl shadow'><h3 class='text-sm font-semibold text-[var(--text-primary)] mb-3'>Time Spent (min)</h3><div class='text-3xl font-bold text-[var(--text-primary)]'>${Math.round(timeSpent/60)}</div></div>
+      <div class='p-4 bg-white rounded-xl shadow'><h3 class='text-sm font-semibold text-[var(--text-primary)] mb-3'>Avg Session Time (s)</h3><div class='text-3xl font-bold text-[var(--text-primary)]'>${avgSessionTime}</div></div>
+    </div>
+  </div>`;
+  const subjDayMap={}; const allDays=new Set(); sessions.forEach(s=>{ const subj=s.subject||'Other'; const day=dayKeyLocal(s.date); allDays.add(day); if(!subjDayMap[subj]) subjDayMap[subj]={}; subjDayMap[subj][day]=(subjDayMap[subj][day]||0)+(s.cardsSeen||0); }); const lineLabels=[...allDays].sort(); const datasets=Object.keys(subjDayMap).sort().map(subj=>{ const color=SUBJECT_COLORS[subj]||'#555'; return {label:subj,data:lineLabels.map(d=>subjDayMap[subj][d]||0),borderColor:color,backgroundColor:color,tension:.25,fill:false}; });
+  const ctxL=document.getElementById('fcLine'); if(ctxL){ __statsCharts.push(new Chart(ctxL,{type:'line',data:{labels:lineLabels,datasets},options:{responsive:true,interaction:{mode:'nearest',intersect:false},plugins:{legend:{position:'bottom'}},scales:{y:{beginAtZero:true}}}})); }
+  const subjLabels=Object.keys(subjectAgg); const subjSessions=subjLabels.map(s=>subjectAgg[s].sessions||0); const subjColors=subjLabels.map(s=>SUBJECT_COLORS[s]||'#999'); const ctxD=document.getElementById('fcDonut'); if(ctxD){ __statsCharts.push(new Chart(ctxD,{type:'doughnut',data:{labels:subjLabels,datasets:[{data:subjSessions,backgroundColor:subjColors}]},options:{plugins:{legend:{position:'bottom'}}}})); }
+  const corrCtx=document.getElementById('fcCorrChart')?.getContext('2d'); if(corrCtx && correlationPoints.length){ __statsCharts.push(new Chart(corrCtx,{type:'bubble',data:{datasets:[{label:'Subjects', data:correlationPoints.map(p=>({x:p.x,y:p.y,r:p.r, subj:p.subj})), backgroundColor:correlationPoints.map(p=> (SUBJECT_COLORS[p.subj]||'#0d78f2')+'cc'), borderColor:correlationPoints.map(p=> SUBJECT_COLORS[p.subj]||'#0d78f2'), borderWidth:1 }]}, options:{responsive:true,maintainAspectRatio:false, parsing:false, scales:{ x:{ title:{display:true,text:'Study Focus %'}, beginAtZero:true, suggestedMax: Math.max(25, Math.ceil(Math.max(...correlationPoints.map(p=>p.x),10)/10)*10) }, y:{ title:{display:true,text:'Test Avg %'}, suggestedMin:0, suggestedMax:100 } }, plugins:{ tooltip:{ callbacks:{ label: ctx=>{ const d=ctx.raw; return `${d.subj}: Study ${d.x.toFixed(1)}% | Test ${d.y.toFixed(1)}%`; } } }, legend:{display:false} } }})); }
+}
+
+// --- Dictionary Stats ---
+function renderDictionaryStats(){ const primary=document.getElementById('primaryArea'); if(!primary) return; destroyStatsCharts(); let stats={}; try{ stats=JSON.parse(localStorage.getItem('fpDictionaryStats')||'{}'); }catch{};
+  // Normalize structure
+  stats.searches = stats.searches||{ total:0, byWord:{}, timeFocusedMs:0 };
+  stats.searches.bySubjectAdd = stats.searches.bySubjectAdd||{};
+  stats.lists = stats.lists||{ created:0, updated:0, deleted:0, bySubject:{} };
+  stats.exports = stats.exports||{ listToFlashcards:0, cardsCreated:0, bySubject:{} };
+  const totalSearches=stats.searches.total||0;
+  const uniqueTerms=Object.keys(stats.searches.byWord||{}).length;
+  const timeMs=stats.searches.timeFocusedMs||0; function fmtMs(ms){ if(!ms) return '0s'; const s=Math.floor(ms/1000); const h=Math.floor(s/3600); const m=Math.floor((s%3600)/60); const sec=s%60; return [h? h+'h':null,m? m+'m':null, (h||m)? (sec+'s'): (sec+'s')].filter(Boolean).join(' ');} const timeFormatted=fmtMs(timeMs);
+  const listsCreated=stats.lists.created||0; const listsUpdated=stats.lists.updated||0; const listsDeleted=stats.lists.deleted||0;
+  const exportsCount=stats.exports.listToFlashcards||0; const exportCards=stats.exports.cardsCreated||0;
+  // Subject usage
+  const subjUsage=stats.lists.bySubject||{}; const subjEntries=Object.entries(subjUsage).filter(([_,v])=> v>0).sort((a,b)=> b[1]-a[1]);
+  const mostUsed=subjEntries.length? subjEntries[0][0]: '—'; const leastUsed=subjEntries.length? subjEntries[subjEntries.length-1][0]: '—';
+  // Build top subjects selected on add (top 10)
+  const topSubjects=Object.entries(stats.searches.bySubjectAdd||{}).sort((a,b)=> b[1]-a[1]).slice(0,10);
+  // Prepare charts datasets
+  const listSubjects=Object.keys(subjUsage); const listCounts=listSubjects.map(s=> subjUsage[s]); const listColors=listSubjects.map(s=> SUBJECT_COLORS[s]||'#0d78f2');
+  const exportSubjects=Object.keys(stats.exports.bySubject||{}); const exportCounts=exportSubjects.map(s=> stats.exports.bySubject[s]); const exportColors=exportSubjects.map(s=> SUBJECT_COLORS[s]||'#14b8a6');
+  const wordLabels=topSubjects.map(w=> w[0]); const wordData=topSubjects.map(w=> w[1]); const wordColors=wordLabels.map(s=> SUBJECT_COLORS[s]||'#6366f1');
+  primary.innerHTML=`<div class='space-y-8'>
+    <div class='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
+      <div class='p-4 bg-white rounded-xl shadow'><div class='text-xs text-[var(--text-secondary)] uppercase font-semibold'>Total Searches</div><div class='mt-2 text-2xl font-bold text-[var(--text-primary)]'>${totalSearches}</div></div>
+      <div class='p-4 bg-white rounded-xl shadow'><div class='text-xs text-[var(--text-secondary)] uppercase font-semibold'>Unique Terms</div><div class='mt-2 text-2xl font-bold text-[var(--text-primary)]'>${uniqueTerms}</div></div>
+      <div class='p-4 bg-white rounded-xl shadow'><div class='text-xs text-[var(--text-secondary)] uppercase font-semibold'>Search Time</div><div class='mt-2 text-xl font-bold text-[var(--text-primary)]'>${timeFormatted}</div></div>
+      <div class='p-4 bg-white rounded-xl shadow'><div class='text-xs text-[var(--text-secondary)] uppercase font-semibold'>Exports</div><div class='mt-2 text-2xl font-bold text-[var(--text-primary)]'>${exportsCount}</div></div>
+    </div>
+    <div class='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
+      <div class='p-4 bg-white rounded-xl shadow'><div class='text-xs text-[var(--text-secondary)] uppercase font-semibold'>Lists Created</div><div class='mt-2 text-2xl font-bold text-[var(--text-primary)]'>${listsCreated}</div></div>
+      <div class='p-4 bg-white rounded-xl shadow'><div class='text-xs text-[var(--text-secondary)] uppercase font-semibold'>Lists Updated</div><div class='mt-2 text-2xl font-bold text-[var(--text-primary)]'>${listsUpdated}</div></div>
+      <div class='p-4 bg-white rounded-xl shadow'><div class='text-xs text-[var(--text-secondary)] uppercase font-semibold'>Lists Deleted</div><div class='mt-2 text-2xl font-bold text-[var(--text-primary)]'>${listsDeleted}</div></div>
+      <div class='p-4 bg-white rounded-xl shadow'><div class='text-xs text-[var(--text-secondary)] uppercase font-semibold'>Cards via Exports</div><div class='mt-2 text-2xl font-bold text-[var(--text-primary)]'>${exportCards}</div></div>
+    </div>
+    <div class='grid gap-6 lg:grid-cols-3'>
+      <div class='p-4 bg-white rounded-xl shadow lg:col-span-2'>
+  <h3 class='text-sm font-semibold text-[var(--text-primary)] mb-3'>Top Searched Subjects</h3>
+        <div class='h-64'><canvas id='dictTopWords'></canvas></div>
+  <p class='mt-2 text-[var(--text-secondary)] text-xs leading-relaxed'>Shows the subjects most frequently chosen when adding looked-up terms. Indicates where dictionary effort is concentrated.</p>
+      </div>
+      <div class='p-4 bg-white rounded-xl shadow'>
+        <h3 class='text-sm font-semibold text-[var(--text-primary)] mb-3'>List Creation by Subject</h3>
+        <div class='h-64'><canvas id='dictListSubjects'></canvas></div>
+      </div>
+    </div>
+    <div class='grid gap-6 lg:grid-cols-3'>
+      <div class='p-4 bg-white rounded-xl shadow'>
+        <h3 class='text-sm font-semibold text-[var(--text-primary)] mb-2'>Exports by Subject</h3>
+        <div class='h-64'><canvas id='dictExportSubjects'></canvas></div>
+      </div>
+      <div class='p-4 bg-white rounded-xl shadow lg:col-span-2'>
+        <h3 class='text-sm font-semibold text-[var(--text-primary)] mb-2'>Subject Usage Ranking</h3>
+        <div class='h-64'><canvas id='dictSubjectRanking'></canvas></div>
+        <div class='mt-3 text-xs text-[var(--text-secondary)] flex flex-wrap gap-4'>
+          <span><span class='font-semibold text-[var(--text-primary)]'>Most Used:</span> ${mostUsed}</span>
+          <span><span class='font-semibold text-[var(--text-primary)]'>Least Used:</span> ${leastUsed}</span>
+        </div>
+      </div>
+    </div>
+    <div class='p-4 bg-white rounded-xl shadow'>
+      <h3 class='text-sm font-semibold text-[var(--text-primary)] mb-2'>Notes</h3>
+      <ul class='list-disc pl-5 space-y-1 text-xs text-[var(--text-secondary)]'>
+        <li>Search time measures active focus inside the search box (pauses when unfocused).</li>
+        <li>Subject usage counts increment on list create, update, and delete interactions.</li>
+        <li>Exports count each time a term list is converted to a flashcard set.</li>
+      </ul>
+    </div>
+  </div>`;
+  // Charts
+  const topCtx=document.getElementById('dictTopWords')?.getContext('2d'); if(topCtx){ __statsCharts.push(new Chart(topCtx,{type:'bar',data:{labels:wordLabels,datasets:[{label:'Searches',data:wordData,backgroundColor:wordColors}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,precision:0}}}})); }
+  const listCtx=document.getElementById('dictListSubjects')?.getContext('2d'); if(listCtx){ __statsCharts.push(new Chart(listCtx,{type:'doughnut',data:{labels:listSubjects,datasets:[{data:listCounts,backgroundColor:listColors}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},cutout:'60%'}})); }
+  // Helper to add alpha to hex colors for better readability of radial labels
+  function addAlpha(hex, alpha){
+    if(!hex) return 'rgba(0,0,0,'+alpha+')';
+    const h=hex.replace('#','');
+    if(h.length===3){ const r=h[0]+h[0], g=h[1]+h[1], b=h[2]+h[2]; return `rgba(${parseInt(r,16)},${parseInt(g,16)},${parseInt(b,16)},${alpha})`; }
+    const r=parseInt(h.slice(0,2),16), g=parseInt(h.slice(2,4),16), b=parseInt(h.slice(4,6),16); return `rgba(${r},${g},${b},${alpha})`;
+  }
+  const expCtx=document.getElementById('dictExportSubjects')?.getContext('2d'); if(expCtx){
+    const expBg=exportColors.map(c=> addAlpha(c,0.55));
+    const polarValueLabels={
+      id:'polarValueLabels',
+      afterDatasetsDraw(chart){
+        const ds=chart.data.datasets[0]; if(!ds) return; const meta=chart.getDatasetMeta(0); const ctx=chart.ctx; ctx.save();
+        meta.data.forEach((arc,i)=>{
+          const val=ds.data[i]; if(val==null) return; const angle=(arc.startAngle+arc.endAngle)/2; const midR=(arc.outerRadius+arc.innerRadius)/2; const x=arc.x + Math.cos(angle)*midR*0.65; const y=arc.y + Math.sin(angle)*midR*0.65; ctx.font='10px Lexend, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; const text=String(val); const metrics=ctx.measureText(text); const padX=4,padY=2; const boxW=metrics.width+padX*2, boxH=12; ctx.fillStyle='rgba(255,255,255,0.92)'; if(ctx.roundRect){ ctx.beginPath(); ctx.roundRect(x-boxW/2,y-boxH/2,boxW,boxH,4); ctx.fill(); } else { ctx.fillRect(x-boxW/2,y-boxH/2,boxW,boxH); } ctx.fillStyle='#111418'; ctx.fillText(text,x,y+1); });
+        ctx.restore();
+      }
+    };
+    __statsCharts.push(new Chart(expCtx,{
+      type:'polarArea',
+      data:{ labels:exportSubjects, datasets:[{ data:exportCounts, backgroundColor:expBg, borderColor:exportColors, borderWidth:1 }]},
+      options:{ responsive:true, maintainAspectRatio:false, scales:{ r:{ beginAtZero:true, angleLines:{color:'#e5e7eb'}, grid:{color:'#e5e7eb'}, ticks:{ backdropColor:'rgba(255,255,255,0.85)', color:'#374151', showLabelBackdrop:true } } }, plugins:{ legend:{ position:'bottom' } } },
+      plugins:[polarValueLabels]
+    })); }
+  const rankCtx=document.getElementById('dictSubjectRanking')?.getContext('2d'); if(rankCtx){ const sorted=[...subjEntries]; __statsCharts.push(new Chart(rankCtx,{type:'bar',data:{labels:sorted.map(s=>s[0]),datasets:[{label:'Interactions',data:sorted.map(s=>s[1]),backgroundColor:sorted.map(s=> SUBJECT_COLORS[s[0]]||'#64748b')}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true}}}})); }
+}
+
+// --- Home (was Trophy content) ---
+function renderHome(){ const primary=document.getElementById('primaryArea'); if(!primary) return; destroyStatsCharts(); const attempts=loadAttempts(); const sessions=loadFlashcardSessions(); const tests=loadTests(); const testById=new Map(tests.map(t=>[String(t.id),t]));
+  let highestScore=null; attempts.forEach(a=>{ const pct=a.total? (a.score/a.total)*100:0; if(!highestScore || pct>highestScore.pct) highestScore={pct,testId:a.testId,date:a.date,score:a.score,total:a.total}; });
+  let maxCardsSession=null; sessions.forEach(s=>{ if(!maxCardsSession || (s.cardsSeen||0) > (maxCardsSession.cardsSeen||0)) maxCardsSession=s; });
+  let longestSession=null; sessions.forEach(s=>{ if(!longestSession || (s.durationSeconds||0) > (longestSession.durationSeconds||0)) longestSession=s; });
+  const daysSet=new Set([...attempts.map(a=>dayKeyLocal(a.date)), ...sessions.map(s=>dayKeyLocal(s.date))]);
+  const totalStudyDays=daysSet.size;
+  function trophyCard(title, value, desc, icon){ return `<div class='bg-white rounded-2xl shadow p-5 flex flex-col gap-3'>
+    <div class='flex items-center gap-3'>${icon}<h3 class='font-semibold text-[var(--text-primary)] text-sm tracking-wide uppercase'>${title}</h3></div>
+    <div class='text-3xl font-bold text-[var(--text-primary)]'>${value}</div>
+    <p class='text-xs text-[var(--text-secondary)] leading-relaxed'>${desc}</p>
+  </div>`; }
+  primary.innerHTML=`<div class='space-y-8'>
+    <div class='grid gap-6 sm:grid-cols-2 lg:grid-cols-3'>
+      ${trophyCard('Highest Test Score', highestScore? highestScore.pct.toFixed(1)+'%':'—', highestScore?`On ${(testById.get(String(highestScore.testId))||{}).name||'a test'} (${highestScore.score}/${highestScore.total})`:'Take a test to unlock this!', '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="text-amber-500"><path d="M5 3h14v3h2a1 1 0 0 1 1 1c0 4.418-2.239 8-5 8-1.357 0-2.59-.71-3.5-1.874A4.494 4.494 0 0 1 9 15C6.239 15 4 11.418 4 7a1 1 0 0 1 1-1h0V3Zm2 2v1c0 3.309 1.567 6 3 6 .42 0 1.362-.675 2-1.657V5H7Zm6 0v5.343C13.638 11.325 14.58 12 15 12c1.433 0 3-2.691 3-6V5h-5ZM8 17h8v2a4 4 0 0 1-4 4 4 4 0 0 1-4-4v-2Z"/></svg>')}
+      ${trophyCard('Most Cards in Session', maxCardsSession? maxCardsSession.cardsSeen:'—', maxCardsSession?`In set: ${maxCardsSession.setName||'Unknown'} (${maxCardsSession.cardsSeen}/${maxCardsSession.totalCards} seen)`:'Study flashcards to unlock.', '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="text-emerald-500"><path d="M4 4h16v12H4zM4 20h16v-2H4z"/></svg>')}
+      ${trophyCard('Longest Flashcard Session', longestSession? fmtSecondsToHMS(longestSession.durationSeconds):'—', longestSession?`Duration with ${(longestSession.cardsSeen||0)} cards studied.`:'Finish a session to unlock.', '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="text-sky-500"><path d="M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8Zm0-6a1 1 0 0 1 1 1v2.07A8.001 8.001 0 0 1 12 22a8.001 8.001 0 0 1-1-15.93V3a1 1 0 0 1 1-1Z"/></svg>')}
+      ${trophyCard('Study Days', totalStudyDays, 'Unique calendar days you engaged with tests or flashcards.', '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="text-indigo-500"><path d="M6 2a1 1 0 0 0-1 1v1H4a2 2 0 0 0-2 2v2h20V6a2 2 0 0 0-2-2h-1V3a1 1 0 1 0-2 0v1H7V3a1 1 0 0 0-1-1ZM22 10H2v8a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-8ZM8 13h3v3H8v-3Z"/></svg>')}
+      ${trophyCard('Total Tests Taken', attempts.length, 'All recorded test attempts. Keep practicing!', '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="text-pink-500"><path d="M5 9h3v10H5zM10.5 4h3v15h-3zM16 13h3v6h-3z"/></svg>')}
+      ${trophyCard('Flashcard Sessions', sessions.length, 'Completed flashcard study sessions logged.', '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="text-teal-500"><path d="M4 4h16v12H4zM4 20h16v-2H4z"/></svg>')}
+    </div>
+    <div class='text-xs text-[var(--text-secondary)]'>Badges & streak tracking coming soon.</div>
+  </div>`; }
+
+// Trophy Room with 50 unlockable badges
+function renderTrophies(){ const primary=document.getElementById('primaryArea'); if(!primary) return; destroyStatsCharts();
+  const tests=loadTests(); const attempts=loadAttempts(); const sets=loadCardSets(); const sessions=loadFlashcardSessions();
+  // --- Concept Typer stats ---
+  let ctStats=[];
+  try { ctStats = JSON.parse(localStorage.getItem('fpConceptTyperStats')||'[]'); } catch {}
+  const ctTotalGames = ctStats.length;
+  const ctTotalCorrect = ctStats.reduce((s,g)=>s+g.correct,0);
+  const ctTotalAttempted = ctStats.reduce((s,g)=>s+g.total,0);
+  const ctBestStreak = ctStats.reduce((m,g)=>g.correct>m?g.correct:m,0);
+  const ctBestAccuracy = ctStats.length? Math.max(...ctStats.map(g=>g.total? (g.correct/g.total)*100:0)) : 0;
+  const ctAvgTime = ctStats.length? (ctStats.reduce((s,g)=>s+g.avgTime,0)/ctStats.length) : 0;
+  // Load dictionary stats
+  let dictStats={}; try{ dictStats=JSON.parse(localStorage.getItem('fpDictionaryStats')||'{}'); }catch{}
+  dictStats.searches = dictStats.searches||{ total:0, byWord:{}, bySubjectAdd:{}, timeFocusedMs:0 };
+  dictStats.lists = dictStats.lists||{ created:0, updated:0, deleted:0, bySubject:{} };
+  dictStats.exports = dictStats.exports||{ listToFlashcards:0, cardsCreated:0, bySubject:{} };
+  const dictionaryListsCreated = dictStats.lists.created||0;
+  const dictionaryListsDeleted = dictStats.lists.deleted||0;
+  const dictionaryExports = dictStats.exports.listToFlashcards||0;
+  const dictionaryExportCards = dictStats.exports.cardsCreated||0;
+  const dictionarySubjectsCount = Object.keys(dictStats.lists.bySubject||{}).filter(k=> (dictStats.lists.bySubject||{})[k]>0).length;
+  const dictionarySubjectsUsedForAdds = Object.keys(dictStats.searches.bySubjectAdd||{}).length;
+  const dictionarySearches = dictStats.searches.total||0;
+  const dictionarySearchTimeSeconds = Math.floor((dictStats.searches.timeFocusedMs||0)/1000);
+  const totalTests=tests.length; const totalQuestions=tests.reduce((s,t)=> s+(t.questions?.length||0),0); const totalAttempts=attempts.length; const totalSets=sets.length; const totalCards=sets.reduce((s,st)=> s+(st.cards?.length||0),0); const totalSessions=sessions.length; const totalCardsStudied=sessions.reduce((s,a)=> s+(a.cardsSeen||0),0); const totalStudySeconds=sessions.reduce((s,a)=> s+(a.durationSeconds||0),0);
+  const longestSession=sessions.reduce((m,s)=> (s.durationSeconds||0)>(m?.durationSeconds||0)?s:m,null); const maxCardsSession=sessions.reduce((m,s)=> (s.cardsSeen||0)>(m?.cardsSeen||0)?s:m,null);
+  const highestScoreAttempt = attempts.reduce((m,a)=>{ const pct=a.total? (a.score/a.total)*100:0; return (!m||pct>m.pct)? {pct,attempt:a}:m; }, null);
+  const perfectScores = attempts.filter(a=> a.total && (a.score/a.total)*100===100).length; const avgScore = attempts.length? attempts.reduce((s,a)=> s+(a.total? (a.score/a.total)*100:0),0)/attempts.length:0;
+  const testBySubject={}; attempts.forEach(a=>{ const t=tests.find(tt=> String(tt.id)===String(a.testId)); const subj=(t&&t.subject)||'(No Subject)'; const pct=a.total? (a.score/a.total)*100:0; if(!testBySubject[subj]) testBySubject[subj]={sum:0,count:0,max:0}; testBySubject[subj].sum+=pct; testBySubject[subj].count++; if(pct>testBySubject[subj].max) testBySubject[subj].max=pct; }); Object.keys(testBySubject).forEach(s=> testBySubject[s].avg = testBySubject[s].count? testBySubject[s].sum/testBySubject[s].count:0 );
+  const flashBySubject={}; sessions.forEach(s=>{ const subj=s.subject||'Other'; if(!flashBySubject[subj]) flashBySubject[subj]={sessions:0,cards:0}; flashBySubject[subj].sessions++; flashBySubject[subj].cards += (s.cardsSeen||0); });
+  const distinctFlashSubjects=Object.keys(flashBySubject).length;
+  const sortedAttempts=[...attempts].sort((a,b)=> new Date(a.date)-new Date(b.date)); const last5=sortedAttempts.slice(-5); const prev5=sortedAttempts.slice(-10,-5); const avgPct=list=> list.length? list.reduce((s,a)=> s+(a.total? (a.score/a.total)*100:0),0)/list.length:0; const trendDelta=(last5.length&&prev5.length)? (avgPct(last5)-avgPct(prev5)):0;
+  const daySet=new Set([...attempts.map(a=>dayKeyLocal(a.date)), ...sessions.map(s=>dayKeyLocal(s.date))]); const allDays=[...daySet].sort(); let longestStreak=0,currentStreak=0,prevDate=null; allDays.forEach(d=>{ const dt=new Date(d); if(prevDate){ const next=new Date(prevDate); next.setDate(next.getDate()+1); const isConsecutive=dayKeyLocal(next)===dayKeyLocal(dt); currentStreak=isConsecutive? currentStreak+1:1; } else currentStreak=1; if(currentStreak>longestStreak) longestStreak=currentStreak; prevDate=dt; });
+  const totalSubjectCards=Object.values(flashBySubject).reduce((s,o)=> s+o.cards,0); let balancedStudy=false; if(totalSubjectCards>0){ const shares=Object.values(flashBySubject).map(o=> o.cards/totalSubjectCards); const avgShare=shares.reduce((a,b)=>a+b,0)/shares.length; balancedStudy=shares.every(sh=> sh>=avgShare*0.4); }
+  function hours(h){ return h*3600; } function minutes(m){ return m*60; }
+  const ctx={tests,attempts,sets,sessions,totalTests,totalQuestions,totalAttempts,totalSets,totalCards,totalSessions,totalCardsStudied,totalStudySeconds,longestSession,maxCardsSession,highestScoreAttempt,perfectScores,avgScore,testBySubject,flashBySubject,distinctFlashSubjects,trendDelta,longestStreak,balancedStudy};
+  // Merge dictionary metrics into ctx
+  Object.assign(ctx,{dictionaryListsCreated,dictionaryListsDeleted,dictionaryExports,dictionaryExportCards,dictionarySubjectsCount,dictionarySubjectsUsedForAdds,dictionarySearches,dictionarySearchTimeSeconds});
+  const badges=[
+  // --- Concept Typer Achievements ---
+  {id:'ct_first',name:'Concept Typer Rookie',icon:'⌨️',check:c=>c.ctTotalGames>=1,desc:'Play Concept Typer once.'},
+  {id:'ct_10_games',name:'Typer Enthusiast',icon:'🖱️',check:c=>c.ctTotalGames>=10,desc:'Play Concept Typer 10 times.'},
+  {id:'ct_100_correct',name:'Accuracy Ace',icon:'🎯',check:c=>c.ctTotalCorrect>=100,desc:'Get 100 correct answers in Concept Typer.'},
+  {id:'ct_streak_10',name:'Streak Seeker',icon:'🔥',check:c=>c.ctBestStreak>=10,desc:'Score 10 correct in a single Concept Typer game.'},
+  {id:'ct_best_95',name:'Precision Pro',icon:'🏆',check:c=>c.ctBestAccuracy>=95,desc:'Achieve 95%+ accuracy in a Concept Typer game.'},
+    {id:'test_first',name:'Test Pilot',icon:'✈️',check:c=>c.totalTests>=1,desc:'Create your first test.'},
+    {id:'test_5',name:'Assessment Architect',icon:'🏗️',check:c=>c.totalTests>=5,desc:'Create 5 tests.'},
+    {id:'test_10',name:'Exam Engineer',icon:'🧪',check:c=>c.totalTests>=10,desc:'Create 10 tests.'},
+    {id:'test_25',name:'Quiz Quartermaster',icon:'📦',check:c=>c.totalTests>=25,desc:'Create 25 tests.'},
+    {id:'test_50',name:'Vault Curator',icon:'🏛️',check:c=>c.totalTests>=50,desc:'Create 50 tests.'},
+    {id:'q_10',name:'Inkling',icon:'🖊️',check:c=>c.totalQuestions>=10,desc:'Write 10 questions.'},
+    {id:'q_50',name:'Question Crafter',icon:'✍️',check:c=>c.totalQuestions>=50,desc:'Write 50 questions.'},
+    {id:'q_100',name:'Item Author',icon:'📜',check:c=>c.totalQuestions>=100,desc:'Write 100 questions.'},
+    {id:'q_250',name:'Socratic Sage',icon:'🦉',check:c=>c.totalQuestions>=250,desc:'Write 250 questions.'},
+    {id:'q_500',name:'Grand Examiner',icon:'👑',check:c=>c.totalQuestions>=500,desc:'Write 500 questions.'},
+    {id:'attempt_first',name:'First Flight',icon:'🚀',check:c=>c.totalAttempts>=1,desc:'Complete your first test attempt.'},
+    {id:'attempt_5',name:'Test Tactician',icon:'🛡️',check:c=>c.totalAttempts>=5,desc:'Finish 5 test attempts.'},
+    {id:'attempt_10',name:'Assessment Adept',icon:'🎯',check:c=>c.totalAttempts>=10,desc:'Finish 10 test attempts.'},
+    {id:'attempt_25',name:'Practice Pro',icon:'🏅',check:c=>c.totalAttempts>=25,desc:'Finish 25 test attempts.'},
+    {id:'attempt_50',name:'Endurance Scholar',icon:'🥇',check:c=>c.totalAttempts>=50,desc:'Finish 50 test attempts.'},
+    {id:'score_80',name:'Solid Scholar',icon:'📈',check:c=>c.highestScoreAttempt && c.highestScoreAttempt.pct>=80,desc:'Score at least 80% once.'},
+    {id:'score_90',name:'High Achiever',icon:'🚩',check:c=>c.highestScoreAttempt && c.highestScoreAttempt.pct>=90,desc:'Score at least 90% once.'},
+    {id:'score_100_once',name:'Perfect Shot',icon:'🎯',check:c=>c.perfectScores>=1,desc:'Earn a perfect 100% score.'},
+    {id:'score_100_five',name:'Precision Machine',icon:'⚙️',check:c=>c.perfectScores>=5,desc:'Earn 5 perfect scores.'},
+    {id:'avg_85',name:'Consistent Brilliance',icon:'💎',check:c=>c.avgScore>=85 && c.totalAttempts>=5,desc:'Maintain 85% avg after 5 attempts.'},
+    {id:'trend_up',name:'Upward Momentum',icon:'📊',check:c=>c.trendDelta>=5,desc:'Improve last 5 vs previous 5 by 5+.'},
+    {id:'set_first',name:'Starter Pack',icon:'📦',check:c=>c.totalSets>=1,desc:'Create first flashcard set.'},
+    {id:'set_5',name:'Deck Dealer',icon:'🃏',check:c=>c.totalSets>=5,desc:'Create 5 flashcard sets.'},
+    {id:'set_10',name:'Card Curator',icon:'🗂️',check:c=>c.totalSets>=10,desc:'Create 10 flashcard sets.'},
+    {id:'set_25',name:'Library Builder',icon:'📚',check:c=>c.totalSets>=25,desc:'Create 25 flashcard sets.'},
+    {id:'set_50',name:'Archive Architect',icon:'🏯',check:c=>c.totalSets>=50,desc:'Create 50 flashcard sets.'},
+    {id:'card_20',name:'First Stack',icon:'🪜',check:c=>c.totalCards>=20,desc:'Author 20 cards.'},
+    {id:'card_100',name:'Century Deck',icon:'💯',check:c=>c.totalCards>=100,desc:'Author 100 cards.'},
+    {id:'card_250',name:'Lexicon Smith',icon:'🧰',check:c=>c.totalCards>=250,desc:'Author 250 cards.'},
+    {id:'card_500',name:'Memory Mason',icon:'🧱',check:c=>c.totalCards>=500,desc:'Author 500 cards.'},
+    {id:'card_1000',name:'Mnemonic Master',icon:'🧠',check:c=>c.totalCards>=1000,desc:'Author 1000 cards.'},
+    {id:'session_first',name:'Study Spark',icon:'🔥',check:c=>c.totalSessions>=1,desc:'Complete first session.'},
+    {id:'session_10',name:'Routine Builder',icon:'🔁',check:c=>c.totalSessions>=10,desc:'Complete 10 sessions.'},
+    {id:'session_25',name:'Habit Former',icon:'🪴',check:c=>c.totalSessions>=25,desc:'Complete 25 sessions.'},
+    {id:'session_50',name:'Drill Specialist',icon:'🛠️',check:c=>c.totalSessions>=50,desc:'Complete 50 sessions.'},
+    {id:'session_100',name:'Session Centurion',icon:'🛡️',check:c=>c.totalSessions>=100,desc:'Complete 100 sessions.'},
+    {id:'study_10min',name:'Warmed Up',icon:'♨️',check:c=>c.totalStudySeconds>=minutes(10),desc:'10 minutes total study.'},
+    {id:'study_1h',name:'One Hour Scholar',icon:'⏰',check:c=>c.totalStudySeconds>=hours(1),desc:'1 hour total study.'},
+    {id:'study_5h',name:'Marathon Mind',icon:'🏃',check:c=>c.totalStudySeconds>=hours(5),desc:'5 hours total study.'},
+    {id:'study_10h',name:'Endurance Mind',icon:'🗻',check:c=>c.totalStudySeconds>=hours(10),desc:'10 hours total study.'},
+    {id:'cardsStudied_500',name:'Card Voyager',icon:'🧭',check:c=>c.totalCardsStudied>=500,desc:'Study 500 cards total.'},
+    {id:'cardsStudied_2000',name:'Recall Ranger',icon:'🏹',check:c=>c.totalCardsStudied>=2000,desc:'Study 2000 cards.'},
+    {id:'cardsStudied_5000',name:'Retention Titan',icon:'🗿',check:c=>c.totalCardsStudied>=5000,desc:'Study 5000 cards.'},
+    {id:'math_master',name:'Math Mastery',icon:'➗',check:c=> (testBySubject['Math']?.avg||0) >=85 && (testBySubject['Math']?.count||0)>=3,desc:'85% Math avg (3 attempts).'},
+    {id:'science_scholar',name:'Science Scholar',icon:'🔬',check:c=> (flashBySubject['Science']?.sessions||0) >=5,desc:'5 Science sessions.'},
+    {id:'language_lover',name:'Language Lover',icon:'📖',check:c=> (flashBySubject['English/Language']?.sessions||0) >=5,desc:'5 English/Language sessions.'},
+    {id:'art_aficionado',name:'Art Aficionado',icon:'🎨',check:c=> (flashBySubject['Art']?.sessions||0) >=5,desc:'5 Art sessions.'},
+    {id:'social_strategist',name:'Social Strategist',icon:'🌍',check:c=> (flashBySubject['Social Studies']?.sessions||0) >=5,desc:'5 Social Studies sessions.'},
+    {id:'diversifier',name:'Subject Sampler',icon:'🍱',check:c=> c.distinctFlashSubjects>=5,desc:'Study 5 subjects.'},
+    {id:'focus_balance',name:'Balanced Scholar',icon:'⚖️',check:c=> c.balancedStudy && c.distinctFlashSubjects>=3,desc:'Balanced focus across subjects.'},
+    {id:'flash_marathon',name:'Flashcard Marathon',icon:'🏁',check:c=> (c.maxCardsSession?.cardsSeen||0)>=100,desc:'100 cards single session.'},
+    {id:'streak_3',name:'Spark Streak',icon:'📆',check:c=> c.longestStreak>=3,desc:'3-day study streak.'},
+  {id:'streak_7',name:'Weekly Warrior',icon:'🗓️',check:c=> c.longestStreak>=7,desc:'7-day study streak.'},
+  // --- Dictionary Achievements ---
+  {id:'dict_list_first',name:'Term Trailblazer',icon:'📘',check:c=> c.dictionaryListsCreated>=1,desc:'Create your first term list.'},
+  {id:'dict_list_10',name:'Lexicon Architect',icon:'🏗️',check:c=> c.dictionaryListsCreated>=10,desc:'Create 10 term lists.'},
+  {id:'dict_export_first',name:'Flashcard Forger',icon:'🗂️',check:c=> c.dictionaryExports>=1,desc:'Export a term list to flashcards.'},
+  {id:'dict_export_5',name:'Set Synthesizer',icon:'🧬',check:c=> c.dictionaryExports>=5,desc:'Export 5 term lists to flashcards.'},
+  {id:'dict_cards_100',name:'Definition Distributor',icon:'📤',check:c=> c.dictionaryExportCards>=100,desc:'Generate 100 flashcards via dictionary exports.'},
+  // Secret achievement disabled / hidden
+  ];
+  // Separate secret logic: count only non-secret for progress
+  const visibleBadges = badges.filter(b=> !b.secret);
+  // Previously earned (persisted) list from resets
+  let persistedBadges=[]; try{ persistedBadges=JSON.parse(localStorage.getItem('fpPersistedBadges')||'[]'); }catch{}
+  const allNonSecretEarnedWithPersisted = visibleBadges.every(b=> b.check(ctx) || persistedBadges.includes(b.id));
+  // Force unlock flag (left in place from earlier feature)
+  const focusMasterUnlockedFlagStored = false; // disabled
+  const secretPersisted = false; // disabled
+  const earnedCountVisible = visibleBadges.filter(b=> b.check(ctx) || persistedBadges.includes(b.id)).length;
+  const earnedCount = badges.filter(b=> (b.check(ctx) || persistedBadges.includes(b.id))).length;
+  primary.innerHTML=`<div class='space-y-6'>
+    <div class='flex items-center justify-between flex-wrap gap-4'>
+      <h3 class='text-xl font-semibold text-[var(--text-primary)]'>Trophy Room</h3>
+      <div class='text-xs text-[var(--text-secondary)]'>${earnedCountVisible}/${visibleBadges.length} core achievements | ${earnedCount}/${badges.length} total</div>
+    </div>
+    <div id='badgeGrid' class='grid gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8'></div>
+    <div id='badgeDetail' class='hidden p-4 bg-white rounded-xl shadow text-sm leading-relaxed'></div>
+  </div>`;
+  const grid=document.getElementById('badgeGrid');
+  const focusMasterUnlockedFlag = false; // disabled
+  badges.forEach(b=>{
+    // Earned if criteria met OR persisted
+  const earned = (b.check(ctx) || persistedBadges.includes(b.id));
+    const btn=document.createElement('button');
+    btn.type='button';
+    btn.dataset.id=b.id;
+    btn.className=`group relative flex flex-col items-center gap-2 p-3 rounded-xl border text-center transition ${earned? 'bg-white border-[var(--primary-color)] shadow':'bg-white border-[var(--border-color)] opacity-70'} hover:opacity-100`;
+    btn.innerHTML=`<div class='text-2xl'>${b.icon}</div><div class='text-[11px] font-semibold tracking-wide ${earned? 'text-[var(--primary-color)]':'text-[var(--text-secondary)]'}'>${b.name}</div><div class='absolute top-2 right-2 text-[10px] ${earned? 'text-emerald-500':'text-gray-300'}'>${earned?'✔':''}</div>`;
+  btn.addEventListener('click',()=>{ const detail=document.getElementById('badgeDetail'); const earnedNow = b.secret ? (allNonSecretEarned || focusMasterUnlockedFlag) : b.check(ctx); detail.innerHTML=badgeDetailHTML(b,ctx,earnedNow); detail.classList.remove('hidden'); detail.scrollIntoView({behavior:'smooth',block:'nearest'}); });
+    grid.appendChild(btn);
+  });
+  function badgeDetailHTML(b,c,earned){ const progress = progressText(b,c,earned); return `<div class='flex items-start gap-4'><div class='text-4xl'>${b.icon}</div><div class='flex-1'><div class='font-semibold text-[var(--text-primary)] text-sm mb-1'>${b.name} ${earned? '<span class="ml-2 text-emerald-600 text-[10px] font-medium px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200">UNLOCKED</span>':''}</div><div class='text-[var(--text-secondary)] text-xs leading-relaxed'>${progress}</div></div></div>`; }
+  function progressText(b,c,earned){ if(b.secret){ return earned? 'You have conquered every challenge across FocusPath.' : 'Unlock all other achievements to reveal this.'; } switch(b.id){
+      case 'q_50': return earned? '50 questions authored.' : `Progress: ${c.totalQuestions}/50 questions.`;
+      case 'q_100': return earned? '100 questions authored.' : `Progress: ${c.totalQuestions}/100 questions.`;
+      case 'test_10': return earned? '10 tests created.' : `Progress: ${c.totalTests}/10 tests.`;
+      case 'avg_85': return earned? `Average ${(c.avgScore).toFixed(1)}%.` : `Current average ${(c.avgScore).toFixed(1)}% / 85%.`;
+      case 'trend_up': return earned? `Improved by ${c.trendDelta.toFixed(1)} pts.` : `Improvement ${c.trendDelta.toFixed(1)} / 5 pts.`;
+      case 'study_5h': return earned? `${(c.totalStudySeconds/3600).toFixed(1)}h studied.` : `Study time ${(c.totalStudySeconds/3600).toFixed(2)}h / 5h.`;
+      case 'cardsStudied_2000': return earned? `${c.totalCardsStudied} cards studied.` : `Cards studied ${c.totalCardsStudied}/2000.`;
+      case 'flash_marathon': return earned? `Best session ${c.maxCardsSession.cardsSeen} cards.` : `Best ${(c.maxCardsSession?.cardsSeen||0)}/100 cards.`;
+      case 'streak_7': return earned? `Longest streak ${c.longestStreak} days.` : `Longest streak ${c.longestStreak}/7 days.`;
+  case 'dict_list_first': return earned? `Lists created ${c.dictionaryListsCreated}.` : `Progress: ${c.dictionaryListsCreated}/1 list.`;
+  case 'dict_list_10': return earned? `${c.dictionaryListsCreated} lists created.` : `Progress: ${c.dictionaryListsCreated}/10 lists.`;
+  case 'dict_export_first': return earned? `Exports ${c.dictionaryExports}.` : `Progress: ${c.dictionaryExports}/1 export.`;
+  case 'dict_export_5': return earned? `${c.dictionaryExports} exports.` : `Progress: ${c.dictionaryExports}/5 exports.`;
+  case 'dict_cards_100': return earned? `${c.dictionaryExportCards} cards generated.` : `Progress: ${c.dictionaryExportCards}/100 cards.`;
+      default: return earned? b.desc : b.desc; }
+  }
+}
+
+function setActive(btn){ document.querySelectorAll('.nav-group').forEach(b=>b.classList.remove('nav-btn-active')); btn.classList.add('nav-btn-active'); }
+function renderStats(view){ if(view==='home') renderHome(); else if(view==='tests') renderTestStats(); else if(view==='flashcards') renderFlashcardStats(); else if(view==='dictionary') renderDictionaryStats(); else if(view==='trophies') renderTrophies(); }
+
+window.addEventListener('DOMContentLoaded',()=>{
+  const bHome=document.getElementById('btnStatHome');
+  const bTests=document.getElementById('btnStatTests');
+  const bFlash=document.getElementById('btnStatFlash');
+  const bDict=document.getElementById('btnStatDict');
+  const bTroph=document.getElementById('btnStatTrophies');
+  bHome.addEventListener('click',()=>{ setActive(bHome); renderStats('home'); });
+  bTests.addEventListener('click',()=>{ setActive(bTests); renderStats('tests'); });
+  bFlash.addEventListener('click',()=>{ setActive(bFlash); renderStats('flashcards'); });
+  bDict.addEventListener('click',()=>{ setActive(bDict); renderStats('dictionary'); });
+  bTroph.addEventListener('click',()=>{ setActive(bTroph); renderStats('trophies'); });
+  setActive(bHome); renderStats('home');
+  if(window.FPAchievementNotifySafe){ try{ window.FPAchievementNotifySafe(); }catch{} }
+  // Attach Hard Reset handler
+  const resetBtn=document.getElementById('btnGlobalReset'); if(resetBtn){ resetBtn.addEventListener('click', fullDataResetPreserveAchievements); }
+});
+
+// --- Global Reset (preserve achievements) ---
+function fullDataResetPreserveAchievements(){
+  if(!confirm('This will erase ALL tests, test attempts, flashcard sets, flashcard sessions, and custom subjects/colors. Achievements will remain. Continue?')) return;
+  if(!confirm('Are you absolutely sure? This cannot be undone.')) return;
+  // Recreate context to capture currently earned achievements BEFORE wiping
+  const tests=loadTests(); const attempts=loadAttempts(); const sets=loadCardSets(); const sessions=loadFlashcardSessions();
+  const totalTests=tests.length; const totalQuestions=tests.reduce((s,t)=> s+(t.questions?.length||0),0); const totalAttempts=attempts.length; const totalSets=sets.length; const totalCards=sets.reduce((s,st)=> s+(st.cards?.length||0),0); const totalSessions=sessions.length; const totalCardsStudied=sessions.reduce((s,a)=> s+(a.cardsSeen||0),0); const totalStudySeconds=sessions.reduce((s,a)=> s+(a.durationSeconds||0),0);
+  const longestSession=sessions.reduce((m,s)=> (s.durationSeconds||0)>(m?.durationSeconds||0)?s:m,null); const maxCardsSession=sessions.reduce((m,s)=> (s.cardsSeen||0)>(m?.cardsSeen||0)?s:m,null);
+  const highestScoreAttempt = attempts.reduce((m,a)=>{ const pct=a.total? (a.score/a.total)*100:0; return (!m||pct>m.pct)? {pct,attempt:a}:m; }, null);
+  const perfectScores = attempts.filter(a=> a.total && (a.score/a.total)*100===100).length; const avgScore = attempts.length? attempts.reduce((s,a)=> s+(a.total? (a.score/a.total)*100:0),0)/attempts.length:0;
+  const testBySubject={}; attempts.forEach(a=>{ const t=tests.find(tt=> String(tt.id)===String(a.testId)); const subj=(t&&t.subject)||'(No Subject)'; const pct=a.total? (a.score/a.total)*100:0; if(!testBySubject[subj]) testBySubject[subj]={sum:0,count:0,max:0}; testBySubject[subj].sum+=pct; testBySubject[subj].count++; if(pct>testBySubject[subj].max) testBySubject[subj].max=pct; }); Object.keys(testBySubject).forEach(s=> testBySubject[s].avg = testBySubject[s].count? testBySubject[s].sum/testBySubject[s].count:0 );
+  const flashBySubject={}; sessions.forEach(s=>{ const subj=s.subject||'Other'; if(!flashBySubject[subj]) flashBySubject[subj]={sessions:0,cards:0}; flashBySubject[subj].sessions++; flashBySubject[subj].cards += (s.cardsSeen||0); });
+  const distinctFlashSubjects=Object.keys(flashBySubject).length;
+  const sortedAttempts=[...attempts].sort((a,b)=> new Date(a.date)-new Date(b.date)); const last5=sortedAttempts.slice(-5); const prev5=sortedAttempts.slice(-10,-5); const avgPct=list=> list.length? list.reduce((s,a)=> s+(a.total? (a.score/a.total)*100:0),0)/list.length:0; const trendDelta=(last5.length&&prev5.length)? (avgPct(last5)-avgPct(prev5)):0;
+  const daySet=new Set([...attempts.map(a=>dayKeyLocal(a.date)), ...sessions.map(s=>dayKeyLocal(s.date))]); const allDays=[...daySet].sort(); let longestStreak=0,currentStreak=0,prevDate=null; allDays.forEach(d=>{ const dt=new Date(d); if(prevDate){ const nx=new Date(prevDate); nx.setDate(nx.getDate()+1); const isConsecutive=dayKeyLocal(nx)===dayKeyLocal(dt); currentStreak=isConsecutive? currentStreak+1:1; } else currentStreak=1; if(currentStreak>longestStreak) longestStreak=currentStreak; prevDate=dt; });
+  const totalSubjectCards=Object.values(flashBySubject).reduce((s,o)=> s+o.cards,0); let balancedStudy=false; if(totalSubjectCards>0){ const shares=Object.values(flashBySubject).map(o=> o.cards/totalSubjectCards); const avgShare=shares.reduce((a,b)=>a+b,0)/shares.length; balancedStudy=shares.every(sh=> sh>=avgShare*0.4); }
+  function hours(h){ return h*3600; } function minutes(m){ return m*60; }
+  const ctx={tests,attempts,sets,sessions,totalTests,totalQuestions,totalAttempts,totalSets,totalCards,totalSessions,totalCardsStudied,totalStudySeconds,longestSession,maxCardsSession,highestScoreAttempt,perfectScores,avgScore,testBySubject,flashBySubject,distinctFlashSubjects,trendDelta,longestStreak,balancedStudy};
+  const badgesDef=[
+    {id:'test_first',check:c=>c.totalTests>=1},{id:'test_5',check:c=>c.totalTests>=5},{id:'test_10',check:c=>c.totalTests>=10},{id:'test_25',check:c=>c.totalTests>=25},{id:'test_50',check:c=>c.totalTests>=50},
+    {id:'q_10',check:c=>c.totalQuestions>=10},{id:'q_50',check:c=>c.totalQuestions>=50},{id:'q_100',check:c=>c.totalQuestions>=100},{id:'q_250',check:c=>c.totalQuestions>=250},{id:'q_500',check:c=>c.totalQuestions>=500},
+    {id:'attempt_first',check:c=>c.totalAttempts>=1},{id:'attempt_5',check:c=>c.totalAttempts>=5},{id:'attempt_10',check:c=>c.totalAttempts>=10},{id:'attempt_25',check:c=>c.totalAttempts>=25},{id:'attempt_50',check:c=>c.totalAttempts>=50},
+    {id:'score_80',check:c=>c.highestScoreAttempt && c.highestScoreAttempt.pct>=80},{id:'score_90',check:c=>c.highestScoreAttempt && c.highestScoreAttempt.pct>=90},
+    {id:'score_100_once',check:c=>c.perfectScores>=1},{id:'score_100_five',check:c=>c.perfectScores>=5},{id:'avg_85',check:c=>c.avgScore>=85 && c.totalAttempts>=5},{id:'trend_up',check:c=>c.trendDelta>=5},
+    {id:'set_first',check:c=>c.totalSets>=1},{id:'set_5',check:c=>c.totalSets>=5},{id:'set_10',check:c=>c.totalSets>=10},{id:'set_25',check:c=>c.totalSets>=25},{id:'set_50',check:c=>c.totalSets>=50},
+    {id:'card_20',check:c=>c.totalCards>=20},{id:'card_100',check:c=>c.totalCards>=100},{id:'card_250',check:c=>c.totalCards>=250},{id:'card_500',check:c=>c.totalCards>=500},{id:'card_1000',check:c=>c.totalCards>=1000},
+    {id:'session_first',check:c=>c.totalSessions>=1},{id:'session_10',check:c=>c.totalSessions>=10},{id:'session_25',check:c=>c.totalSessions>=25},{id:'session_50',check:c=>c.totalSessions>=50},{id:'session_100',check:c=>c.totalSessions>=100},
+    {id:'study_10min',check:c=>c.totalStudySeconds>=minutes(10)},{id:'study_1h',check:c=>c.totalStudySeconds>=hours(1)},{id:'study_5h',check:c=>c.totalStudySeconds>=hours(5)},{id:'study_10h',check:c=>c.totalStudySeconds>=hours(10)},
+    {id:'cardsStudied_500',check:c=>c.totalCardsStudied>=500},{id:'cardsStudied_2000',check:c=>c.totalCardsStudied>=2000},{id:'cardsStudied_5000',check:c=>c.totalCardsStudied>=5000},
+    {id:'math_master',check:c=> (c.testBySubject['Math']?.avg||0) >=85 && (c.testBySubject['Math']?.count||0)>=3},
+    {id:'science_scholar',check:c=> (c.flashBySubject['Science']?.sessions||0) >=5},
+    {id:'language_lover',check:c=> (c.flashBySubject['English/Language']?.sessions||0) >=5},
+    {id:'art_aficionado',check:c=> (c.flashBySubject['Art']?.sessions||0) >=5},
+    {id:'social_strategist',check:c=> (c.flashBySubject['Social Studies']?.sessions||0) >=5},
+    {id:'diversifier',check:c=> c.distinctFlashSubjects>=5},
+    {id:'focus_balance',check:c=> c.balancedStudy && c.distinctFlashSubjects>=3},
+    {id:'flash_marathon',check:c=> (c.maxCardsSession?.cardsSeen||0)>=100},
+    {id:'streak_3',check:c=> c.longestStreak>=3}, {id:'streak_7',check:c=> c.longestStreak>=7},
+    {id:'focus_master_secret',secret:true,check:c=> true}
+  ];
+  const visible = badgesDef.filter(b=> !b.secret);
+  const currentlyEarnedVisible = visible.filter(b=> b.check(ctx)).map(b=>b.id);
+  const allVisibleEarned = visible.every(b=> b.check(ctx));
+  let earned = badgesDef.filter(b=> (b.secret? allVisibleEarned : b.check(ctx))).map(b=>b.id);
+  // Persist list (union with any existing persisted to prevent accidental loss if we expand set later)
+  try {
+    const existing = JSON.parse(localStorage.getItem('fpPersistedBadges')||'[]');
+    const union = Array.from(new Set([...existing, ...earned]));
+    localStorage.setItem('fpPersistedBadges', JSON.stringify(union));
+  } catch {}
+  // Remove all non-achievement data
+  try {
+  const preserve = new Set(['fpPersistedBadges']); // deprecated fpFocusMasterUnlocked intentionally not preserved
+    const toRemove=[]; for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(!preserve.has(k)) toRemove.push(k); }
+    toRemove.forEach(k=> localStorage.removeItem(k));
+  } catch {}
+  alert('Data reset complete. Achievements preserved.');
+  renderStats('home');
+}
+</script>
+</body></html>
+<div id="fpFooter" style="font-size:11px; color:var(--text-secondary); text-align:center; position:absolute; left:16rem; right:0; bottom:0; z-index:9999; background:rgba(240,242,245,0.95); pointer-events:none; box-shadow:0 -2px 8px rgba(0,0,0,0.04);">© FocusPath 2025. 4a4152564953 Applications EST. 2025</div>

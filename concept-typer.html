@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Concept Typer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <style>
+    body { font-family:'Lexend',sans-serif; background:#f0f2f5; }
+    .typer-input { font-size:1.25rem; padding:0.5rem 1rem; border-radius:8px; border:1px solid #e5e7eb; width:100%; }
+    .typer-word { font-weight:600; font-size:1.5rem; color:#0d78f2; }
+    .typer-result { font-size:1rem; margin-top:1rem; }
+  </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+  <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
+    <h1 class="text-2xl font-bold mb-4 text-center">Concept Typer</h1>
+    <div id="typer-game">
+      <div class="typer-word mb-4" id="typer-word">Loading...</div>
+      <input type="text" class="typer-input mb-2" id="typer-input" autocomplete="off" placeholder="Type here..." />
+      <div class="typer-result" id="typer-result"></div>
+      <div class="mt-4 text-sm text-gray-500" id="typer-stats"></div>
+      <button id="typer-next" class="mt-4 px-4 py-2 rounded bg-[var(--primary-color)] text-white font-semibold" style="display:none;">Next</button>
+    </div>
+  </div>
+  <script src="concept-typer.js"></script>
+</body>
+</html>

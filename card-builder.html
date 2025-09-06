@@ -1,0 +1,89 @@
+<script src="themes.js"></script>
+<style>
+  .cardbuilder-scope input[type="text"],
+  .cardbuilder-scope textarea,
+  .cardbuilder-scope select { color: var(--text-primary) !important; background: var(--white) !important; }
+  [data-theme="dark"] .cardbuilder-scope input[type="text"],
+  [data-theme="dark"] .cardbuilder-scope textarea,
+  [data-theme="dark"] .cardbuilder-scope select { color:#ffffff !important; background:#1f2937 !important; border-color:#334155 !important; }
+  #fcSubject option { color: var(--text-primary); }
+  [data-theme="dark"] #fcSubject option { color:#fff !important; background:#1f2937; }
+  #fcName::placeholder, #fcDesc::placeholder { color: var(--text-secondary) !important; opacity:0.7; }
+  [data-theme="dark"] #fcName::placeholder, [data-theme="dark"] #fcDesc::placeholder { color:#94a3b8 !important; opacity:0.6; }
+  .cardbuilder-scope .btn { transition:opacity .2s ease; }
+  .cardbuilder-scope .btn:hover { opacity:.9; }
+  .cardbuilder-scope .btn-primary { background:var(--primary-color); color:#fff; }
+  .cardbuilder-scope .btn-secondary { background:#e5e7eb; color:var(--text-primary); }
+</style>
+<div class="cardbuilder-scope">
+  <!-- Set Info -->
+  <div class="bg-white rounded-lg shadow p-6 mb-6">
+    <h3 class="text-xl font-semibold text-[var(--text-primary)] mb-4">Flashcard Set Details</h3>
+    <div class="grid md:grid-cols-4 gap-4 text-sm text-[var(--text-secondary)]">
+      <div>
+        <label class="block font-medium text-[var(--text-primary)] mb-1">Subject</label>
+        <div class="flex gap-2">
+        <select id="fcSubject" class="w-full rounded-md border-gray-300">
+          <option value="" disabled selected>Select a Subject</option>
+          <option>Art</option>
+          <option>English/Language</option>
+          <option>Math</option>
+          <option>Science</option>
+          <option>Social Studies</option>
+          <option>Other</option>
+          <option value="__create">Create New…</option>
+        </select>
+        <div class="flex flex-col gap-1">
+          <button type="button" id="btnManageSubjectsFC" class="px-2 py-1 text-[10px] rounded border border-[var(--border-color)] hover:bg-gray-100">Manage</button>
+          <button type="button" id="btnRemoveSubjectFC" class="px-2 py-1 text-[10px] rounded border border-red-300 text-red-600 hover:bg-red-50 hidden">Remove</button>
+        </div>
+        </div>
+      </div>
+      <div>
+        <label class="block font-medium text-[var(--text-primary)] mb-1">Subject Component</label>
+        <input id="fcName" type="text" class="w-full rounded-md border-gray-300" placeholder="e.g. Biology Terms 101" />
+      </div>
+      <div>
+        <label class="block font-medium text-[var(--text-primary)] mb-1">Description</label>
+        <input id="fcDesc" type="text" class="w-full rounded-md border-gray-300" placeholder="Short description..." />
+      </div>
+      <div class="flex items-end justify-end">
+        <button id="btnSaveSet" class="btn btn-primary px-4 py-2 rounded-md">Save Set</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-3 gap-6">
+    <!-- Cards list -->
+    <div class="bg-white rounded-lg shadow p-4 flex flex-col h-[600px]">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-lg font-semibold text-[var(--text-primary)]">Cards</h3>
+        <div class="flex gap-2">
+          <button id="btnAddCard" class="px-3 py-1.5 text-xs rounded-md bg-[var(--primary-color)] text-white shadow">+ Card</button>
+          <button id="btnBulkAdd" class="px-3 py-1.5 text-xs rounded-md bg-gray-200 text-[var(--text-primary)] hover:bg-gray-300">Bulk</button>
+        </div>
+      </div>
+      <div id="cardsList" class="flex-1 overflow-y-auto space-y-2 p-2 border rounded-md bg-gray-50 text-sm">
+        <div class="text-[var(--text-secondary)] italic">No cards yet. Use "+ Card".</div>
+      </div>
+    </div>
+
+    <!-- Active Card Editor -->
+    <div class="lg:col-span-2 bg-white rounded-lg shadow p-6 flex flex-col h-[600px]">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-semibold text-[var(--text-primary)]">Card Editor</h3>
+        <div class="flex gap-2">
+          <button id="btnMoveUp" class="px-2 py-1 text-xs rounded border border-[var(--border-color)] disabled:opacity-40">↑</button>
+          <button id="btnMoveDown" class="px-2 py-1 text-xs rounded border border-[var(--border-color)] disabled:opacity-40">↓</button>
+          <button id="btnDeleteCard" class="px-2 py-1 text-xs rounded border border-red-300 text-red-600 disabled:opacity-40">Delete</button>
+        </div>
+      </div>
+      <div id="activeCard" class="flex-1 overflow-y-auto pr-2 space-y-4 text-sm">
+        <div class="text-[var(--text-secondary)] italic">No active card. Add one to begin editing.</div>
+      </div>
+      <div class="mt-6 flex justify-end gap-3">
+        <button id="btnSaveCard" class="btn px-4 py-2 rounded-md bg-green-600 text-white">Save Card</button>
+      </div>
+    </div>
+  </div>
+</div>

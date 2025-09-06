@@ -1,0 +1,102 @@
+<script src="themes.js"></script>
+<style>
+  /* Modern builder inputs follow global theme styles */
+  .builder-scope input[type="text"],
+  .builder-scope textarea,
+  .builder-scope select { color: var(--text-primary) !important; background: var(--white) !important; }
+  /* Dark theme: increase contrast */
+  [data-theme="dark"] .builder-scope input[type="text"],
+  [data-theme="dark"] .builder-scope textarea,
+  [data-theme="dark"] .builder-scope select { color: #ffffff !important; background: #1f2937 !important; border-color: #334155 !important; }
+  [data-theme="dark"] #testSubject option { color:#fff !important; background:#1f2937; }
+  #testName::placeholder, #testDesc::placeholder { color: var(--text-secondary) !important; opacity:0.7; }
+  [data-theme="dark"] #testName::placeholder, [data-theme="dark"] #testDesc::placeholder { color:#94a3b8 !important; opacity:0.6; }
+  .builder-scope .btn { transition: opacity .2s ease; }
+  .builder-scope .btn:hover { opacity: .9; }
+  .builder-scope .btn-primary { background: var(--primary-color); color: #fff; }
+  .builder-scope .btn-secondary { background: #e5e7eb; color: var(--text-primary); }
+</style>
+<div class="builder-scope">
+<!-- Test Info (full width at top) -->
+<div class="bg-white rounded-lg shadow p-6 mb-6">
+  <h3 class="text-xl font-semibold text-[var(--text-primary)] mb-4">Test Details</h3>
+  <div class="grid md:grid-cols-4 gap-4 text-sm text-[var(--text-secondary)]">
+    <div>
+      <label class="block font-medium text-[var(--text-primary)] mb-1">Subject</label>
+      <div class="flex gap-2">
+      <select id="testSubject" class="w-full rounded-md border-gray-300">
+        <option value="" disabled selected>Select a Subject</option>
+        <option>Art</option>
+        <option>English/Language</option>
+        <option>Math</option>
+        <option>Science</option>
+        <option>Social Studies</option>
+  <option>Other</option>
+  <option value="__create">Create New…</option>
+      </select>
+      <div class="flex flex-col gap-1">
+        <button type="button" id="btnManageSubjectsTest" class="px-2 py-1 text-[10px] rounded border border-[var(--border-color)] hover:bg-gray-100">Manage</button>
+        <button type="button" id="btnRemoveSubjectTest" class="px-2 py-1 text-[10px] rounded border border-red-300 text-red-600 hover:bg-red-50 hidden">Remove</button>
+      </div>
+      </div>
+    </div>
+    <div>
+      <label class="block font-medium text-[var(--text-primary)] mb-1">Subject Component</label>
+      <input id="testName" type="text" class="w-full rounded-md border-gray-300" placeholder="e.g. History 101" />
+    </div>
+    <div>
+      <label class="block font-medium text-[var(--text-primary)] mb-1">Description</label>
+      <input id="testDesc" type="text" class="w-full rounded-md border-gray-300" placeholder="Short description..." />
+    </div>
+    <div class="flex items-end justify-end">
+      <button id="btnSaveTest" class="btn btn-primary px-4 py-2 rounded-md">
+        Save Test
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Main Layout (mirrors flashcard builder ergonomics) -->
+<div class="grid lg:grid-cols-3 gap-6">
+  <!-- Left Panel: Question List -->
+  <div class="bg-white rounded-lg shadow p-4 flex flex-col h-[600px]">
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="text-lg font-semibold text-[var(--text-primary)]">Questions</h3>
+      <div class="flex gap-2">
+        <button id="btnAddQuestion" class="px-3 py-1.5 text-xs rounded-md bg-[var(--primary-color)] text-white shadow">+ Question</button>
+        <button id="btnBulkAddQuestions" class="px-3 py-1.5 text-xs rounded-md bg-gray-200 text-[var(--text-primary)] hover:bg-gray-300">Bulk</button>
+      </div>
+    </div>
+    <div id="questionsList" class="flex-1 overflow-y-auto space-y-2 p-2 border rounded-md bg-gray-50 text-sm">
+      <div class="text-[var(--text-secondary)] italic">No questions yet. Use "+ Question".</div>
+    </div>
+  </div>
+
+  <!-- Right Panel: Active Question Editor -->
+  <div class="lg:col-span-2 bg-white rounded-lg shadow p-6 flex flex-col h-[600px]">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-semibold text-[var(--text-primary)]">Question Editor</h3>
+      <div class="flex gap-2">
+        <button id="btnMoveUpQuestion" class="px-2 py-1 text-xs rounded border border-[var(--border-color)] disabled:opacity-40" title="Move Up">↑</button>
+        <button id="btnMoveDownQuestion" class="px-2 py-1 text-xs rounded border border-[var(--border-color)] disabled:opacity-40" title="Move Down">↓</button>
+        <button id="btnDeleteQuestion" class="px-2 py-1 text-xs rounded border border-red-300 text-red-600 disabled:opacity-40" title="Delete">Delete</button>
+      </div>
+    </div>
+
+    <!-- The editor will always appear here -->
+    <div id="activeQuestion" class="flex-1 overflow-y-auto pr-2 space-y-4">
+      <div class="text-[var(--text-secondary)] italic">
+        No active question. Add one to begin editing.
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="mt-6 flex justify-end gap-3">
+	<button id="btnSaveQuestion" class="btn px-4 py-2 rounded-md bg-green-600 text-white">
+        Save Question
+      </button>
+    </div>
+  </div>
+</div>
+
+</div>

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FocusPath — Games</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <style type="text/tailwindcss">
+    :root { --primary-color:#0d78f2; --background-color:#f0f2f5; --text-primary:#111418; --text-secondary:#60748a; --white:#ffffff; --border-color:#e5e7eb; }
+    body { font-family:'Lexend',sans-serif; }
+    .hover-bg-primary-light:hover{ background-color:#e6f2ff; }
+  </style>
+</head>
+<body class="bg-[var(--background-color)]">
+<div class="flex min-h-screen">
+  <!-- Sidebar -->
+  <aside class="w-64 bg-[var(--white)] shadow-md flex-col justify-between hidden md:flex">
+    <div class="p-6 flex flex-col h-full">
+      <div class="flex items-center gap-3 mb-8">
+        <div class="w-8 h-8 text-[var(--primary-color)]">
+          <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"/></svg>
+        </div>
+        <h1 class="text-[var(--text-primary)] text-2xl font-bold">FocusPath</h1>
+      </div>
+      <nav class="flex flex-col gap-2 mb-6">
+  <div class="flex items-center gap-3 px-4 py-3 rounded-md font-semibold text-white bg-[var(--primary-color)]"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 2h12a2 2 0 0 1 2 2v12.5l-4-2-4 2-4-2-4 2V4a2 2 0 0 1 2-2z"/></svg><span>Motivational Marty</span></div>
+      </nav>
+  <div id="npc-sidebar-container" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;">
+  <img id="npc-sidebar" src="buddy-test/rotations/south.png" alt="Motivator Character" style="width:96px;height:96px;position:absolute;top:0;left:0;" />
+  <div id="sidebar-chat-bubble" style="position:absolute;left:0;top:-40px;max-width:220px;padding:8px 14px;background:#fff;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,0.08);color:#111;font-size:13px;opacity:0;pointer-events:none;transition:opacity 0.3s;"></div>
+  <div id="sidebar-chat-bubble" style="position:absolute;left:0;top:-40px;max-width:220px;padding:8px 14px;background:#fff;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,0.08);color:#111;font-size:13px;opacity:0;pointer-events:none;transition:opacity 0.3s;"></div>
+      </div>
+      <div class="mt-auto pt-6 text-[10px] text-[var(--text-secondary)]">
+  <div class="mb-4">Experimental learning games to reinforce study concepts.</div>
+  <a href="helper.html" class="text-xs text-[var(--text-secondary)] hover:text-[var(--primary-color)] px-4 py-2 rounded transition-colors border border-transparent hover:border-[var(--primary-color)]">Help</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main column -->
+  <div class="flex-1 flex flex-col">
+    <header class="bg-[var(--white)] shadow-sm flex items-center justify-between p-4">
+      <div class="flex-1 flex justify-center items-center">
+        <div class="flex gap-4">
+          <a href="index.html" title="Home" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11.5z"/></svg></a>
+          <a href="flashcards.html" title="Flashcards" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v12H4zM4 20h16v-2H4z"/></svg></a>
+          <a href="test.html" title="Tests" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M4 17.25V21h3.75L17.81 10.94l-3.75-3.75L4 17.25Zm14.71-8.04a1 1 0 0 0 0-1.41l-2.54-2.54a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 2.03-2.03Z"/></svg></a>
+          <a href="dictionary.html" title="Dictionary" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 2h9.5a4.5 4.5 0 0 1 0 9H8v9a1 1 0 0 1-2 0V3a1 1 0 0 1 1-1Zm2 2v5h7.5a2.5 2.5 0 0 0 0-5H8Z"/><path d="M18 6v13a3 3 0 0 1-3 3H7.5a1.5 1.5 0 0 1 0-3H15a1 1 0 0 0 1-1V6h2Z"/></svg></a>
+          <a href="stats.html" title="Statistics" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M5 9h3v10H5zM10.5 4h3v15h-3zM16 13h3v6h-3z"/></svg></a>
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" style='background-image:url("https://lh3.googleusercontent.com/aida-public/AB6AXuCAMzclmWsDYh9STHWC4bYSZWCP2ZqUSi2Tv7hk1t__UQisqFXVQ847TNl6gP_A6HiQhQKr_CJBhEgo17C6MNYopaP4i-ShKU-5ZtGp3UlaHub43muyWTbIPvF09V7hMR6ttWWZOJlbuGFkda_-y7WD-UZj9QHUwjJmdGKiTPHxGhdQPd-ppbdiZGRGqmykWE5pGrwNm08sSVmw8vLTURway5Ulqo9Aw6Vcbldg3SiZ4WZxAvQTNxsRzlS3YRuejEy822RS");'></div>
+      </div>
+    </header>
+
+    <main class="flex-1 p-6 lg:p-8 space-y-8">
+      <div>
+        <h1 class="text-3xl font-bold text-[var(--text-primary)] mb-2">Learning Games</h1>
+        <p class="text-[var(--text-secondary)] text-sm">Pick a game below. These mini-games will track only local session data.</p>
+      </div>
+
+      <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3" id="gamesGrid">
+        <!-- Game cards injected -->
+      </div>
+
+      <div class="text-[10px] text-[var(--text-secondary)]">More games coming soon: Have a suggestion? let me know!</div>
+    </main>
+  </div>
+</div>
+
+<script src="themes.js"></script>
+<script src="achievements.js"></script>
+<script>
+// Sidebar autonomous character logic (ported from buddy.js)
+// Load motivational quotes
+let motivationalQuotes = [];
+fetch('motivational-quotes.txt')
+  .then(r => r.text())
+  .then(t => { motivationalQuotes = t.split('\n').filter(Boolean); });
+
+const metadata = {
+  character: { size: { width: 96, height: 96 } },
+  frames: {
+    rotations: {
+      'north': 'buddy-test/rotations/north.png',
+      'north-east': 'buddy-test/rotations/north-east.png',
+      'east': 'buddy-test/rotations/east.png',
+      'south-east': 'buddy-test/rotations/south-east.png',
+      'south': 'buddy-test/rotations/south.png',
+      'south-west': 'buddy-test/rotations/south-west.png',
+      'west': 'buddy-test/rotations/west.png',
+      'north-west': 'buddy-test/rotations/north-west.png'
+    },
+    animations: {
+      'walking-8-frames': {
+        'north': [
+          'buddy-test/animations/walking-8-frames/north/frame_000.png',
+          'buddy-test/animations/walking-8-frames/north/frame_001.png',
+          'buddy-test/animations/walking-8-frames/north/frame_002.png',
+          'buddy-test/animations/walking-8-frames/north/frame_003.png',
+          'buddy-test/animations/walking-8-frames/north/frame_004.png',
+          'buddy-test/animations/walking-8-frames/north/frame_005.png',
+          'buddy-test/animations/walking-8-frames/north/frame_006.png',
+          'buddy-test/animations/walking-8-frames/north/frame_007.png'
+        ],
+        'north-east': [
+          'buddy-test/animations/walking-8-frames/north-east/frame_000.png',
+          'buddy-test/animations/walking-8-frames/north-east/frame_001.png',
+          'buddy-test/animations/walking-8-frames/north-east/frame_002.png',
+          'buddy-test/animations/walking-8-frames/north-east/frame_003.png',
+          'buddy-test/animations/walking-8-frames/north-east/frame_004.png',
+          'buddy-test/animations/walking-8-frames/north-east/frame_005.png',
+          'buddy-test/animations/walking-8-frames/north-east/frame_006.png',
+          'buddy-test/animations/walking-8-frames/north-east/frame_007.png'
+        ],
+        'east': [
+          'buddy-test/animations/walking-8-frames/east/frame_000.png',
+          'buddy-test/animations/walking-8-frames/east/frame_001.png',
+          'buddy-test/animations/walking-8-frames/east/frame_002.png',
+          'buddy-test/animations/walking-8-frames/east/frame_003.png',
+          'buddy-test/animations/walking-8-frames/east/frame_004.png',
+          'buddy-test/animations/walking-8-frames/east/frame_005.png',
+          'buddy-test/animations/walking-8-frames/east/frame_006.png',
+          'buddy-test/animations/walking-8-frames/east/frame_007.png'
+        ],
+        'south-east': [
+          'buddy-test/animations/walking-8-frames/south-east/frame_000.png',
+          'buddy-test/animations/walking-8-frames/south-east/frame_001.png',
+          'buddy-test/animations/walking-8-frames/south-east/frame_002.png',
+          'buddy-test/animations/walking-8-frames/south-east/frame_003.png',
+          'buddy-test/animations/walking-8-frames/south-east/frame_004.png',
+          'buddy-test/animations/walking-8-frames/south-east/frame_005.png',
+          'buddy-test/animations/walking-8-frames/south-east/frame_006.png',
+          'buddy-test/animations/walking-8-frames/south-east/frame_007.png'
+        ],
+        'south': [
+          'buddy-test/animations/walking-8-frames/south/frame_000.png',
+          'buddy-test/animations/walking-8-frames/south/frame_001.png',
+          'buddy-test/animations/walking-8-frames/south/frame_002.png',
+          'buddy-test/animations/walking-8-frames/south/frame_003.png',
+          'buddy-test/animations/walking-8-frames/south/frame_004.png',
+          'buddy-test/animations/walking-8-frames/south/frame_005.png',
+          'buddy-test/animations/walking-8-frames/south/frame_006.png',
+          'buddy-test/animations/walking-8-frames/south/frame_007.png'
+        ],
+        'south-west': [
+          'buddy-test/animations/walking-8-frames/south-west/frame_000.png',
+          'buddy-test/animations/walking-8-frames/south-west/frame_001.png',
+          'buddy-test/animations/walking-8-frames/south-west/frame_002.png',
+          'buddy-test/animations/walking-8-frames/south-west/frame_003.png',
+          'buddy-test/animations/walking-8-frames/south-west/frame_004.png',
+          'buddy-test/animations/walking-8-frames/south-west/frame_005.png',
+          'buddy-test/animations/walking-8-frames/south-west/frame_006.png',
+          'buddy-test/animations/walking-8-frames/south-west/frame_007.png'
+        ],
+        'west': [
+          'buddy-test/animations/walking-8-frames/west/frame_000.png',
+          'buddy-test/animations/walking-8-frames/west/frame_001.png',
+          'buddy-test/animations/walking-8-frames/west/frame_002.png',
+          'buddy-test/animations/walking-8-frames/west/frame_003.png',
+          'buddy-test/animations/walking-8-frames/west/frame_004.png',
+          'buddy-test/animations/walking-8-frames/west/frame_005.png',
+          'buddy-test/animations/walking-8-frames/west/frame_006.png',
+          'buddy-test/animations/walking-8-frames/west/frame_007.png'
+        ],
+        'north-west': [
+          'buddy-test/animations/walking-8-frames/north-west/frame_000.png',
+          'buddy-test/animations/walking-8-frames/north-west/frame_001.png',
+          'buddy-test/animations/walking-8-frames/north-west/frame_002.png',
+          'buddy-test/animations/walking-8-frames/north-west/frame_003.png',
+          'buddy-test/animations/walking-8-frames/north-west/frame_004.png',
+          'buddy-test/animations/walking-8-frames/north-west/frame_005.png',
+          'buddy-test/animations/walking-8-frames/north-west/frame_006.png',
+          'buddy-test/animations/walking-8-frames/north-west/frame_007.png'
+        ]
+      }
+    }
+  }
+};
+
+// Sidebar movement logic
+let x = 10, y = 10;
+// Will be set to headerBottom on first tick
+const baseSpeed = 1.2; // slower walking
+let stopCount = 0;
+const directions = Object.keys(metadata.frames.rotations);
+let currentDir = 'south';
+let frame = 0;
+const totalFrames = metadata.frames.animations['walking-8-frames'][directions[0]].length;
+let dx = 0;
+let dy = 1;
+let changeTime = randomInt(50, 150);
+let walking = true;
+let idleTime = 0;
+
+function getDirection(dx, dy) {
+  if (dx === 0 && dy < 0) return 'north';
+  if (dx > 0 && dy < 0) return 'north-east';
+  if (dx > 0 && dy === 0) return 'east';
+  if (dx > 0 && dy > 0) return 'south-east';
+  if (dx === 0 && dy > 0) return 'south';
+  if (dx < 0 && dy > 0) return 'south-west';
+  if (dx < 0 && dy === 0) return 'west';
+  if (dx < 0 && dy < 0) return 'north-west';
+  return 'south';
+}
+
+function randomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function randomDirection() {
+  const dirIdx = randomInt(0, directions.length - 1);
+  currentDir = directions[dirIdx];
+  switch (currentDir) {
+    case 'north': dx = 0; dy = -1; break;
+    case 'north-east': dx = 1; dy = -1; break;
+    case 'east': dx = 1; dy = 0; break;
+    case 'south-east': dx = 1; dy = 1; break;
+    case 'south': dx = 0; dy = 1; break;
+    case 'south-west': dx = -1; dy = 1; break;
+    case 'west': dx = -1; dy = 0; break;
+    case 'north-west': dx = -1; dy = -1; break;
+    default: dx = 0; dy = 1;
+  }
+}
+
+function moveSidebarNPC() {
+  // Sidebar bounds: full .p-6 content area
+  // Use the full sidebar content area for movement
+  const sidebarContent = document.querySelector('.p-6.flex.flex-col.h-full');
+  const header = document.querySelector('.flex.items-center.gap-3.mb-8');
+  const charWidth = metadata.character.size.width;
+  const charHeight = metadata.character.size.height;
+  const areaW = sidebarContent ? sidebarContent.offsetWidth : 256;
+  const areaH = sidebarContent ? sidebarContent.offsetHeight : 600;
+  let headerBottom = 0;
+  if (header && sidebarContent) {
+    const headerRect = header.getBoundingClientRect();
+    const sidebarRect = sidebarContent.getBoundingClientRect();
+    headerBottom = headerRect.bottom - sidebarRect.top;
+  }
+  // On first tick, if y is at initial value, spawn below header
+  if (y === 10) {
+    y = headerBottom;
+  }
+  const chatBubble = document.getElementById('sidebar-chat-bubble');
+  if (walking) {
+    changeTime--;
+    if (changeTime <= 0) {
+      randomDirection();
+      changeTime = randomInt(50, 150);
+    }
+    let speed = baseSpeed;
+    if (dx !== 0 && dy !== 0) speed /= Math.sqrt(2);
+    let nextX = x + dx * speed;
+    let nextY = y + dy * speed;
+  // Clamp nextX/nextY to keep character inside area and below header
+  nextX = Math.max(0, Math.min(nextX, areaW - charWidth));
+  nextY = Math.max(headerBottom, Math.min(nextY, areaH - charHeight));
+    let hitBorder = false;
+    if ((x === nextX && y === nextY) || nextX < 0 || nextX > areaW - charWidth || nextY < 0 || nextY > areaH - charHeight) {
+      hitBorder = true;
+    }
+    if (hitBorder) {
+      walking = false;
+      idleTime = randomInt(60, 180);
+      document.getElementById('npc-sidebar').src = metadata.frames.rotations[currentDir];
+      stopCount++;
+      // Show motivational bubble every 5 stops
+      if (chatBubble && motivationalQuotes.length) {
+        if (stopCount % 5 === 0) {
+          const quote = motivationalQuotes[randomInt(0, motivationalQuotes.length - 1)];
+          if (quote && quote.trim().length > 0) {
+            chatBubble.textContent = quote;
+            chatBubble.style.opacity = 1;
+            chatBubble.style.display = 'block';
+          } else {
+            chatBubble.textContent = '';
+            chatBubble.style.opacity = 0;
+            chatBubble.style.display = 'none';
+          }
+        } else {
+          chatBubble.textContent = '';
+          chatBubble.style.opacity = 0;
+          chatBubble.style.display = 'none';
+        }
+      }
+    } else {
+      x = nextX;
+      y = nextY;
+      currentDir = getDirection(dx, dy);
+      frame = (frame + 1) % totalFrames;
+      document.getElementById('npc-sidebar').src = metadata.frames.animations['walking-8-frames'][currentDir][frame];
+      // Hide bubble immediately when moving
+      if (chatBubble) {
+        chatBubble.style.opacity = 0;
+        chatBubble.style.display = 'none';
+      }
+      if (Math.random() < 0.005) {
+        walking = false;
+        idleTime = randomInt(120, 300);
+        document.getElementById('npc-sidebar').src = metadata.frames.rotations[currentDir];
+        stopCount++;
+        // Show motivational bubble every 5 stops
+        if (chatBubble && motivationalQuotes.length) {
+          if (stopCount % 5 === 0) {
+            const quote = motivationalQuotes[randomInt(0, motivationalQuotes.length - 1)];
+            if (quote && quote.trim().length > 0) {
+              chatBubble.textContent = quote;
+              chatBubble.style.opacity = 1;
+            } else {
+              chatBubble.textContent = '';
+              chatBubble.style.opacity = 0;
+            }
+          } else {
+            chatBubble.textContent = '';
+            chatBubble.style.opacity = 0;
+          }
+        }
+      }
+    }
+  } else {
+    idleTime--;
+    if (idleTime <= 0) {
+      walking = true;
+      frame = 0;
+      randomDirection();
+      if (chatBubble) {
+        chatBubble.style.opacity = 0;
+        chatBubble.style.display = 'none';
+      }
+    }
+    document.getElementById('npc-sidebar').src = metadata.frames.rotations[currentDir];
+    // Bubble stays visible while idle
+    if (chatBubble && chatBubble.textContent && chatBubble.textContent.trim().length > 0) {
+      chatBubble.style.opacity = 1;
+      chatBubble.style.display = 'block';
+    } else if (chatBubble) {
+      chatBubble.style.opacity = 0;
+      chatBubble.style.display = 'none';
+    }
+  }
+  // Update position
+  const npcDiv = document.getElementById('npc-sidebar');
+  if (npcDiv) {
+    npcDiv.style.left = `${x}px`;
+    npcDiv.style.top = `${y}px`;
+    // Bubble always above character, never covering head
+    if (chatBubble) {
+      const bubbleHeight = chatBubble.offsetHeight || 32;
+      const bubbleY = Math.max(0, y - bubbleHeight - 8); // 8px gap above head
+      chatBubble.style.left = `${x}px`;
+      chatBubble.style.top = `${bubbleY}px`;
+    }
+  }
+}
+
+setInterval(moveSidebarNPC, 1000 / 60);
+</script>
+<script>
+// Build static game cards (now logic in games.js)
+(function(){
+  const games=[
+  { id:'flash-sprint', title:'Flash Card Sprint', desc:'Answer backs of random deck cards for 60 seconds.', action:'Play', enabled:true },
+  { id:'quick-math', title:'Quick Math Drill', desc:'Endless arithmetic with streak counter.', action:'Start', enabled:true },
+  { id:'concept-typer', title:'Concept Typer', desc:'Type definitions accurately and quickly.', action:'Play', enabled:true }
+  ];
+  const grid=document.getElementById('gamesGrid');
+  games.forEach(g=>{
+    const card=document.createElement('div');
+    card.className='bg-white rounded-lg shadow p-5 flex flex-col justify-between border border-[var(--border-color)]';
+    if(g.id==='flash-sprint'){
+      card.innerHTML=`<div class='flex items-start justify-between gap-2'><div><h3 class='text-lg font-semibold text-[var(--text-primary)] mb-1'>${g.title}</h3><p class='text-xs text-[var(--text-secondary)] leading-snug mb-3'>${g.desc}</p></div><button title='Settings' data-sprint-settings class='text-[var(--text-secondary)] hover:text-[var(--text-primary)] mt-1'>
+          <svg width='18' height='18' viewBox='0 0 24 24' fill='currentColor'><path d='M12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7ZM19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65a.5.5 0 0 0 .11-.64l-2-3.46a.5.5 0 0 0-.6-.22l-2.49 1a7.14 7.14 0 0 0-1.7-.98l-.38-2.65A.5.5 0 0 0 13.88 2h-3.76a.5.5 0 0 0-.5.42l-.38 2.65c-.63.24-1.2.56-1.7.98l-2.49-1a.5.5 0 0 0-.6.22l-2 3.46a.5.5 0 0 0 .11.64L4.57 11c-.04.32-.07.65-.07.98 0 .33.03.66.07.98l-2.11 1.65a.5.5 0 0 0-.11.64l2 3.46c.14.24.43.34.6.22l2.49-1c.5.42 1.07.75 1.7.98l.38 2.65c.04.24.25.42.5.42h3.76c.25 0 .46-.18.5-.42l.38-2.65c.63-.23 1.2-.56 1.7-.98l2.49 1c.17.12.46.02.6-.22l2-3.46a.5.5 0 0 0-.11-.64L19.43 12.98Z'/></svg></button></div><button data-game='${g.id}' class='mt-2 px-3 py-2 rounded text-xs font-medium ${g.enabled? 'bg-[var(--primary-color)] text-white hover:opacity-90':'bg-gray-300 text-gray-600 cursor-not-allowed'}'>${g.action}</button>`;
+    } else if(g.id==='quick-math') {
+      card.innerHTML=`<div class='flex items-start justify-between gap-2'><div><h3 class='text-lg font-semibold text-[var(--text-primary)] mb-1'>${g.title}</h3><p class='text-xs text-[var(--text-secondary)] leading-snug mb-3'>${g.desc}</p></div><button title='Settings' data-drill-settings class='text-[var(--text-secondary)] hover:text-[var(--text-primary)] mt-1'>
+          <svg width='18' height='18' viewBox='0 0 24 24' fill='currentColor'><path d='M12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7ZM19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65a.5.5 0 0 0 .11-.64l-2-3.46a.5.5 0 0 0-.6-.22l-2.49 1a7.14 7.14 0 0 0-1.7-.98l-.38-2.65A.5.5 0 0 0 13.88 2h-3.76a.5.5 0 0 0-.5.42l-.38 2.65c-.63.24-1.2.56-1.7.98l-2.49-1a.5.5 0 0 0-.6.22l-2 3.46a.5.5 0 0 0 .11.64L4.57 11c-.04.32-.07.65-.07.98 0 .33.03.66.07.98l-2.11 1.65a.5.5 0 0 0-.11.64l2 3.46c.14.24.43.34.6.22l2.49-1c.5.42 1.07.75 1.7.98l.38 2.65c.04.24.25.42.5.42h3.76c.25 0 .46-.18.5-.42l.38-2.65c.63-.23 1.2-.56 1.7-.98l2.49 1c.17.12.46.02.6-.22l2-3.46a.5.5 0 0 0-.11-.64L19.43 12.98Z'/></svg></button></div><button data-game='${g.id}' class='mt-2 px-3 py-2 rounded text-xs font-medium ${g.enabled? 'bg-[var(--primary-color)] text-white hover:opacity-90':'bg-gray-300 text-gray-600 cursor-not-allowed'}'>${g.action}</button>`;
+    } else {
+  card.innerHTML=`<div><h3 class='text-lg font-semibold text-[var(--text-primary)] mb-1'>${g.title}</h3><p class='text-xs text-[var(--text-secondary)] leading-snug mb-3'>${g.desc}</p></div><button data-game='${g.id}' class='px-3 py-2 rounded text-xs font-medium ${g.enabled? 'bg-[var(--primary-color)] text-white hover:opacity-90':'bg-gray-300 text-gray-600 cursor-not-allowed'}'>${g.action}</button>`;
+    }
+    grid.appendChild(card);
+  });
+  // Wire sprint & drill settings buttons
+  document.querySelectorAll('[data-sprint-settings]').forEach(b=> b.addEventListener('click',()=> window.FPGames?.showSprintSettings && window.FPGames.showSprintSettings()));
+  document.querySelectorAll('[data-drill-settings]').forEach(b=> b.addEventListener('click',()=> window.FPGames?.showDrillSettings && window.FPGames.showDrillSettings()));
+  // Wire Play buttons for games
+  document.querySelectorAll('[data-game]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-game');
+      if (btn.classList.contains('cursor-not-allowed')) return;
+      if (id === 'flash-sprint' && window.FPGames?.startFlashCardSprint) window.FPGames.startFlashCardSprint();
+      if (id === 'quick-math' && window.FPGames?.quickMathDrill) window.FPGames.quickMathDrill();
+      if (id === 'concept-typer' && window.FPGames?.conceptTyperGame) window.FPGames.conceptTyperGame();
+    });
+  });
+})();
+</script>
+<script src="games.js"></script>
+<div id="fpFooter" style="font-size:11px; color:var(--text-secondary); text-align:center; position:absolute; left:16rem; right:0; bottom:0; z-index:9999; background:rgba(240,242,245,0.95); pointer-events:none; box-shadow:0 -2px 8px rgba(0,0,0,0.04);">© FocusPath 2025. 4a4152564953 Applications EST. 2025</div>
+</body>
+</html>

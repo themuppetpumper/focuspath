@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FocusPath — Help & Guide</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="themes.js"></script>
+  <style type="text/tailwindcss">
+    :root{--primary-color:#0d78f2;--background-color:#f0f2f5;--text-primary:#111418;--text-secondary:#60748a;--white:#ffffff;--border-color:#e5e7eb}
+    body{font-family:'Lexend',sans-serif}
+    .hover-bg-primary-light:hover{background-color:#e6f2ff}
+  </style>
+</head>
+<body class="bg-[var(--background-color)]">
+<div class="flex min-h-screen">
+  <!-- Sidebar -->
+  <aside class="w-64 bg-[var(--white)] shadow-md flex-col justify-between hidden md:flex">
+    <div class="p-6 flex flex-col h-full">
+      <div class="flex items-center gap-3 mb-8">
+        <div class="w-8 h-8 text-[var(--primary-color)]">
+          <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"/></svg>
+        </div>
+        <h1 class="text-[var(--text-primary)] text-2xl font-bold">FocusPath</h1>
+      </div>
+      <nav class="flex flex-col gap-2 mb-6">
+  <button class="flex items-center gap-3 px-4 py-3 rounded-md text-[var(--text-secondary)] hover:text-[var(--primary-color)] hover-bg-primary-light font-medium text-left">Test Help</button>
+  <button class="flex items-center gap-3 px-4 py-3 rounded-md text-[var(--text-secondary)] hover:text-[var(--primary-color)] hover-bg-primary-light font-medium text-left">Flashcards Help</button>
+  <button class="flex items-center gap-3 px-4 py-3 rounded-md text-[var(--text-secondary)] hover:text-[var(--primary-color)] hover-bg-primary-light font-medium text-left">Dictionary Help</button>
+  <button class="flex items-center gap-3 px-4 py-3 rounded-md text-[var(--text-secondary)] hover:text-[var(--primary-color)] hover-bg-primary-light font-medium text-left">Games Help</button>
+  <button class="flex items-center gap-3 px-4 py-3 rounded-md text-[var(--text-secondary)] hover:text-[var(--primary-color)] hover-bg-primary-light font-medium text-left">Stats Help</button>
+  <button class="flex items-center gap-3 px-4 py-3 rounded-md text-[var(--text-secondary)] hover:text-[var(--primary-color)] hover-bg-primary-light font-medium text-left">Event Help</button>
+      </nav>
+      <div class="mt-auto pt-6 flex flex-col items-center">
+  <!-- Help button removed on help page -->
+      </div>
+    </div>
+  </aside>
+  <!-- Main column -->
+  <div class="flex-1 flex flex-col">
+    <!-- Top nav -->
+    <header class="bg-[var(--white)] shadow-sm flex items-center justify-between p-4">
+  <div class="flex gap-4">
+        <a href="index.html" title="Home" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11.5z"/></svg>
+        </a>
+        <a href="flashcards.html" title="Flashcards" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v12H4zM4 20h16v-2H4z"/></svg>
+        </a>
+        <a href="test.html" title="Tests" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M4 17.25V21h3.75L17.81 10.94l-3.75-3.75L4 17.25Zm14.71-8.04a1 1 0 0 0 0-1.41l-2.54-2.54a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 2.03-2.03Z"/></svg>
+        </a>
+        <a href="games.html" title="Games" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 3h12a3 3 0 0 1 3 3v9.5a3 3 0 0 1-4.34 2.65l-1.97-.99a1 1 0 0 0-.89 0l-1.97.99a3 3 0 0 1-2.66 0l-1.97-.99a1 1 0 0 0-.89 0l-1.97.99A3 3 0 0 1 3 15.5V6a3 3 0 0 1 3-3Zm2.5 5A1.5 1.5 0 1 0 8.5 8 1.5 1.5 0 0 0 8.5 8Zm7 0A1.5 1.5 0 1 0 15.5 8 1.5 1.5 0 0 0 15.5 8Z"/></svg>
+        </a>
+        <a href="dictionary.html" title="Dictionary" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 2h9.5a4.5 4.5 0 0 1 0 9H8v9a1 1 0 0 1-2 0V3a1 1 0 0 1 1-1Zm2 2v5h7.5a2.5 2.5 0 0 0 0-5H8Z"/><path d="M18 6v13a3 3 0 0 1-3 3H7.5a1.5 1.5 0 0 1 0-3H15a1 1 0 0 0 1-1V6h2Z"/></svg>
+        </a>
+        <a href="stats.html" title="Statistics" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M5 9h3v10H5zM10.5 4h3v15h-3zM16 13h3v6h-3z"/></svg>
+        </a>
+      </div>
+    </header>
+    <main class="flex-1 p-6 lg:p-8 space-y-8">
+      <section class="max-w-2xl mx-auto">
+        <h2 class="text-xl font-semibold text-[var(--text-primary)] mb-4">Welcome to FocusPath Help</h2>
+        <p class="text-[var(--text-secondary)] mb-6">Select a help topic from the left panel for detailed guides and instructions.</p>
+        <div id="helpContent" class="space-y-6">
+          <!-- Default help content shown on load -->
+          <div id="defaultHelp">
+            <h3 class="text-lg font-bold text-[var(--primary-color)] mb-2">Getting Started</h3>
+            <ul class="list-disc pl-6 text-[var(--text-secondary)]">
+              <li>Use the sidebar to access Flashcards, Tests, Games, Dictionary, and Statistics.</li>
+              <li>Create new sets, import/export, and manage your study materials easily.</li>
+              <li>Track your progress and achievements as you learn.</li>
+            </ul>
+            <h3 class="text-lg font-bold text-[var(--primary-color)] mt-6 mb-2">Frequently Asked Questions</h3>
+            <ul class="list-disc pl-6 text-[var(--text-secondary)]">
+              <li><strong>How do I reset my data?</strong> Use the Soft Reset button in each section to hide existing data locally while keeping your stats history.</li>
+              <li><strong>Where can I find privacy information?</strong> The privacy message is shown on your first visit and can be reviewed in the Help section.</li>
+              <li><strong>How do I contact support?</strong> Email us at <a href="mailto:4a4152564953apps@gmail.com" class="underline text-[var(--primary-color)]">4a4152564953apps@gmail.com</a> or find us on Instagram <a href="https://instagram.com/focuspathlearning" target="_blank" class="underline text-[var(--primary-color)]">@focuspathlearning</a>. You can also use the Help button at the bottom of the sidebar to return to this page anytime.</li>
+            </ul>
+          </div>
+          <!-- Individual help topics -->
+          <div id="testHelp" style="display:none">
+<h3 class="text-lg font-bold text-[var(--primary-color)] mb-2">FocusPath Tests Page — Complete Guide</h3>
+
+<h4 class="text-md font-semibold mt-4 mb-2">Overview</h4>
+<p class="mb-4">The Tests section lets you create, import, export, and take custom tests to reinforce your learning. You can manage test subjects, build questions, run tests interactively, and track your performance.</p>
+
+<h4 class="text-md font-semibold mt-4 mb-2">1. Sidebar Actions</h4>
+<ul class="list-disc pl-6 text-[var(--text-secondary)] mb-4">
+  <li><strong>Test Home</strong>: Returns you to the main Tests dashboard.</li>
+  <li><strong>New Test</strong>: Opens the Test Builder to create a new test from scratch.</li>
+  <li><strong>Import Tests</strong>: Allows you to import tests from files or external sources.</li>
+  <li><strong>Export Test</strong>: Lets you export your tests for backup or sharing (enabled when a test is selected).</li>
+  <li><strong>Trash All</strong>: Deletes all saved tests from local storage.</li>
+  <li><strong>Soft Reset</strong>: Hides all tests locally but keeps your stats history.</li>
+</ul>
+
+<h4 class="text-md font-semibold mt-4 mb-2">2. Creating a Test (Test Builder)</h4>
+<ul class="list-disc pl-6 text-[var(--text-secondary)] mb-4">
+  <li><strong>Access</strong>: Click "New Test" in the sidebar.</li>
+  <li><strong>Test Details</strong>: Fill in Subject, Subject Component (e.g., History 101), and Description.
+    <ul class="list-disc pl-6">
+      <li>You can select a subject or create a new one.</li>
+      <li>Manage or remove subjects using the buttons next to the dropdown.</li>
+    </ul>
+  </li>
+  <li><strong>Save Test</strong>: Click "Save Test" to store your test in local storage.</li>
+</ul>
+
+<strong>Building Questions</strong>
+<ul class="list-disc pl-6 text-[var(--text-secondary)] mb-4">
+  <li><strong>Add Question</strong>: Click "+ Question" to add a new question.</li>
+  <li><strong>Bulk Add</strong>: Use "Bulk" to add multiple questions at once.</li>
+  <li><strong>Question Editor</strong>: Edit question text, type (multiple choice, true/false, etc.), options, and images.</li>
+  <li><strong>Move/Remove</strong>: Use the up/down arrows to reorder questions, or delete them.</li>
+  <li><strong>Save Question</strong>: Save changes to the current question.</li>
+</ul>
+
+<strong>Question Types Supported</strong>
+<ul class="list-disc pl-6 text-[var(--text-secondary)] mb-4">
+  <li><strong>Multiple Choice</strong>: Add options, select the correct answer.</li>
+  <li><strong>True/False</strong>: Choose the correct value.</li>
+  <li><strong>Short Answer</strong>: Enter the expected answer.</li>
+  <li><strong>Image Support</strong>: Attach images to questions for visual reference.</li>
+</ul>
+
+<h4 class="text-md font-semibold mt-4 mb-2">3. Managing Tests</h4>
+<ul class="list-disc pl-6 text-[var(--text-secondary)] mb-4">
+  <li><strong>Test List</strong>: All saved tests appear in the main list. Click a test to view details.</li>
+  <li><strong>Test Info Panel</strong>: Shows subject, name, number of questions, creation date, times taken, and time spent.</li>
+  <li><strong>Edit/Delete</strong>: Edit or delete tests as needed.</li>
+</ul>
+
+<h4 class="text-md font-semibold mt-4 mb-2">4. Running a Test (Test Runner)</h4>
+<ul class="list-disc pl-6 text-[var(--text-secondary)] mb-4">
+  <li><strong>Start</strong>: Click a test in the list, then choose to "Run" it.</li>
+  <li><strong>Test Runner UI</strong>:
+    <ul class="list-disc pl-6">
+      <li>Title: Displays the test name.</li>
+      <li>Questions: Each question is shown one at a time.</li>
+      <li>Navigation: Use "Back" and "Next" to move between questions.</li>
+      <li>Answer Input: Select or enter your answer (radio buttons for multiple choice/true-false, text for short answer).</li>
+      <li>Images: If a question has an image, it will be displayed.</li>
+    </ul>
+  </li>
+  <li><strong>Progress</strong>: Your answers are tracked as you move through the test.</li>
+  <li><strong>Completion</strong>: At the end, your results are shown, including score and time taken.</li>
+</ul>
+
+<h4 class="text-md font-semibold mt-4 mb-2">5. Importing & Exporting Tests</h4>
+<ul class="list-disc pl-6 text-[var(--text-secondary)] mb-4">
+  <li><strong>Import</strong>: Use the "Import Tests" button to load tests from a file. Supported formats are typically JSON.</li>
+  <li><strong>Export</strong>: Select a test and click "Export Test" to save it as a file for sharing or backup.</li>
+</ul>
+
+<h4 class="text-md font-semibold mt-4 mb-2">6. Stats & Achievements</h4>
+<ul class="list-disc pl-6 text-[var(--text-secondary)] mb-4">
+  <li><strong>Tracking</strong>: Your test history, scores, and time spent are tracked and shown in the Statistics section.</li>
+  <li><strong>Achievements</strong>: Completing tests and improving scores unlocks achievements.</li>
+</ul>
+
+<h4 class="text-md font-semibold mt-4 mb-2">7. Tips</h4>
+<ul class="list-disc pl-6 text-[var(--text-secondary)] mb-4">
+  <li>Use the "Bulk" add feature to quickly create many questions.</li>
+  <li>Soft Reset is useful for hiding tests without losing your progress stats.</li>
+  <li>You can manage custom subjects for better organization.</li>
+  <li>Images can be added to questions for visual learning.</li>
+</ul>
+
+          </div>
+          <div id="flashcardsHelp" style="display:none">
+<h3 class="text-lg font-bold text-[var(--primary-color)] mb-2">FocusPath Flashcards Page — Complete Guide</h3>
+
+<h4 class="text-md font-semibold mt-4 mb-2">Overview</h4>
+<p class="mb-4">The Flashcards section lets you create, import, export, and study custom flashcard sets for any subject. You can build cards, organize sets, run study sessions, and track your progress.</p>
+
+<h4 class="text-md font-semibold mt-4 mb-2">1. Sidebar Actions</h4>
+<ul class="list-disc pl-6 text-[var(--text-secondary)] mb-4">
+  <li><strong>Flashcard Home</strong>: Returns you to the main Flashcards dashboard.</li>
+  <li><strong>New Set</strong>: Opens the Card Builder to create a new flashcard set.</li>
+  <li><strong>Import Sets</strong>: Allows you to import flashcard sets from files or external sources.</li>
+  <li><strong>Export Set</strong>: Lets you export your sets for backup or sharing (enabled when a set is selected).</li>
+  <li><strong>Trash All</strong>: Deletes all saved flashcard sets from local storage.</li>
+  <li><strong>Soft Reset</strong>: Hides all flashcards locally but keeps your stats history.</li>
+</ul>
+
+<h4 class="text-md font-semibold mt-4 mb-2">2. Creating a Flashcard Set (Card Builder)</h4>
+<ul class="list-disc pl-6 text-[var(--text-secondary)] mb-4">
+  <li><strong>Access</strong>: Click "New Set" in the sidebar.</li>
+  <li><strong>Set Details</strong>: Fill in Subject, Subject Component (e.g., Biology Terms 101), and Description.
+    <ul class="list-disc pl-6">
+      <li>You can select a subject or create a new one.</li>
+      <li>Manage or remove subjects using the buttons next to the dropdown.</li>
+    </ul>
+  </li>
+  <li><strong>Save Set</strong>: Click "Save Set" to store your flashcard set in local storage.</li>
+</ul>
+
+<strong>Building Cards</strong>
+<ul class="list-disc pl-6 text-[var(--text-secondary)] mb-4">
+  <li><strong>Add Card</strong>: Click "+ Card" to add a new card.</li>
+  <li><strong>Bulk Add</strong>: Use "Bulk" to add multiple cards at once (format: Front :: Back per line).</li>
+  <li><strong>Card Editor</strong>: Edit card front, back, tags, hint, and image.</li>
+  <li><strong>Move/Remove</strong>: Use the up/down arrows to reorder cards, or delete them.</li>
+  <li><strong>Save Card</strong>: Save changes to the current card.</li>
+</ul>
+
+<strong>Card Features Supported</strong>
+<ul class="list-disc pl-6 text-[var(--text-secondary)] mb-4">
+  <li><strong>Front/Back</strong>: Enter the term/question on the front and the answer/definition on the back.</li>
+  <li><strong>Tags</strong>: Add tags for organization and filtering.</li>
+  <li><strong>Hint</strong>: Add a hint to help during study sessions.</li>
+  <li><strong>Image Support</strong>: Attach images to cards for visual learning.</li>
+</ul>
+
+<h4 class="text-md font-semibold mt-4 mb-2">3. Managing Flashcard Sets</h4>
+<ul class="list-disc pl-6 text-[var(--text-secondary)] mb-4">
+  <li><strong>Set List</strong>: All saved sets appear in the main list. Click a set to view details or start a study session.</li>
+  <li><strong>Edit/Delete</strong>: Edit or delete sets as needed.</li>
+</ul>
+
+<h4 class="text-md font-semibold mt-4 mb-2">4. Studying Flashcards (Card Runner)</h4>
+<ul class="list-disc pl-6 text-[var(--text-secondary)] mb-4">
+  <li><strong>Start</strong>: Click a set in the list, then choose to "Study" it.</li>
+  <li><strong>Card Runner UI</strong>:
+    <ul class="list-disc pl-6">
+      <li>Meta Info: Shows subject and card number.</li>
+      <li>Card Stage: Displays the current card.</li>
+      <li>Flip: Click the card to flip between front and back.</li>
+      <li>Navigation: Use "Previous" and "Next" to move between cards.</li>
+      <li>Hint: Click "Hint" to show the card's hint (if available).</li>
+      <li>Finish: Click "Finish" to end the session and log your study.</li>
+      <li>Return: Click "Return to Set" to go back to the set list.</li>
+    </ul>
+  </li>
+  <li><strong>Progress</strong>: Your study sessions are tracked, including cards seen and time spent.</li>
+</ul>
+
+<h4 class="text-md font-semibold mt-4 mb-2">5. Importing & Exporting Sets</h4>
+<ul class="list-disc pl-6 text-[var(--text-secondary)] mb-4">
+  <li><strong>Import</strong>: Use the "Import Sets" button to load sets from a file. Supported formats are typically JSON.</li>
+  <li><strong>Export</strong>: Select a set and click "Export Set" to save it as a file for sharing or backup.</li>
+</ul>
+
+<h4 class="text-md font-semibold mt-4 mb-2">6. Stats & Achievements</h4>
+<ul class="list-disc pl-6 text-[var(--text-secondary)] mb-4">
+  <li><strong>Tracking</strong>: Your flashcard study history, cards seen, and time spent are tracked and shown in the Statistics section.</li>
+  <li><strong>Achievements</strong>: Completing study sessions and reviewing cards unlocks achievements.</li>
+</ul>
+
+<h4 class="text-md font-semibold mt-4 mb-2">7. Tips</h4>
+<ul class="list-disc pl-6 text-[var(--text-secondary)] mb-4">
+  <li>Use the "Bulk" add feature to quickly create many cards.</li>
+  <li>Soft Reset is useful for hiding sets without losing your progress stats.</li>
+  <li>You can manage custom subjects for better organization.</li>
+  <li>Images and hints can be added to cards for enhanced learning.</li>
+</ul>
+
+<p>If you need step-by-step instructions for a specific action, let me know!</p>
+          </div>
+          <div id="dictionaryHelp" style="display:none">
+            <h2 class="text-2xl font-bold mb-2">Dictionary Help Guide</h2>
+            <p class="mb-4">Welcome to the FocusPath Dictionary! This tool helps you build, organize, and search key terms and definitions for any subject. Your dictionary powers future tests and games, making it a central resource for your learning.</p>
+            <h3 class="text-lg font-semibold mt-4 mb-2">Main Features:</h3>
+            <ol class="list-decimal ml-6 mb-4">
+              <li class="mb-2"><b>Term List Editor (Left Panel)</b><br>
+                <ul class="list-disc ml-6">
+                  <li>Subject Selector: Choose a broad subject (Art, Math, Science, etc.) for your term list.</li>
+                  <li>Component Subject: Optionally specify a class or component (e.g., "Art 201").</li>
+                  <li>Term Staging List: Add terms and definitions here before saving.</li>
+                  <li>Save List: Stores your current term list for future use.</li>
+                  <li>View List: Opens the selected list for review and editing.</li>
+                  <li>Delete List: Removes the selected list permanently.</li>
+                  <li>Trash All: Deletes all saved term lists and their terms.</li>
+                </ul>
+              </li>
+              <li class="mb-2"><b>Dictionary Search & Add (Center Panel)</b><br>
+                <ul class="list-disc ml-6">
+                  <li>Search Bar: Type a word or phrase and click "Lookup" or press Enter.</li>
+                  <li>Lookup: Searches for definitions using an online dictionary API. Results show the word, meanings, and definitions.</li>
+                  <li>Add: After searching, click "Add" to stage the word and its definition for your term list.</li>
+                  <li>Results: Definitions are displayed with part of speech and example usage (if available).</li>
+                </ul>
+              </li>
+              <li class="mb-2"><b>Term List Display</b><br>
+                <ul class="list-disc ml-6">
+                  <li>Terms List: Shows all terms and definitions in your current list. Scroll to review or edit.</li>
+                  <li>List Detail View: Opens when you view a saved list, allowing for further editing or exporting.</li>
+                </ul>
+              </li>
+              <li class="mb-2"><b>Statistics Tracking</b><br>
+                <ul class="list-disc ml-6">
+                  <li>The app tracks your usage invisibly (searches, lists created/updated/deleted, exports to flashcards, time spent searching) to help you monitor your study habits.</li>
+                </ul>
+              </li>
+            </ol>
+            <h3 class="text-lg font-semibold mt-4 mb-2">How to Use:</h3>
+            <ul class="list-disc ml-6 mb-4">
+              <li>Build a Term List: Select a subject, add terms and definitions, then save. You can create multiple lists for different subjects or classes.</li>
+              <li>Search for Definitions: Use the search bar to look up words. Add useful definitions directly to your term list.</li>
+              <li>Review & Edit: View saved lists, edit terms, or delete lists as needed.</li>
+              <li>Export to Flashcards: Use your dictionary lists to generate flashcards for study and review (see Flashcards Help for details).</li>
+            </ul>
+            <h3 class="text-lg font-semibold mt-4 mb-2">Tips:</h3>
+            <ul class="list-disc ml-6 mb-4">
+              <li>Use concise, clear definitions for best results in tests and games.</li>
+              <li>Organize terms by subject and class for easy retrieval.</li>
+              <li>Regularly review and update your lists to keep them relevant.</li>
+              <li>Use the "Trash All" button with caution—it deletes all your saved lists!</li>
+            </ul>
+            <h3 class="text-lg font-semibold mt-4 mb-2">Privacy:</h3>
+            <ul class="list-disc ml-6 mb-4">
+              <li>All data is stored locally in your browser. No terms or definitions are sent to external servers except for dictionary lookups.</li>
+            </ul>
+            <h3 class="text-lg font-semibold mt-4 mb-2">Troubleshooting:</h3>
+            <ul class="list-disc ml-6 mb-4">
+              <li>If a word isn’t found, try a simpler form or check your spelling.</li>
+              <li>If buttons are disabled, ensure you have selected or staged a list/term.</li>
+            </ul>
+          </div>
+          <div id="gamesHelp" style="display:none">
+            <h3 class="text-lg font-bold text-[var(--primary-color)] mb-2">Games Page Help & Guide</h3>
+            <ul class="list-disc pl-6 text-[var(--text-secondary)]">
+              <li>Play learning games to reinforce study concepts.</li>
+              <li>Choose from available games to practice terms and definitions.</li>
+              <li>Track your game scores and achievements.</li>
+              <li>Games use your flashcards and dictionary terms for questions.</li>
+              <li>Soft Reset hides all game data locally but keeps your stats history.</li>
+            </ul>
+            <h2 class="text-2xl font-bold mb-2">Games Help Guide</h2>
+            <p class="mb-4">FocusPath offers experimental learning games to reinforce your study concepts. These games use your saved flashcards and dictionary terms to create interactive challenges. All progress is tracked locally for privacy.</p>
+            <h3 class="text-lg font-semibold mt-4 mb-2">Main Games Page</h3>
+            <ul class="list-disc ml-6 mb-4">
+              <li>Sidebar & Navigation: Access all FocusPath tools. Motivational Marty appears in the sidebar for encouragement.</li>
+              <li>Game Cards: The main grid displays available games. Click a card to launch a game.</li>
+              <li>Session Tracking: Games only track your progress for the current session (not across devices).</li>
+            </ul>
+            <h3 class="text-lg font-semibold mt-4 mb-2">Game Types & Functions</h3>
+            <ul class="list-disc ml-6 mb-4">
+              <li><b>Flash Card Sprint</b><br>
+                <ul class="list-disc ml-6">
+                  <li>Purpose: Rapidly review flashcards from your saved sets.</li>
+                  <li>Settings: Choose total time (seconds) and which subjects to include.</li>
+                  <li>Gameplay: Cards are shown one by one; answer as quickly as possible.</li>
+                  <li>Progress: Tracks accuracy and speed for the session.</li>
+                </ul>
+              </li>
+              <li><b>Concept Typer</b><br>
+                <ul class="list-disc ml-6">
+                  <li>Purpose: Practice recalling key terms from their definitions.</li>
+                  <li>Gameplay: A definition is shown. Type the correct term and press Enter. Immediate feedback: "Correct!" or the correct answer if missed. Click "Next" to proceed to the next concept. Stats are shown: accuracy, average time per answer. At the end, see your final accuracy and average time.</li>
+                  <li>Concepts: Uses a built-in set of science terms and definitions (can be expanded in code).</li>
+                </ul>
+              </li>
+              <li><b>Quick Math Drill</b><br>
+                <ul class="list-disc ml-6">
+                  <li>Purpose: Test and improve your mental math speed and accuracy.</li>
+                  <li>Settings: Set per-question time (seconds) and select which operations (+, -, ×, ÷) to include.</li>
+                  <li>Gameplay: Solve randomly generated arithmetic problems before the timer runs out. One mistake or timeout ends the game.</li>
+                  <li>Progress: Tracks score, accuracy, and time per question. Review all attempts at the end, with correct/incorrect answers and time taken.</li>
+                  <li>Tips: Use settings to focus on specific operations or increase difficulty. Play repeatedly to improve speed and accuracy.</li>
+                </ul>
+              </li>
+              <li><b>Other Games</b><br>
+                <ul class="list-disc ml-6">
+                  <li>More games are planned (spaced repetition sprint, formula builder, logic rush).</li>
+                </ul>
+              </li>
+            </ul>
+            <h3 class="text-lg font-semibold mt-4 mb-2">How to Use</h3>
+            <ul class="list-disc ml-6 mb-4">
+              <li>Open the Games Page: Click "Games" in the sidebar.</li>
+              <li>Select a Game: Click a game card to launch.</li>
+              <li>Adjust Settings (if available): For games like Flash Card Sprint, set your preferred time and subjects.</li>
+              <li>Play: Follow on-screen instructions. Most games provide instant feedback and track your stats.</li>
+              <li>Review Results: At the end of each game, review your accuracy and speed.</li>
+            </ul>
+            <h3 class="text-lg font-semibold mt-4 mb-2">Tips</h3>
+            <ul class="list-disc ml-6 mb-4">
+              <li>Use your own flashcard and dictionary sets for personalized practice.</li>
+              <li>Try Concept Typer to improve recall of definitions and key terms.</li>
+              <li>Play regularly to reinforce learning and track your improvement.</li>
+            </ul>
+            <h3 class="text-lg font-semibold mt-4 mb-2">Privacy</h3>
+            <ul class="list-disc ml-6 mb-4">
+              <li>All game progress and stats are stored locally in your browser.</li>
+              <li>No data is sent to external servers.</li>
+            </ul>
+            <h3 class="text-lg font-semibold mt-4 mb-2">Troubleshooting</h3>
+            <ul class="list-disc ml-6 mb-4">
+              <li>If no flashcard sets are available, create some in the Flashcards section first.</li>
+              <li>If a game doesn't load, refresh the page or check your browser's local storage settings.</li>
+            </ul>
+            </div>
+          <div id="statsHelp" style="display:none">
+            <h2 class="text-2xl font-bold mb-2">Statistics & Achievements Help Guide</h2>
+            <p class="mb-4">The Statistics page provides a detailed overview of your study progress and performance across all FocusPath tools. It helps you visualize your learning journey, identify strengths and areas for improvement, and stay motivated.</p>
+            <h3 class="text-lg font-semibold mt-4 mb-2">Main Functions:</h3>
+            <ul class="list-disc ml-6 mb-4">
+              <li><b>Stats Home:</b> View a summary of your overall study activity.</li>
+              <li><b>Test Stats:</b> See data on tests created, attempts, scores, and trends over time. Charts show your average scores, subject performance, and study streaks.</li>
+              <li><b>Flashcard Stats:</b> Track flashcard sets created, cards studied, session counts, and subject breakdowns.</li>
+              <li><b>Dictionary Stats:</b> Monitor term lists, searches, and usage patterns.</li>
+              <li><b>Trophy Room:</b> View all achievements and badges earned for study milestones and skill mastery.</li>
+              <li><b>Hard Reset:</b> Erase all study data except achievements (use with caution).</li>
+            </ul>
+            <h3 class="text-lg font-semibold mt-4 mb-2">Why is it Useful?</h3>
+            <ul class="list-disc ml-6 mb-4">
+              <li><b>Progress Tracking:</b> See how much you’ve studied, your test scores, and flashcard mastery.</li>
+              <li><b>Motivation:</b> Visual charts and streaks encourage consistent study habits.</li>
+              <li><b>Goal Setting:</b> Achievements and badges help you set and reach learning goals.</li>
+              <li><b>Self-Assessment:</b> Identify subjects or skills that need more attention.</li>
+              <li><b>Privacy:</b> All stats are stored locally in your browser.</li>
+            </ul>
+            <h3 class="text-lg font-semibold mt-4 mb-2">Achievements System</h3>
+            <ul class="list-disc ml-6 mb-4">
+              <li><b>Automatic Tracking:</b> Achievements are unlocked as you reach milestones (e.g., creating tests, scoring high, maintaining streaks, studying multiple subjects).</li>
+              <li><b>Badges & Trophies:</b> Earn badges for activities like “First Test Created”, “Math Mastery”, “Flashcard Marathon”, and more.</li>
+              <li><b>Notifications:</b> Achievement notifications appear outside active study/test pages, so they don’t interrupt your focus.</li>
+              <li><b>Trophy Room:</b> View all earned achievements and see which ones you’re close to unlocking.</li>
+            </ul>
+            <h3 class="text-lg font-semibold mt-4 mb-2">Why Achievements Matter</h3>
+            <ul class="list-disc ml-6 mb-4">
+              <li><b>Motivation:</b> Celebrate your progress and keep pushing for new goals.</li>
+              <li><b>Skill Mastery:</b> Badges highlight your strengths and encourage balanced study.</li>
+              <li><b>Streaks & Consistency:</b> Streak achievements reward regular study habits.</li>
+              <li><b>Personalized Goals:</b> Achievements adapt to your study style and subjects.</li>
+            </ul>
+            <h3 class="text-lg font-semibold mt-4 mb-2">Tips</h3>
+            <ul class="list-disc ml-6 mb-4">
+              <li>Visit the Statistics page regularly to review your progress.</li>
+              <li>Use achievements as motivation to try new subjects and maintain study streaks.</li>
+              <li>All data is private and stored locally—your stats and achievements are yours alone.</li>
+            </ul>
+          </div>
+          <div id="eventHelp" style="display:none">
+            <h2 class="text-2xl font-bold mb-2">Event Planner Help Guide</h2>
+            <p class="mb-4">The Event Planner in FocusPath helps you organize your study schedule, track important deadlines, and stay motivated. It’s designed to make planning and managing your academic life simple and effective.</p>
+            <h3 class="text-lg font-semibold mt-4 mb-2">Main Features</h3>
+            <ul class="list-disc ml-6 mb-4">
+              <li><b>Calendar View:</b> See your month at a glance. Navigate between months using the arrow buttons.</li>
+              <li><b>Upcoming Events List:</b> Displays all your upcoming events, deadlines, and study sessions in a scrollable list for quick reference.</li>
+              <li><b>Create Event Form:</b> Add new events with details like date, time, type, and description. Double-click a date on the calendar to autofill the date in the form.
+                <ul class="list-disc ml-6">
+                  <li><b>Date & Time:</b> Specify the exact date and time, or mark events as “All Day.”</li>
+                  <li><b>Event Type:</b> Choose from Test/Exam, Study Time, Group Activity, Practice, and more.</li>
+                  <li><b>Description:</b> Add notes or details to help you remember what the event is about.</li>
+                </ul>
+              </li>
+              <li><b>Event Autofill:</b> Double-clicking a date on the calendar automatically fills the event form with that date.</li>
+              <li><b>Event Management:</b> Easily add, view, and track events. Events are displayed both on the calendar and in the upcoming list.</li>
+            </ul>
+            <h3 class="text-lg font-semibold mt-4 mb-2">Why is it Useful?</h3>
+            <ul class="list-disc ml-6 mb-4">
+              <li><b>Organization:</b> Keep track of all your study-related events, deadlines, and goals in one place.</li>
+              <li><b>Time Management:</b> Plan your study sessions, exams, and group activities to avoid last-minute stress.</li>
+              <li><b>Motivation:</b> Seeing your schedule and progress helps you stay focused and motivated.</li>
+              <li><b>Reminders:</b> Never miss an important test, study session, or group activity.</li>
+              <li><b>Customization:</b> Add detailed notes and choose event types to fit your personal study style.</li>
+              <li><b>Privacy:</b> All events are stored locally in your browser—no data is sent to external servers.</li>
+            </ul>
+            <h3 class="text-lg font-semibold mt-4 mb-2">Tips</h3>
+            <ul class="list-disc ml-6 mb-4">
+              <li>Use the calendar to plan your study week and set realistic goals.</li>
+              <li>Add all your exams, assignments, and study sessions as events for better tracking.</li>
+              <li>Review the Upcoming Events list regularly to stay on top of your schedule.</li>
+              <li>Double-click dates on the calendar for quick event creation.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <script>
+        // Show help topic when button is clicked
+        document.querySelectorAll('nav button').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const topics = ['testHelp','flashcardsHelp','dictionaryHelp','gamesHelp','statsHelp','eventHelp'];
+            topics.forEach(id => document.getElementById(id).style.display = 'none');
+            document.getElementById('defaultHelp').style.display = 'none';
+            const topicId = btn.textContent.replace(/\s/g,'').toLowerCase();
+            if(topicId.includes('test')) document.getElementById('testHelp').style.display = 'block';
+            else if(topicId.includes('flashcard')) document.getElementById('flashcardsHelp').style.display = 'block';
+            else if(topicId.includes('dictionary')) document.getElementById('dictionaryHelp').style.display = 'block';
+            else if(topicId.includes('game')) document.getElementById('gamesHelp').style.display = 'block';
+            else if(topicId.includes('stat')) document.getElementById('statsHelp').style.display = 'block';
+            else if(topicId.includes('event')) document.getElementById('eventHelp').style.display = 'block';
+          });
+        });
+      </script>
+    </main>
+  </div>
+</div>
+<div id="fpFooter" style="font-size:11px; color:var(--text-secondary); text-align:center; position:absolute; left:16rem; right:0; bottom:0; z-index:9999; background:rgba(240,242,245,0.95); pointer-events:none; box-shadow:0 -2px 8px rgba(0,0,0,0.04);">© FocusPath 2025. 4a4152564953 Applications EST. 2025</div>
+</body>
+</html>

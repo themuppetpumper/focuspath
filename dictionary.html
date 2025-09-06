@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>FocusPath — Dictionary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <style type="text/tailwindcss">
+    :root { --primary-color:#0d78f2; --background-color:#f0f2f5; --text-primary:#111418; --text-secondary:#60748a; --white:#ffffff; --border-color:#e5e7eb; }
+    body { font-family:'Lexend',sans-serif; }
+    .hover-bg-primary-light:hover{ background:#e6f2ff; }
+  </style>
+</head>
+<body class="bg-[var(--background-color)]">
+<div class="flex min-h-screen">
+  <aside class="w-64 bg-[var(--white)] shadow-md flex-col justify-between hidden md:flex">
+    <div class="p-6 flex flex-col h-full">
+      <div class="flex items-center gap-3 mb-8">
+        <div class="w-8 h-8 text-[var(--primary-color)]">
+          <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"/></svg>
+        </div>
+        <h1 class="text-[var(--text-primary)] text-2xl font-bold">FocusPath</h1>
+      </div>
+      <div class="flex items-center justify-between px-1 mb-2">
+        <h4 class="text-[var(--text-secondary)] text-xs font-semibold uppercase tracking-wide">Term Lists</h4>
+        <button id="trashAllLists" class="text-[10px] text-red-600 hover:underline" title="Delete ALL saved term lists and their terms">Trash All</button>
+      </div>
+      <div id="termLists" class="flex flex-col gap-2 overflow-auto pr-1" style="max-height:55vh;"></div>
+    <!-- Help button removed from top -->
+        <div class="mt-auto pt-6 flex flex-col items-center">
+          <a href="helper.html" class="text-xs text-[var(--text-secondary)] hover:text-[var(--primary-color)] px-4 py-2 rounded transition-colors border border-transparent hover:border-[var(--primary-color)]">Help</a>
+        </div>
+    </div>
+  </aside>
+  <div class="flex-1 flex flex-col">
+    <header class="bg-[var(--white)] shadow-sm flex items-center justify-between p-4">
+      <div class="flex-1 flex justify-center items-center">
+        <div class="flex gap-4">
+          <a href="index.html" title="Home" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11.5z"/></svg></a>
+          <a href="flashcards.html" title="Flashcards" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v12H4zM4 20h16v-2H4z"/></svg></a>
+          <a href="test.html" title="Tests" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M4 17.25V21h3.75L17.81 10.94l-3.75-3.75L4 17.25Zm14.71-8.04a1 1 0 0 0 0-1.41l-2.54-2.54a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 2.03-2.03Z"/></svg></a>
+          <a href="games.html" title="Games" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 3h12a3 3 0 0 1 3 3v9.5a3 3 0 0 1-4.34 2.65l-1.97-.99a1 1 0 0 0-.89 0l-1.97.99a3 3 0 0 1-2.66 0l-1.97-.99a1 1 0 0 0-.89 0l-1.97.99A3 3 0 0 1 3 15.5V6a3 3 0 0 1 3-3Zm2.5 5A1.5 1.5 0 1 0 8.5 8 1.5 1.5 0 0 0 8.5 8Zm7 0A1.5 1.5 0 1 0 15.5 8 1.5 1.5 0 0 0 15.5 8Z"/></svg></a>
+          <a href="stats.html" title="Statistics" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M5 9h3v10H5zM10.5 4h3v15h-3zM16 13h3v6h-3z"/></svg></a>
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" style='background-image:url("https://lh3.googleusercontent.com/aida-public/AB6AXuCAMzclmWsDYh9STHWC4bYSZWCP2ZqUSi2Tv7hk1t__UQisqFXVQ847TNl6gP_A6HiQhQKr_CJBhEgo17C6MNYopaP4i-ShKU-5ZtGp3UlaHub43muyWTbIPvF09V7hMR6ttWWZOJlbuGFkda_-y7WD-UZj9QHUwjJmdGKiTPHxGhdQPd-ppbdiZGRGqmykWE5pGrwNm08sSVmw8vLTURway5Ulqo9Aw6Vcbldg3SiZ4WZxAvQTNxsRzlS3YRuejEy822RS");'></div>
+      </div>
+    </header>
+    <main class="flex-1 p-6 lg:p-8 space-y-8">
+      <div>
+        <h1 class="text-3xl font-bold text-[var(--text-primary)] mb-2">Subject Dictionary</h1>
+        <p class="text-[var(--text-secondary)] text-sm">Add key terms and concise definitions. Use it to power future tests and games.</p>
+      </div>
+      <div id="dictionaryMainGrid" class="grid lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-1 bg-white rounded-lg shadow p-5 space-y-4" id="termListEditorPanel">
+          <h3 class="text-lg font-semibold text-[var(--text-primary)]">Term List Editor</h3>
+          <div>
+            <label class="block text-xs font-semibold text-[var(--text-secondary)] mb-1" for="termSubjectSelect">Subject</label>
+            <select id="termSubjectSelect" class="w-full rounded border border-[var(--border-color)] p-2 text-sm bg-white">
+              <option>Art</option>
+              <option>English/Language</option>
+              <option>Math</option>
+              <option>Science</option>
+              <option>Social Studies</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-[var(--text-secondary)] mb-1" for="componentSubjectInput">Component Subject <span class="font-normal text-[10px] text-[var(--text-secondary)]">(e.g., Art 201)</span></label>
+            <input id="componentSubjectInput" class="w-full rounded border border-[var(--border-color)] p-2 text-sm bg-white" placeholder="Optional specific class / component" />
+          </div>
+          <div id="termStagingList" class="h-72 overflow-auto border border-[var(--border-color)] rounded p-2 space-y-2 text-sm bg-[var(--background-color)]"></div>
+          <button id="saveTermsBtn" class="w-full px-4 py-2 rounded bg-[var(--primary-color)] text-white text-xs font-medium disabled:opacity-50">Save List</button>
+          <button id="viewListBtn" class="w-full px-4 py-2 rounded bg-blue-600 text-white text-xs font-medium disabled:opacity-50 flex items-center justify-center gap-2" disabled>
+            <span>View List</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5c-7.633 0-11 7-11 7s3.367 7 11 7 11-7 11-7-3.367-7-11-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"/><circle cx="12" cy="12" r="2.5" fill="#fff"/></svg>
+          </button>
+          <button id="deleteListBtn" class="w-full px-4 py-2 rounded bg-red-600 text-white text-xs font-medium disabled:opacity-50 flex items-center justify-center gap-2" disabled>
+            <span>Delete List</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 6h14l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6Z"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M3 6h18"/></svg>
+          </button>
+        </div>
+        <div class="lg:col-span-2 space-y-5">
+          <div class="bg-white rounded-lg shadow p-5">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-4">
+              <div class="flex-1 flex gap-2">
+                <input id="dictInput" class="flex-1 rounded border border-[var(--border-color)] p-2 text-sm" placeholder="Search terms or definitions..."/>
+                <button id="dictSearch" class="px-3 py-2 rounded bg-[var(--primary-color)] text-white text-xs font-medium">Lookup</button>
+                <button id="addTermBtn" class="px-3 py-2 rounded bg-green-600 text-white text-xs font-medium">Add</button>
+              </div>
+            </div>
+            <div id="dictResult" class="space-y-3 mb-6 text-sm"></div>
+            <div id="termsList" class="space-y-3 max-h-[480px] overflow-auto pr-1"></div>
+          </div>
+        </div>
+      </div>
+      <div id="listDetailView" class="hidden"></div>
+    </main>
+  </div>
+</div>
+
+<script src="themes.js"></script>
+<script src="achievements.js"></script>
+<script src="dictionary.js"></script>
+<script>
+(function(){
+  const STORAGE_KEY='fpDictionaryTerms';
+  const LISTS_KEY='fpDictionaryLists';
+  function loadTerms(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); } catch { return []; } }
+  function saveTerms(list){ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
+  function loadLists(){ try { return JSON.parse(localStorage.getItem(LISTS_KEY)||'[]'); } catch { return []; } }
+  function saveLists(list){ localStorage.setItem(LISTS_KEY, JSON.stringify(list)); }
+  function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+  function purgeOrphanTerms(){
+    const lists=loadLists();
+    const valid=new Set(lists.map(l=> l.id));
+    const terms=loadTerms();
+    const filtered=terms.filter(t=> t.listId && valid.has(t.listId));
+    if(filtered.length!==terms.length){ saveTerms(filtered); }
+  }
+
+  // New panel elements
+  const subjectSelect=document.getElementById('termSubjectSelect');
+  const componentSubjectInput=document.getElementById('componentSubjectInput');
+  const stagingList=document.getElementById('termStagingList');
+  const saveBtn=document.getElementById('saveTermsBtn');
+  const addBtn=document.getElementById('addTermBtn');
+  let staging=[]; // {subject, word, definition}
+  const termListsEl=document.getElementById('termLists');
+  const trashAllListsBtn=document.getElementById('trashAllLists');
+  const listEl=document.getElementById('termsList');
+  const mainGrid=document.getElementById('dictionaryMainGrid');
+  const listDetailView=document.getElementById('listDetailView');
+  const viewListBtn=document.getElementById('viewListBtn');
+  const deleteListBtn=document.getElementById('deleteListBtn');
+  let activeEditingListId=null; // if editing existing list
+  const filterQuery=document.getElementById('dictInput');
+  // export/import removed
+
+  function render(){
+  // Suppress saved terms list under search area per new design.
+  listEl.innerHTML='';
+  }
+  function renderStaging(){
+    const subj=subjectSelect.value;
+    const items=staging.filter(s=> s.subject===subj);
+    stagingList.innerHTML = items.map((t,i)=>`<div class='bg-white border rounded p-2 flex flex-col gap-1'>
+      <div class='flex justify-between gap-2'>
+        <span class='font-medium text-[var(--text-primary)] text-xs'>${escapeHtml(t.word)}</span>
+        <button data-remove='${i}' class='text-red-500 text-[10px] hover:underline'>Remove</button>
+      </div>
+      <div class='text-[10px] text-[var(--text-secondary)] whitespace-pre-line leading-snug'>${escapeHtml(t.definition)}</div>
+    </div>`).join('') || `<div class='text-[10px] text-[var(--text-secondary)] italic'>No staged terms yet.</div>`;
+    saveBtn.disabled=!staging.length;
+    stagingList.querySelectorAll('[data-remove]').forEach(btn=> btn.addEventListener('click',()=>{
+      const idx=Number(btn.getAttribute('data-remove'));
+      // remove only in this subject subset
+      const subjItems=staging.filter(s=> s.subject===subj);
+      const others=staging.filter(s=> s.subject!==subj);
+      subjItems.splice(idx,1);
+      staging=[...others, ...subjItems];
+      renderStaging();
+    }));
+  }
+
+  addBtn.addEventListener('click', ()=>{
+  purgeOrphanTerms();
+    const subj=subjectSelect.value;
+    const last=window.__dictLastEntry;
+    const inputVal=filterQuery.value.trim();
+    if(!last && !inputVal){ alert('Lookup a term first.'); return; }
+    // If last entry matches input, use its first definition; else create minimal entry
+    let word=''; let definition='';
+    if(last && last.word){
+      word= last.word;
+      if(Array.isArray(last.meanings) && last.meanings.length){
+        const defs = last.meanings.flatMap(m=> (m.definitions||[]).map(d=> d.definition)).filter(Boolean);
+        definition = defs.slice(0,2).join('\n');
+      }
+    }
+    if(!word){ word = inputVal; definition=''; }
+    // Prevent duplicate (same subject+word)
+    const key= (subj+'|'+word).toLowerCase();
+    // Duplicate handling with orphan cleanup (terms left from older system or deleted lists)
+    const existingTerms=loadTerms();
+    const lists=loadLists();
+    const validIds=new Set(lists.map(l=> l.id));
+    const dupTerms = existingTerms.filter(t=> (t.subject+'|'+t.word).toLowerCase()===key);
+    if(dupTerms.length){
+      const validDup = dupTerms.find(t=> t.listId && validIds.has(t.listId));
+      if(validDup){
+        alert('Term already exists for this subject.');
+        return;
+      } else {
+        // purge orphan duplicates and continue
+        const remaining = existingTerms.filter(t=> !(t.subject && t.word && (t.subject+'|'+t.word).toLowerCase()===key));
+        saveTerms(remaining);
+      }
+    }
+    staging.push({ subject:subj, word, definition });
+    // Stats: track subject selected when adding term
+    try { const stats=JSON.parse(localStorage.getItem('fpDictionaryStats')||'{}');
+      stats.searches = stats.searches||{ total:0, byWord:{}, timeFocusedMs:0 };
+      stats.searches.bySubjectAdd = stats.searches.bySubjectAdd||{};
+      stats.searches.bySubjectAdd[subj] = (stats.searches.bySubjectAdd[subj]||0)+1;
+      stats.lastUpdated=Date.now();
+      localStorage.setItem('fpDictionaryStats', JSON.stringify(stats)); } catch{}
+    renderStaging();
+  // Clear the lookup result visual after adding
+  const dr=document.getElementById('dictResult'); if(dr) dr.innerHTML='';
+  });
+  subjectSelect.addEventListener('change', ()=>{ render(); renderStaging(); });
+  saveBtn.addEventListener('click',()=>{
+    const subj=subjectSelect.value;
+    const comp=(componentSubjectInput.value||'').trim();
+    const subset=staging.filter(s=> s.subject===subj);
+    if(!subset.length){ alert('No staged terms for this subject.'); return; }
+    const now=Date.now();
+    const lists=loadLists();
+    let listId=activeEditingListId;
+    if(listId){
+      // Update metadata
+      const list=lists.find(l=> l.id===listId);
+      if(list){ list.componentSubject=comp; list.subject=subj; list.name=`${subj} Terms`; }
+      saveLists(lists);
+      // Remove existing terms for this listId for this subject then re-add
+      let allTerms=loadTerms().filter(t=> !(t.listId===listId));
+      subset.forEach(t=> allTerms.push({ id:uid(), listId, subject:t.subject, word:t.word, definition:t.definition, created:now }));
+      saveTerms(allTerms);
+      staging = staging.filter(s=> s.subject!==subj);
+      renderStaging(); render(); renderTermLists();
+      alert('List updated.');
+      // Stats: list updated & subject usage
+      try { const stats=JSON.parse(localStorage.getItem('fpDictionaryStats')||'{}');
+        stats.lists = stats.lists||{ created:0, updated:0, deleted:0, bySubject:{} };
+        stats.lists.updated = (stats.lists.updated||0)+1;
+        stats.lists.bySubject = stats.lists.bySubject||{}; stats.lists.bySubject[subj]=(stats.lists.bySubject[subj]||0)+1;
+        stats.lastUpdated=Date.now(); localStorage.setItem('fpDictionaryStats', JSON.stringify(stats)); } catch{}
+    } else {
+      listId='lst-'+uid();
+      const listObj = { id:listId, subject:subj, componentSubject:comp, name:`${subj} Terms`, created:now };
+      lists.push(listObj); saveLists(lists);
+      const existing=loadTerms();
+      subset.forEach(t=> existing.push({ id:uid(), listId, subject:t.subject, word:t.word, definition:t.definition, created:now }));
+      saveTerms(existing);
+      staging = staging.filter(s=> s.subject!==subj);
+      renderStaging(); render(); renderTermLists();
+      componentSubjectInput.value='';
+      alert('Term list saved.');
+      activeEditingListId=listId; enableListActionButtons();
+      // Stats: list created & subject usage
+      try { const stats=JSON.parse(localStorage.getItem('fpDictionaryStats')||'{}');
+        stats.lists = stats.lists||{ created:0, updated:0, deleted:0, bySubject:{} };
+        stats.lists.created = (stats.lists.created||0)+1;
+        stats.lists.bySubject = stats.lists.bySubject||{}; stats.lists.bySubject[subj]=(stats.lists.bySubject[subj]||0)+1;
+        stats.lastUpdated=Date.now(); localStorage.setItem('fpDictionaryStats', JSON.stringify(stats)); } catch{}
+    }
+  });
+
+  function renderTermLists(){
+    const lists=loadLists();
+    if(!lists.length){ termListsEl.innerHTML='<div class="text-[10px] text-[var(--text-secondary)] italic">No saved term lists yet.</div>'; return; }
+    termListsEl.innerHTML='';
+    lists.sort((a,b)=> b.created - a.created); // newest first
+    lists.forEach(l=>{
+      const btn=document.createElement('button');
+      btn.className='text-left p-3 rounded-md border border-[var(--border-color)] bg-white hover:bg-[var(--background-color)] flex flex-col gap-0.5';
+      const compLine = l.componentSubject ? `<span class='text-[10px] text-[var(--text-secondary)] truncate'>${escapeHtml(l.componentSubject)}</span>` : `<span class='text-[10px] text-[var(--text-secondary)] italic'>General</span>`;
+      btn.innerHTML=`<span class='text-xs font-semibold text-[var(--text-primary)] truncate'>${escapeHtml(l.name)}</span>${compLine}`;
+      btn.dataset.listId=l.id;
+      btn.addEventListener('click',()=>{ loadListIntoEditor(l.id); });
+      termListsEl.appendChild(btn);
+    });
+  }
+  function loadListIntoEditor(listId){
+    const lists=loadLists();
+    const list=lists.find(l=> l.id===listId); if(!list) return;
+    activeEditingListId=listId;
+    subjectSelect.value=list.subject;
+    componentSubjectInput.value=list.componentSubject||'';
+    // Load its terms into staging (remove any existing staging for that subject first)
+    const listTerms = loadTerms().filter(t=> t.listId===listId);
+    staging = staging.filter(s=> s.subject!==list.subject); // clear existing for subject
+    listTerms.forEach(t=> staging.push({ subject:t.subject, word:t.word, definition:t.definition }));
+    renderStaging(); render(); enableListActionButtons();
+  }
+  function enableListActionButtons(){
+    const has=!!activeEditingListId;
+    viewListBtn.disabled=!has; deleteListBtn.disabled=!has; saveBtn.textContent = has? 'Update List':'Save List';
+  }
+  viewListBtn.addEventListener('click',()=>{ if(activeEditingListId) showListDetail(activeEditingListId); });
+  deleteListBtn.addEventListener('click',()=>{
+    if(!activeEditingListId) return;
+    if(!confirm('Delete this term list? This will remove its terms.')) return;
+    const listId=activeEditingListId;
+    let listSubject=null; try { const listsAll=loadLists(); const found=listsAll.find(l=> l.id===listId); if(found) listSubject=found.subject; } catch{}
+    const lists=loadLists().filter(l=> l.id!==listId); saveLists(lists);
+    const remainingTerms=loadTerms().filter(t=> t.listId!==listId); saveTerms(remainingTerms);
+    activeEditingListId=null; staging=[]; componentSubjectInput.value=''; renderStaging(); render(); renderTermLists(); enableListActionButtons();
+    // Stats: list deleted & subject usage (deletion count only, still increment subject usage to reflect interaction)
+    try { const stats=JSON.parse(localStorage.getItem('fpDictionaryStats')||'{}');
+      stats.lists = stats.lists||{ created:0, updated:0, deleted:0, bySubject:{} };
+      stats.lists.deleted = (stats.lists.deleted||0)+1;
+      if(listSubject){ stats.lists.bySubject = stats.lists.bySubject||{}; stats.lists.bySubject[listSubject]=(stats.lists.bySubject[listSubject]||0)+1; }
+      stats.lastUpdated=Date.now(); localStorage.setItem('fpDictionaryStats', JSON.stringify(stats)); } catch{}
+  });
+  function showListDetail(listId){
+    const lists=loadLists();
+    const list=lists.find(l=> l.id===listId);
+    if(!list){ return; }
+    const terms=loadTerms().filter(t=> t.listId===listId).sort((a,b)=> (a.word||'').localeCompare(b.word||''));
+    mainGrid.classList.add('hidden');
+    listDetailView.classList.remove('hidden');
+    listDetailView.innerHTML = `
+      <div class='bg-white rounded-lg shadow p-6 flex flex-col h-[calc(100vh-180px)]'>
+        <div class='flex items-start justify-between mb-4 gap-4'>
+          <div>
+            <h2 class='text-2xl font-bold text-[var(--text-primary)] leading-tight'>${escapeHtml(list.name)}</h2>
+            ${list.componentSubject? `<div class='text-sm text-[var(--text-secondary)]'>${escapeHtml(list.componentSubject)}</div>`:''}
+            <div class='text-[11px] text-[var(--text-secondary)] mt-1'>${terms.length} term${terms.length!==1?'s':''}</div>
+          </div>
+          <div class='flex flex-col gap-2'>
+            <button id='createFlashcardsFromList' class='px-3 py-2 rounded bg-green-600 text-white text-xs font-medium disabled:opacity-50' ${terms.length? '' : 'disabled'}>Create Flashcards</button>
+            <button id='backToDictionary' class='px-3 py-2 rounded bg-[var(--primary-color)] text-white text-xs font-medium'>Back</button>
+          </div>
+        </div>
+        <div class='flex-1 overflow-auto space-y-3 pr-1'>
+          ${ terms.map(t=> `<div class='border rounded p-3 bg-[var(--background-color)]'>
+              <div class='flex items-start justify-between gap-4 mb-1'>
+                <div class='font-semibold text-[var(--text-primary)] text-sm'>${escapeHtml(t.word||'(No Term)')}</div>
+                <span class='text-[10px] text-[var(--text-secondary)]'>${escapeHtml(t.subject||'')}</span>
+              </div>
+              <div class='text-[11px] leading-snug text-[var(--text-secondary)] whitespace-pre-line'>${escapeHtml(t.definition||'')}</div>
+            </div>`).join('') || `<div class='text-sm text-[var(--text-secondary)]'>No terms in this list.</div>` }
+        </div>
+      </div>`;
+    document.getElementById('backToDictionary').addEventListener('click', ()=>{
+      listDetailView.classList.add('hidden');
+      mainGrid.classList.remove('hidden');
+    });
+    document.getElementById('createFlashcardsFromList')?.addEventListener('click',()=> createFlashcardsFromList(list, terms));
+  }
+  // ---- Flashcard Set Creation from Dictionary List ----
+  function loadCardSets(){ try { return JSON.parse(localStorage.getItem('flashcardSets')||'[]'); } catch { return []; } }
+  function saveCardSets(arr){ localStorage.setItem('flashcardSets', JSON.stringify(arr)); }
+  function generateSetId(){ return 'fcset_'+Date.now()+'_'+Math.random().toString(36).slice(2,7); }
+  function generateCardId(){ return 'fccard_'+Date.now()+'_'+Math.random().toString(36).slice(2,7); }
+  function ensureSubjectRegistered(subject){
+    if(!subject) return;
+    try {
+      const defaults=['Art','English/Language','Math','Science','Social Studies','Other'];
+      if(!defaults.includes(subject)){
+        let list=JSON.parse(localStorage.getItem('fpCustomSubjects')||'[]');
+        if(!list.includes(subject)){ list.push(subject); localStorage.setItem('fpCustomSubjects', JSON.stringify(list)); }
+        // Remove from removed defaults if accidentally flagged
+        let rem=JSON.parse(localStorage.getItem('fpRemovedDefaultSubjects')||'[]');
+        if(rem.includes(subject)){ rem=rem.filter(r=>r!==subject); localStorage.setItem('fpRemovedDefaultSubjects', JSON.stringify(rem)); }
+        // Ensure color
+        let cmap=JSON.parse(localStorage.getItem('fpSubjectColors')||'{}');
+        if(!cmap[subject]){
+          const palette=['#ef4444','#f59e0b','#0d78f2','#22c55e','#8b5cf6','#14b8a6','#6366f1','#ec4899','#10b981','#eab308','#0ea5e9','#fb923c','#84cc16','#f472b6','#38bdf8','#a855f7','#dc2626','#2563eb','#9333ea','#047857','#ea580c'];
+          const used=new Set(Object.values(cmap).map(c=>c.toLowerCase()));
+          let pick=null; for(const col of palette){ if(!used.has(col.toLowerCase())){ pick=col; break; } }
+          let guard=0; while(!pick && guard<40){ const cand='#'+Math.floor(Math.random()*0xffffff).toString(16).padStart(6,'0'); if(!used.has(cand.toLowerCase())) pick=cand; guard++; }
+          if(!pick) pick='#'+Math.floor(Math.random()*0xffffff).toString(16).padStart(6,'0');
+          cmap[subject]=pick; localStorage.setItem('fpSubjectColors', JSON.stringify(cmap));
+        }
+      }
+    } catch {}
+  }
+  function createFlashcardsFromList(listMeta, terms){
+    if(!listMeta || !terms || !terms.length){ alert('No terms to import.'); return; }
+    const subject=listMeta.subject || 'Other';
+    ensureSubjectRegistered(subject);
+    const name = (listMeta.componentSubject && listMeta.componentSubject.trim()) || listMeta.name || (subject+' Terms');
+    const desc = 'Imported from Dictionary '+new Date().toLocaleDateString();
+  // Reverse: show definition on front, expect term on back
+  const cards = terms.map(t=> ({ id:generateCardId(), front:t.definition||'', back:t.word||'(Term)', tags:[], hint:'', image:null }));
+    const sets=loadCardSets();
+    // Avoid name collision with same subject
+    let finalName=name; let n=1; while(sets.some(s=> (s.subject||'')===subject && (s.name||'')===finalName)){ finalName = name + ' ('+(++n)+')'; }
+    const newSet={ id:generateSetId(), subject, name:finalName, desc, cards };
+    sets.push(newSet); saveCardSets(sets);
+    alert('Flashcard set "'+finalName+'" created with '+cards.length+' cards. Open Flashcards to view.');
+    // Stats: export event
+    try { const stats=JSON.parse(localStorage.getItem('fpDictionaryStats')||'{}');
+      stats.exports = stats.exports||{ listToFlashcards:0, cardsCreated:0, bySubject:{} };
+      stats.exports.listToFlashcards = (stats.exports.listToFlashcards||0)+1;
+      stats.exports.cardsCreated = (stats.exports.cardsCreated||0)+cards.length;
+      stats.exports.bySubject = stats.exports.bySubject||{}; stats.exports.bySubject[subject]=(stats.exports.bySubject[subject]||0)+1;
+      stats.lastUpdated=Date.now(); localStorage.setItem('fpDictionaryStats', JSON.stringify(stats)); } catch{}
+  }
+  trashAllListsBtn?.addEventListener('click',()=>{
+    if(!confirm('Delete ALL term lists and their terms? This cannot be undone.')) return;
+    // Remove lists and any terms tied to them
+    const lists=loadLists();
+    if(!lists.length){ alert('No lists to delete.'); return; }
+    localStorage.setItem(LISTS_KEY,'[]');
+    const remainingTerms=loadTerms().filter(t=> false); // none remain
+    saveTerms(remainingTerms);
+    // Stats: increment deleted count by number of lists
+    try { const stats=JSON.parse(localStorage.getItem('fpDictionaryStats')||'{}');
+      stats.lists = stats.lists||{ created:0, updated:0, deleted:0, bySubject:{} };
+      stats.lists.deleted = (stats.lists.deleted||0) + lists.length;
+      stats.lastUpdated=Date.now(); localStorage.setItem('fpDictionaryStats', JSON.stringify(stats)); } catch{}
+    activeEditingListId=null; staging=[]; componentSubjectInput.value=''; renderStaging(); render(); renderTermLists(); enableListActionButtons();
+    alert('All term lists deleted.');
+  });
+
+  filterQuery.addEventListener('input',()=> render());
+
+  function escapeHtml(str=''){ return String(str).replace(/[&<>"']/g,c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;' }[c])); }
+
+  // Initial
+  render();
+  renderStaging();
+  renderTermLists();
+  purgeOrphanTerms();
+  enableListActionButtons();
+})();
+</script>
+<div id="fpFooter" style="font-size:11px; color:var(--text-secondary); text-align:center; position:absolute; left:16rem; right:0; bottom:0; z-index:9999; background:rgba(240,242,245,0.95); pointer-events:none; box-shadow:0 -2px 8px rgba(0,0,0,0.04);">© FocusPath 2025. 4a4152564953 Applications EST. 2025</div>
+</body>
+</html>

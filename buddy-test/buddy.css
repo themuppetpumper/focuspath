@@ -1,0 +1,27 @@
+/* Ensure npc image is sized correctly */
+#npc {
+  position: absolute;
+  width: 128px;
+  height: 128px;
+  user-select: none;
+  pointer-events: none;
+}
+/* Frame container for sprite animation */
+.buddy-frame {
+  width: 128px;
+  height: 128px;
+  overflow: hidden;
+  position: relative;
+  border: 2px solid #f00;
+  background: #ffcccc;
+  display: inline-block;
+}
+#buddy-img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 384px; /* 3 frames horizontally, adjust if needed */
+  height: 128px;
+  image-rendering: pixelated;
+  transition: left 0.1s;
+}
