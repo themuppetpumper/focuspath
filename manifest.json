@@ -6,8 +6,16 @@
   "orientation": "any",
   "scope": "/",
   "short_name": "FPL",
-  "start_url": "/",
+  "start_url": "/https://themuppetpumper.github.io/focuspath/",
   "theme_color": "#ffffff",
   "description": "FocusPath is a study companion designed to help learners of all ages stay focused, organized, and motivated on their educational journey. We believe knowledge should be accessible to everyone, which is why FocusPath is completely free — no subscriptions, no hidden costs, just powerful tools to support healthy learning habits.\n\nWhether you’re preparing for exams, building new skills, or simply exploring topics that interest you, FocusPath provides a clean and distraction-free space to learn at your own pace. With features designed around clarity, structure, and simplicity, FocusPath keeps your studies on track and your mind engaged.",
-  "id": "FP Learning"
+  "categories": [
+    "books",
+    "education",
+    "entertainment",
+    "games",
+    "personalization",
+    "productivity",
+    "utilities"
+  ]
 }
