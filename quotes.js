@@ -1,3 +1,4 @@
+
 // FocusPath Quotes: an array of motivational quotes.
 // You can edit this list freely. Each item can be either a string or { text, author }.
 

@@ -11,7 +11,7 @@ function generateSetId() { return 'fcset_' + Date.now() + '_' + Math.random().to
 function generateCardId() { return 'fccard_' + Date.now() + '_' + Math.random().toString(36).slice(2,7); }
 
 // ---- State ----
-let currentSet = null; // { id, subject, name, desc, cards: [{id, front, back, tags:[], hint:null, image:null}] }
+let currentSet = null; // { id, subject, name, desc, cards: [{id, front, back, tags:[], hint:null, image:null}], coverImage: null }
 let activeCardIndex = null;
 let fcEls = {};
 
@@ -33,6 +33,7 @@ window.initCardBuilder = function () {
     btnDeleteCard: document.getElementById('btnDeleteCard'),
     cardsList: document.getElementById('cardsList'),
     activeCard: document.getElementById('activeCard')
+    // cover controls removed
   };
 
   if (!fcEls.cardsList || !fcEls.activeCard) {
@@ -40,13 +41,18 @@ window.initCardBuilder = function () {
     return;
   }
 
-  fcEls.btnAddCard?.addEventListener('click', () => {
+  // central add-card handler used by UI and as a fallback
+  function handleAddCard() {
+    if (!currentSet) currentSet = { id: null, subject: '', name: '', desc: '', cards: [] };
+    if (!Array.isArray(currentSet.cards)) currentSet.cards = [];
     const newCard = { id: generateCardId(), front: '', back: '', tags: [], hint: '', image: null };
     currentSet.cards.push(newCard);
     activeCardIndex = currentSet.cards.length - 1;
-    renderCardsList();
-    renderActiveCard();
-  });
+    try { renderCardsList(); } catch(e){ console.warn('renderCardsList failed in handleAddCard', e); }
+    try { renderActiveCard(); } catch(e){ console.warn('renderActiveCard failed in handleAddCard', e); }
+  }
+
+  fcEls.btnAddCard?.addEventListener('click', handleAddCard);
 
   fcEls.btnBulkAdd?.addEventListener('click', () => {
     const example = 'Term 1 :: Definition 1\nTerm 2 :: Definition 2';
@@ -100,6 +106,7 @@ window.initCardBuilder = function () {
     currentSet.subject = fcEls.subject?.value?.trim() || '';
     currentSet.name = fcEls.name?.value?.trim() || '';
     currentSet.desc = fcEls.desc?.value?.trim() || '';
+    // cover image support removed; no cover persistence
     if (!currentSet.name) { alert('Please provide a Subject Component (Set Name).'); return; }
     let sets = loadCardSets();
     if (!currentSet.id) {
@@ -184,6 +191,18 @@ window.initCardBuilder = function () {
 // Load existing set into builder
 window.loadSetIntoBuilder = function(setObj) {
   if (!setObj) return;
+  // Ensure builder is initialized and fcEls are present. If not, attempt to initialize or retry.
+  if (!fcEls || !fcEls.subject) {
+    if (typeof window.initCardBuilder === 'function') {
+      try { window.initCardBuilder(); } catch (err) { console.warn('initCardBuilder failed during loadSetIntoBuilder retry:', err); }
+    }
+    // If still not initialized, defer and retry once shortly after to allow DOM to settle
+    if (!fcEls || !fcEls.subject) {
+      setTimeout(() => { try { window.loadSetIntoBuilder(setObj); } catch(e){ console.error(e); } }, 80);
+      return;
+    }
+  }
+
   currentSet = JSON.parse(JSON.stringify(setObj));
   activeCardIndex = 0;
   if (fcEls.subject && currentSet.subject) {
@@ -197,6 +216,7 @@ window.loadSetIntoBuilder = function(setObj) {
   }
   fcEls.name.value = currentSet.name || '';
   fcEls.desc.value = currentSet.desc || '';
+  // cover image support removed - nothing to show
   renderCardsList();
   renderActiveCard();
   // Subject custom creation handler
@@ -319,3 +339,16 @@ function renderActiveCard() {
   wrap.appendChild(tagsLbl); wrap.appendChild(tagsInput);
   wrap.appendChild(imageBlock);
 }
+
+// Delegated fallback: if the builder wasn't fully wired up, handle clicks on the + Card button here
+document.addEventListener('click', function(e) {
+  try {
+    const btn = e.target.closest && e.target.closest('#btnAddCard');
+    if (!btn) return;
+    // If the real listener is present, let it run; otherwise call handler
+    // Check for Reactivity: if fcEls exists and listener was attached earlier, do nothing
+    if (fcEls && fcEls.btnAddCard && fcEls.btnAddCard.onclick) return; // native onclick present
+    // Prevent duplicate when init attached but listener absent
+    handleAddCard();
+  } catch (err) { /* ignore */ }
+});

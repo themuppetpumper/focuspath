@@ -44,7 +44,7 @@
     <!-- Top nav -->
     <header class="bg-[var(--white)] shadow-sm flex items-center justify-between p-4">
   <div class="flex gap-4">
-        <a href="index.html" title="Home" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]">
+  <a href="home.html" title="Home" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11.5z"/></svg>
         </a>
         <a href="flashcards.html" title="Flashcards" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]">
@@ -476,6 +476,47 @@
         </div>
       </section>
       <script>
+// Theme dropdown logic (copied from home.html)
+(function(){
+  const themeBtn = document.getElementById('themeToggle');
+  const themeMenu = document.getElementById('themeMenu');
+  if (themeBtn && themeMenu) {
+    const hideMenu = () => themeMenu.classList.add('hidden');
+    const showMenu = () => { buildThemeMenu(); themeMenu.classList.remove('hidden'); };
+    themeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (themeMenu.classList.contains('hidden')) showMenu(); else hideMenu();
+    });
+    document.addEventListener('click', (e) => {
+      if (!themeMenu.contains(e.target) && e.target !== themeBtn) hideMenu();
+    });
+    function buildThemeMenu(){
+      const current = (window.ThemeManager && window.ThemeManager.getTheme && window.ThemeManager.getTheme()) || 'system';
+      const list = window.ThemeManager?.listThemes ? window.ThemeManager.listThemes() : [];
+      const unlockedStarWars = list.includes('star-wars');
+      themeMenu.innerHTML = '';
+      list.forEach((key,idx) => {
+        if(idx===3){
+          const div=document.createElement('div'); div.className='my-1 h-px bg-[var(--border-color)]'; themeMenu.appendChild(div);
+        }
+        const btn=document.createElement('button');
+        btn.className='w-full flex items-center justify-between gap-2 text-left px-3 py-2 text-sm hover:bg-[var(--background-color)]';
+        btn.setAttribute('data-theme', key);
+        let label = key==='system'?'System Default': key.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+        if(key==='star-wars') label = 'Star Wars (Secret)';
+        btn.innerHTML = `<span>${label}</span>${current===key?'<span class="text-[var(--primary-color)]">✔</span>':''}`;
+        btn.addEventListener('click', () => { window.ThemeManager?.setTheme(key); hideMenu(); });
+        themeMenu.appendChild(btn);
+      });
+      if(!unlockedStarWars){
+        const hint=document.createElement('div');
+        hint.className='px-3 py-2 text-[10px] leading-snug text-[var(--text-secondary)] border-t border-[var(--border-color)]';
+        hint.textContent='Unlock all achievements to reveal a secret theme.';
+        themeMenu.appendChild(hint);
+      }
+    }
+  }
+})();
         // Show help topic when button is clicked
         document.querySelectorAll('nav button').forEach(btn => {
           btn.addEventListener('click', function() {
@@ -496,5 +537,8 @@
   </div>
 </div>
 <div id="fpFooter" style="font-size:11px; color:var(--text-secondary); text-align:center; position:absolute; left:16rem; right:0; bottom:0; z-index:9999; background:rgba(240,242,245,0.95); pointer-events:none; box-shadow:0 -2px 8px rgba(0,0,0,0.04);">© FocusPath 2025. 4a4152564953 Applications EST. 2025</div>
+<!-- Nova Assistant: floating button + chat modal (updated bubbles) -->
+<script type="module" src="./nova-widget.js"></script>
+
 </body>
 </html>

@@ -65,7 +65,7 @@
     <header class="bg-[var(--white)] shadow-sm flex items-center justify-between p-4">
       <div class="flex-1 flex justify-center items-center">
         <div class="flex gap-4">
-          <a href="index.html" title="Home" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]">
+          <a href="home.html" title="Home" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11.5z"/></svg>
           </a>
           <a href="test.html" title="Tests" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M4 17.25V21h3.75L17.81 10.94l-3.75-3.75L4 17.25Zm14.71-8.04a1 1 0 0 0 0-1.41l-2.54-2.54a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 2.03-2.03Z"/></svg></a>
@@ -90,6 +90,47 @@
 </div>
 
 <script>
+// Theme dropdown logic (copied from home.html)
+(function(){
+  const themeBtn = document.getElementById('themeToggle');
+  const themeMenu = document.getElementById('themeMenu');
+  if (themeBtn && themeMenu) {
+    const hideMenu = () => themeMenu.classList.add('hidden');
+    const showMenu = () => { buildThemeMenu(); themeMenu.classList.remove('hidden'); };
+    themeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (themeMenu.classList.contains('hidden')) showMenu(); else hideMenu();
+    });
+    document.addEventListener('click', (e) => {
+      if (!themeMenu.contains(e.target) && e.target !== themeBtn) hideMenu();
+    });
+    function buildThemeMenu(){
+      const current = (window.ThemeManager && window.ThemeManager.getTheme && window.ThemeManager.getTheme()) || 'system';
+      const list = window.ThemeManager?.listThemes ? window.ThemeManager.listThemes() : [];
+      const unlockedStarWars = list.includes('star-wars');
+      themeMenu.innerHTML = '';
+      list.forEach((key,idx) => {
+        if(idx===3){
+          const div=document.createElement('div'); div.className='my-1 h-px bg-[var(--border-color)]'; themeMenu.appendChild(div);
+        }
+        const btn=document.createElement('button');
+        btn.className='w-full flex items-center justify-between gap-2 text-left px-3 py-2 text-sm hover:bg-[var(--background-color)]';
+        btn.setAttribute('data-theme', key);
+        let label = key==='system'?'System Default': key.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+        if(key==='star-wars') label = 'Star Wars (Secret)';
+        btn.innerHTML = `<span>${label}</span>${current===key?'<span class="text-[var(--primary-color)]">✔</span>':''}`;
+        btn.addEventListener('click', () => { window.ThemeManager?.setTheme(key); hideMenu(); });
+        themeMenu.appendChild(btn);
+      });
+      if(!unlockedStarWars){
+        const hint=document.createElement('div');
+        hint.className='px-3 py-2 text-[10px] leading-snug text-[var(--text-secondary)] border-t border-[var(--border-color)]';
+        hint.textContent='Unlock all achievements to reveal a secret theme.';
+        themeMenu.appendChild(hint);
+      }
+    }
+  }
+})();
 // --- Shared helpers ---
 let SUBJECT_COLORS={ 'Art':'#ef4444','English/Language':'#f59e0b','Math':'#0d78f2','Science':'#22c55e','Social Studies':'#8b5cf6','Other':'#14b8a6','(No Subject)':'#94a3b8'};
 // Merge in any custom user-defined subject colors
@@ -290,26 +331,26 @@ function renderFlashcardStats(){ const primary=document.getElementById('primaryA
         <ul class='list-disc pl-5 space-y-1 text-xs text-[var(--text-secondary)]'>${fcSuggestions.map(s=>`<li>${s}</li>`).join('')}</ul>
       </div>
     </div>
-    <div class='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
-      <div class='p-4 bg-white rounded-xl shadow'><div class='text-xs text-[var(--text-secondary)] uppercase font-semibold'>Total Sets</div><div class='mt-2 text-2xl font-bold text-[var(--text-primary)]'>${totalSets}</div></div>
-      <div class='p-4 bg-white rounded-xl shadow'><div class='text-xs text-[var(--text-secondary)] uppercase font-semibold'>Study Sessions</div><div class='mt-2 text-2xl font-bold text-[var(--text-primary)]'>${totalSessions}</div></div>
-      <div class='p-4 bg-white rounded-xl shadow'><div class='text-xs text-[var(--text-secondary)] uppercase font-semibold'>Cards Studied</div><div class='mt-2 text-2xl font-bold text-[var(--text-primary)]'>${totalCardsStudied}</div></div>
-      <div class='p-4 bg-white rounded-xl shadow'><div class='text-xs text-[var(--text-secondary)] uppercase font-semibold'>Unique Days</div><div class='mt-2 text-2xl font-bold text-[var(--text-primary)]'>${uniqueDays}</div></div>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="p-4 bg-white rounded-xl shadow"><div class="text-xs text-[var(--text-secondary)] uppercase font-semibold">Total Sets</div><div class="mt-2 text-2xl font-bold text-[var(--text-primary)]">${totalSets}</div></div>
+      <div class="p-4 bg-white rounded-xl shadow"><div class="text-xs text-[var(--text-secondary)] uppercase font-semibold">Study Sessions</div><div class="mt-2 text-2xl font-bold text-[var(--text-primary)]">${totalSessions}</div></div>
+      <div class="p-4 bg-white rounded-xl shadow"><div class="text-xs text-[var(--text-secondary)] uppercase font-semibold">Cards Studied</div><div class="mt-2 text-2xl font-bold text-[var(--text-primary)]">${totalCardsStudied}</div></div>
+      <div class="p-4 bg-white rounded-xl shadow"><div class="text-xs text-[var(--text-secondary)] uppercase font-semibold">Unique Days</div><div class="mt-2 text-2xl font-bold text-[var(--text-primary)]">${uniqueDays}</div></div>
     </div>
-    <div class='grid gap-6 lg:grid-cols-3'>
-      <div class='p-4 bg-white rounded-xl shadow lg:col-span-2'>
-        <h3 class='text-sm font-semibold text-[var(--text-primary)] mb-3'>Cards Studied Over Time</h3>
-        <canvas id='fcLine'></canvas>
+    <div class="grid gap-6 lg:grid-cols-3">
+      <div class="p-4 bg-white rounded-xl shadow lg:col-span-2">
+        <h3 class="text-sm font-semibold text-[var(--text-primary)] mb-3">Cards Studied Over Time</h3>
+        <canvas id="fcLine"></canvas>
       </div>
-      <div class='p-4 bg-white rounded-xl shadow'>
-        <h3 class='text-sm font-semibold text-[var(--text-primary)] mb-3'>Sessions by Subject</h3>
-        <canvas id='fcDonut'></canvas>
+      <div class="p-4 bg-white rounded-xl shadow">
+        <h3 class="text-sm font-semibold text-[var(--text-primary)] mb-3">Sessions by Subject</h3>
+        <canvas id="fcDonut"></canvas>
       </div>
     </div>
-    <div class='grid gap-6 lg:grid-cols-3'>
-      <div class='p-4 bg-white rounded-xl shadow'><h3 class='text-sm font-semibold text-[var(--text-primary)] mb-3'>Avg Cards / Session</h3><div class='text-3xl font-bold text-[var(--text-primary)]'>${avgSessionCards}</div></div>
-      <div class='p-4 bg-white rounded-xl shadow'><h3 class='text-sm font-semibold text-[var(--text-primary)] mb-3'>Time Spent (min)</h3><div class='text-3xl font-bold text-[var(--text-primary)]'>${Math.round(timeSpent/60)}</div></div>
-      <div class='p-4 bg-white rounded-xl shadow'><h3 class='text-sm font-semibold text-[var(--text-primary)] mb-3'>Avg Session Time (s)</h3><div class='text-3xl font-bold text-[var(--text-primary)]'>${avgSessionTime}</div></div>
+    <div class="grid gap-6 lg:grid-cols-3">
+      <div class="p-4 bg-white rounded-xl shadow"><h3 class="text-sm font-semibold text-[var(--text-primary)] mb-3">Avg Cards / Session</h3><div class="text-3xl font-bold text-[var(--text-primary)]">${avgSessionCards}</div></div>
+      <div class="p-4 bg-white rounded-xl shadow"><h3 class="text-sm font-semibold text-[var(--text-primary)] mb-3">Time Spent (min)</h3><div class="text-3xl font-bold text-[var(--text-primary)]">${Math.round(timeSpent/60)}</div></div>
+      <div class="p-4 bg-white rounded-xl shadow"><h3 class="text-sm font-semibold text-[var(--text-primary)] mb-3">Avg Session Time (s)</h3><div class="text-3xl font-bold text-[var(--text-primary)]">${avgSessionTime}</div></div>
     </div>
   </div>`;
   const subjDayMap={}; const allDays=new Set(); sessions.forEach(s=>{ const subj=s.subject||'Other'; const day=dayKeyLocal(s.date); allDays.add(day); if(!subjDayMap[subj]) subjDayMap[subj]={}; subjDayMap[subj][day]=(subjDayMap[subj][day]||0)+(s.cardsSeen||0); }); const lineLabels=[...allDays].sort(); const datasets=Object.keys(subjDayMap).sort().map(subj=>{ const color=SUBJECT_COLORS[subj]||'#555'; return {label:subj,data:lineLabels.map(d=>subjDayMap[subj][d]||0),borderColor:color,backgroundColor:color,tension:.25,fill:false}; });
@@ -364,8 +405,7 @@ function renderDictionaryStats(){ const primary=document.getElementById('primary
       </div>
     </div>
     <div class='grid gap-6 lg:grid-cols-3'>
-      <div class='p-4 bg-white rounded-xl shadow'>
-        <h3 class='text-sm font-semibold text-[var(--text-primary)] mb-2'>Exports by Subject</h3>
+      <div class='p-4 bg-white rounded-xl shadow'><h3 class='text-sm font-semibold text-[var(--text-primary)] mb-2'>Exports by Subject</h3>
         <div class='h-64'><canvas id='dictExportSubjects'></canvas></div>
       </div>
       <div class='p-4 bg-white rounded-xl shadow lg:col-span-2'>
@@ -473,7 +513,7 @@ function renderTrophies(){ const primary=document.getElementById('primaryArea');
   const flashBySubject={}; sessions.forEach(s=>{ const subj=s.subject||'Other'; if(!flashBySubject[subj]) flashBySubject[subj]={sessions:0,cards:0}; flashBySubject[subj].sessions++; flashBySubject[subj].cards += (s.cardsSeen||0); });
   const distinctFlashSubjects=Object.keys(flashBySubject).length;
   const sortedAttempts=[...attempts].sort((a,b)=> new Date(a.date)-new Date(b.date)); const last5=sortedAttempts.slice(-5); const prev5=sortedAttempts.slice(-10,-5); const avgPct=list=> list.length? list.reduce((s,a)=> s+(a.total? (a.score/a.total)*100:0),0)/list.length:0; const trendDelta=(last5.length&&prev5.length)? (avgPct(last5)-avgPct(prev5)):0;
-  const daySet=new Set([...attempts.map(a=>dayKeyLocal(a.date)), ...sessions.map(s=>dayKeyLocal(s.date))]); const allDays=[...daySet].sort(); let longestStreak=0,currentStreak=0,prevDate=null; allDays.forEach(d=>{ const dt=new Date(d); if(prevDate){ const next=new Date(prevDate); next.setDate(next.getDate()+1); const isConsecutive=dayKeyLocal(next)===dayKeyLocal(dt); currentStreak=isConsecutive? currentStreak+1:1; } else currentStreak=1; if(currentStreak>longestStreak) longestStreak=currentStreak; prevDate=dt; });
+  const daySet=new Set([...attempts.map(a=>dayKeyLocal(a.date)), ...sessions.map(s=>dayKeyLocal(s.date))]); const allDays=[...daySet].sort(); let longestStreak=0,currentStreak=0,prevDate=null; allDays.forEach(d=>{ const dt=new Date(d); if(prevDate){ const nx=new Date(prevDate); nx.setDate(nx.getDate()+1); const isConsecutive=dayKeyLocal(nx)===dayKeyLocal(dt); currentStreak=isConsecutive? currentStreak+1:1; } else currentStreak=1; if(currentStreak>longestStreak) longestStreak=currentStreak; prevDate=dt; });
   const totalSubjectCards=Object.values(flashBySubject).reduce((s,o)=> s+o.cards,0); let balancedStudy=false; if(totalSubjectCards>0){ const shares=Object.values(flashBySubject).map(o=> o.cards/totalSubjectCards); const avgShare=shares.reduce((a,b)=>a+b,0)/shares.length; balancedStudy=shares.every(sh=> sh>=avgShare*0.4); }
   function hours(h){ return h*3600; } function minutes(m){ return m*60; }
   const ctx={tests,attempts,sets,sessions,totalTests,totalQuestions,totalAttempts,totalSets,totalCards,totalSessions,totalCardsStudied,totalStudySeconds,longestSession,maxCardsSession,highestScoreAttempt,perfectScores,avgScore,testBySubject,flashBySubject,distinctFlashSubjects,trendDelta,longestStreak,balancedStudy};
@@ -678,5 +718,7 @@ function fullDataResetPreserveAchievements(){
   renderStats('home');
 }
 </script>
-</body></html>
-<div id="fpFooter" style="font-size:11px; color:var(--text-secondary); text-align:center; position:absolute; left:16rem; right:0; bottom:0; z-index:9999; background:rgba(240,242,245,0.95); pointer-events:none; box-shadow:0 -2px 8px rgba(0,0,0,0.04);">© FocusPath 2025. 4a4152564953 Applications EST. 2025</div>
+<script type="module" src="./nova-widget.js"></script>
+
+</body>
+</html>
