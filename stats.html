@@ -81,15 +81,14 @@
 
     <main class="flex-1 p-6 lg:p-8">
       <h2 id="pageTitle" class="text-[var(--text-primary)] text-3xl font-bold mb-6">Statistics</h2>
-      <div id="primaryArea" class="rounded-lg p-6 bg-[var(--background-color)] min-h-[50vh]">
-        <!-- ...existing content... -->
-  <!-- Copyright footer moved to fixed position below -->
-      </div>
+      <div id="statsContent"></div>
     </main>
   </div>
 </div>
 
 <script>
+// Lightweight DEV banner (if ThemeManager loaded Dev tools)
+try { if (window.FPDev && window.FPDev.isDev && window.FPDev.isDev()) { const b=document.createElement('div'); b.textContent='DEV MODE'; b.style.cssText='position:fixed;right:8px;bottom:8px;z-index:2000;background:rgba(16,185,129,0.15);color:#065f46;border:1px solid rgba(16,185,129,0.4);font:700 10px/1.2 system-ui, sans-serif;letter-spacing:.08em;padding:6px 8px;border-radius:8px;backdrop-filter:blur(4px)'; document.body.appendChild(b);} } catch {}
 // Theme dropdown logic (copied from home.html)
 (function(){
   const themeBtn = document.getElementById('themeToggle');
@@ -155,7 +154,7 @@ function fmtSecondsToHMS(sec){ if(!sec||sec<=0) return '0s'; const h=Math.floor(
 let __statsCharts=[]; function destroyStatsCharts(){ try{__statsCharts.forEach(c=>c && c.destroy && c.destroy());}catch{} __statsCharts=[]; }
 
 // --- Test Stats ---
-function renderTestStats(){ const primary=document.getElementById('primaryArea'); if(!primary) return; destroyStatsCharts(); const tests=loadTests(); const attempts=loadAttempts(); const testById=new Map(tests.map(t=>[String(t.id),t]));
+function renderTestStats(){ const primary=document.getElementById('statsContent'); if(!primary) return; destroyStatsCharts(); const tests=loadTests(); const attempts=loadAttempts(); const testById=new Map(tests.map(t=>[String(t.id),t]));
   const testsCreated=tests.length; const testsTaken=attempts.length; const daysStudied=attempts.length? new Set(attempts.map(a=>dayKeyLocal(a.date))).size:0; const avgTime=attempts.length? Math.round(attempts.reduce((s,a)=>s+(a.timeTaken||0),0)/attempts.length):0; const avgScorePct=attempts.length? (attempts.reduce((s,a)=>s + (a.total? (a.score/a.total)*100:0),0)/attempts.length):0;
   const byDay=new Map(); attempts.forEach(a=>{ const t=testById.get(String(a.testId)); const subj=(t&&t.subject)||'(No Subject)'; const day=dayKeyLocal(a.date); const pct=a.total?(a.score/a.total)*100:0; if(!byDay.has(day)) byDay.set(day,new Map()); const sub=byDay.get(day); if(!sub.has(subj)) sub.set(subj,[]); sub.get(subj).push(pct); });
   const base=new Date(); base.setHours(0,0,0,0); const last14=Array.from({length:14}).map((_,i)=>{ const d=new Date(base); d.setDate(d.getDate()-(13-i)); return dayKeyLocal(d); });
@@ -187,68 +186,32 @@ function renderTestStats(){ const primary=document.getElementById('primaryArea')
   if(bestSubject && bestSubject.avgPct>=85) suggestions.push(`Great job in ${bestSubject.subject}. Consider increasing difficulty to keep progressing.`);
   if(!suggestions.length) suggestions.push('Keep up the steady progress! Try scheduling regular review sessions to maintain momentum.');
 
-  primary.innerHTML=`<div class='space-y-6'>
-    <!-- In-Depth Analysis (moved to top) -->
-    <div class='bg-white rounded-xl shadow p-6 space-y-6'>
-      <div class='flex items-center justify-between flex-wrap gap-4'>
-        <h3 class='font-semibold text-[var(--text-primary)]'>In-Depth Analysis</h3>
-        <div class='flex gap-3 text-xs'>
-          <span class='px-2 py-1 rounded bg-[var(--background-color)]'>Best: ${bestSubject? bestSubject.subject+' '+bestSubject.avgPct.toFixed(1)+'%':'—'}</span>
-          <span class='px-2 py-1 rounded bg-[var(--background-color)]'>Needs Work: ${worstSubject? worstSubject.subject+' '+worstSubject.avgPct.toFixed(1)+'%':'—'}</span>
-          <span class='px-2 py-1 rounded bg-[var(--background-color)]'>Trend: ${ (last5.length && prev5.length)? (trendDelta>0? '+'+trendDelta.toFixed(1): trendDelta.toFixed(1))+' pts':'—' }</span>
-          <span class='px-2 py-1 rounded bg-[var(--background-color)]'>Consistency σ: ${stdDev.toFixed(1)}</span>
-        </div>
+  primary.innerHTML=`<div class='space-y-8'>
+    <div class='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
+      <div class='p-4 bg-white rounded-xl shadow'><div class='text-xs text-[var(--text-secondary)] uppercase font-semibold'>Tests Created</div><div class='mt-2 text-2xl font-bold text-[var(--text-primary)]'>${testsCreated}</div></div>
+      <div class='p-4 bg-white rounded-xl shadow'><div class='text-xs text-[var(--text-secondary)] uppercase font-semibold'>Tests Taken</div><div class='mt-2 text-2xl font-bold text-[var(--text-primary)]'>${testsTaken}</div></div>
+      <div class='p-4 bg-white rounded-xl shadow'><div class='text-xs text-[var(--text-secondary)] uppercase font-semibold'>Study Days</div><div class='mt-2 text-2xl font-bold text-[var(--text-primary)]'>${daysStudied}</div></div>
+      <div class='p-4 bg-white rounded-xl shadow'><div class='text-xs text-[var(--text-secondary)] uppercase font-semibold'>Avg Time (s)</div><div class='mt-2 text-2xl font-bold text-[var(--text-primary)]'>${avgTime}</div></div>
+    </div>
+    <div class='grid gap-6 lg:grid-cols-3 mt-8'>
+      <div class='p-4 bg-white rounded-xl shadow lg:col-span-2'>
+        <h3 class='text-sm font-semibold text-[var(--text-primary)] mb-3'>Scores Over Time</h3>
+        <div class='h-80'><canvas id='scoresChart'></canvas></div>
       </div>
-      <div class='grid lg:grid-cols-3 gap-6'>
-        <div class='lg:col-span-2'>
-          <h4 class='text-sm font-medium mb-2 text-[var(--text-primary)]'>Subject Mastery</h4>
-          <div class='overflow-auto rounded-lg border border-[var(--border-color)]'>
-            <table class='min-w-full text-sm'>
-              <thead class='bg-[var(--background-color)] text-[var(--text-secondary)]'>
-                <tr><th class='text-left px-3 py-2 font-semibold'>Subject</th><th class='text-left px-3 py-2 font-semibold'>Attempts</th><th class='text-left px-3 py-2 font-semibold'>Avg %</th><th class='text-left px-3 py-2 font-semibold'>Best %</th><th class='text-left px-3 py-2 font-semibold'>Low %</th><th class='text-left px-3 py-2 font-semibold'>Last %</th><th class='text-left px-3 py-2 font-semibold'>Last Date</th><th class='text-left px-3 py-2 font-semibold'>Range</th></tr>
-              </thead>
-              <tbody>
-                ${Object.keys(subjectMetrics).length? Object.entries(subjectMetrics).sort((a,b)=> b[1].avgPct - a[1].avgPct).map(([subj,m])=>`<tr class='border-t border-[var(--border-color)]'>
-                  <td class='px-3 py-1 whitespace-nowrap'><span class='inline-flex items-center gap-1'><span class='w-2 h-2 rounded-full' style='background:${SUBJECT_COLORS[subj]||'#64748b'}'></span>${subj}</span></td>
-                  <td class='px-3 py-1'>${m.attempts}</td>
-                  <td class='px-3 py-1 font-medium'>${m.avgPct.toFixed(1)}%</td>
-                  <td class='px-3 py-1 text-green-600'>${m.maxPct>=0? m.maxPct.toFixed(1)+'%':'—'}</td>
-                  <td class='px-3 py-1 text-red-600'>${m.minPct<=100? m.minPct.toFixed(1)+'%':'—'}</td>
-                  <td class='px-3 py-1'>${m.lastPct!=null? m.lastPct.toFixed(1)+'%':'—'}</td>
-                  <td class='px-3 py-1 whitespace-nowrap'>${m.lastDate? new Date(m.lastDate).toLocaleDateString(): '—'}</td>
-                  <td class='px-3 py-1'>${m.range.toFixed(1)}</td>
-                </tr>`).join('') : `<tr><td colspan='8' class='px-3 py-4 text-center text-[var(--text-secondary)]'>No attempts yet.</td></tr>`}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div>
-          <h4 class='text-sm font-medium mb-2 text-[var(--text-primary)]'>Score Distribution</h4>
-          <div class='h-52'><canvas id='scoreDistChart'></canvas></div>
-          <p class='mt-2 text-[var(--text-secondary)] text-xs leading-relaxed'>Each bar groups test attempt percentages into 10-point buckets (0–9, 10–19, ..., 90–100). Taller bars mean more attempts fell inside that score range. Use this to see if you're clustering in mid-ranges or pushing into higher performance bands.</p>
-        </div>
-      </div>
-      <div>
-        <h4 class='text-sm font-medium mb-2 text-[var(--text-primary)]'>Suggestions</h4>
-        <ul class='list-disc pl-5 space-y-1 text-xs text-[var(--text-secondary)]'>
-          ${suggestions.map(s=>`<li>${s}</li>`).join('')}
-        </ul>
+      <div class='p-4 bg-white rounded-xl shadow'>
+        <h3 class='text-sm font-semibold text-[var(--text-primary)] mb-3'>Subjects Breakdown</h3>
+        <div class='h-64'><canvas id='subjectsChart'></canvas></div>
       </div>
     </div>
-    <!-- Key Metrics -->
-    <div class='grid sm:grid-cols-2 lg:grid-cols-5 gap-4'>
-      <div class='bg-white rounded-xl shadow p-4'><div class='text-xs text-[var(--text-secondary)]'>Days Studied</div><div class='mt-1 text-2xl font-semibold text-[var(--text-primary)]'>${daysStudied}</div></div>
-      <div class='bg-white rounded-xl shadow p-4'><div class='text-xs text-[var(--text-secondary)]'>Tests Created</div><div class='mt-1 text-2xl font-semibold text-[var(--text-primary)]'>${testsCreated}</div></div>
-      <div class='bg-white rounded-xl shadow p-4'><div class='text-xs text-[var(--text-secondary)]'>Tests Taken</div><div class='mt-1 text-2xl font-semibold text-[var(--text-primary)]'>${testsTaken}</div></div>
-      <div class='bg-white rounded-xl shadow p-4'><div class='text-xs text-[var(--text-secondary)]'>Avg Time</div><div class='mt-1 text-2xl font-semibold text-[var(--text-primary)]'>${fmtSecondsToHMS(avgTime)}</div></div>
-      <div class='bg-white rounded-xl shadow p-4'><div class='text-xs text-[var(--text-secondary)]'>Avg Score</div><div class='mt-1 text-2xl font-semibold text-[var(--text-primary)]'>${avgScorePct.toFixed(0)}%</div></div>
+    <div class='grid gap-6 lg:grid-cols-3 mt-8'>
+      <div class='p-4 bg-white rounded-xl shadow'><h3 class='text-sm font-semibold text-[var(--text-primary)] mb-3'>Avg Score (%)</h3><div class='text-3xl font-bold text-[var(--text-primary)]'>${avgScorePct.toFixed(1)}</div></div>
+      <div class='p-4 bg-white rounded-xl shadow'><h3 class='text-sm font-semibold text-[var(--text-primary)] mb-3'>Attempts Distribution</h3><div class='h-48'><canvas id='scoreDistChart'></canvas></div></div>
+      <div class='p-4 bg-white rounded-xl shadow'><h3 class='text-sm font-semibold text-[var(--text-primary)] mb-3'>Time per Attempt</h3><div class='h-48'><canvas id='timeChart'></canvas></div></div>
     </div>
-    <!-- Charts -->
-    <div class='grid lg:grid-cols-3 gap-6'>
-      <div class='bg-white rounded-xl shadow p-4 lg:col-span-2'><div class='flex items-center justify-between mb-2'><div class='font-semibold text-[var(--text-primary)]'>Scores Over Time (14d)</div><div class='text-xs text-[var(--text-secondary)]'>Daily avg</div></div><div class='h-56'><canvas id='scoresChart'></canvas></div></div>
-      <div class='bg-white rounded-xl shadow p-4'><div class='font-semibold text-[var(--text-primary)] mb-2'>Avg Score by Subject</div><div class='h-56'><canvas id='subjectsChart'></canvas></div></div>
+    <div class='p-4 bg-white rounded-xl shadow mt-8'>
+      <h3 class='text-sm font-semibold text-[var(--text-primary)] mb-2'>Suggestions</h3>
+      <ul class='list-disc pl-5 space-y-1 text-xs text-[var(--text-secondary)]'>${suggestions.map(s=>`<li>${s}</li>`).join('')}</ul>
     </div>
-    <div class='bg-white rounded-xl shadow p-4'><div class='font-semibold text-[var(--text-primary)] mb-2'>Time per Attempt (last 10)</div><div class='h-56'><canvas id='timeChart'></canvas></div></div>
   </div>`;
   const scoresCtx=document.getElementById('scoresChart')?.getContext('2d'); if(scoresCtx){ __statsCharts.push(new Chart(scoresCtx,{type:'line',data:{labels:last14.map(d=>{const [y,m,dd]=d.split('-').map(Number);return new Date(y,m-1,dd).toLocaleDateString();}),datasets:lineDatasets},options:{responsive:true,maintainAspectRatio:false,scales:{y:{suggestedMin:0,suggestedMax:100,ticks:{callback:v=>v+'%'}}},plugins:{legend:{display:true,position:'bottom'},tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${(ctx.parsed.y??0).toFixed(1)}%`}}}}})); }
   const subjCtx=document.getElementById('subjectsChart')?.getContext('2d'); if(subjCtx){ __statsCharts.push(new Chart(subjCtx,{type:'doughnut',data:{labels:subjLabels,datasets:[{data:subjData.map(v=>Number.isFinite(v)?Number(v.toFixed(1)):0),backgroundColor:subjColors,borderColor:subjColors,borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},cutout:'60%'}})); }
@@ -257,7 +220,7 @@ function renderTestStats(){ const primary=document.getElementById('primaryArea')
 }
 
 // --- Flashcard Stats ---
-function renderFlashcardStats(){ const primary=document.getElementById('primaryArea'); if(!primary) return; destroyStatsCharts(); const sets=loadCardSets(); const sessions=loadFlashcardSessions(); const totalSets=sets.length; const totalSessions=sessions.length; const uniqueDays=sessions.length? new Set(sessions.map(s=>dayKeyLocal(s.date))).size:0; const totalCardsStudied=sessions.reduce((s,a)=>s+(a.cardsSeen||0),0); const avgSessionCards=sessions.length? Math.round(totalCardsStudied/sessions.length):0; const timeSpent=sessions.reduce((s,a)=>s+(a.durationSeconds||0),0); const avgSessionTime=sessions.length? Math.round(timeSpent/sessions.length):0; const subjectAgg={}; sets.forEach(set=>{ const subj=set.subject||'Other'; if(!subjectAgg[subj]) subjectAgg[subj]={cards:0,sessions:0}; subjectAgg[subj].cards+=(set.cards||[]).length; }); sessions.forEach(s=>{ const subj=s.subject||'Other'; if(!subjectAgg[subj]) subjectAgg[subj]={cards:0,sessions:0}; subjectAgg[subj].sessions++; });
+function renderFlashcardStats(){ const primary=document.getElementById('statsContent'); if(!primary) return; destroyStatsCharts(); const sets=loadCardSets(); const sessions=loadFlashcardSessions(); const totalSets=sets.length; const totalSessions=sessions.length; const uniqueDays=sessions.length? new Set(sessions.map(s=>dayKeyLocal(s.date))).size:0; const totalCardsStudied=sessions.reduce((s,a)=>s+(a.cardsSeen||0),0); const avgSessionCards=sessions.length? Math.round(totalCardsStudied/sessions.length):0; const timeSpent=sessions.reduce((s,a)=>s+(a.durationSeconds||0),0); const avgSessionTime=sessions.length? Math.round(timeSpent/sessions.length):0; const subjectAgg={}; sets.forEach(set=>{ const subj=set.subject||'Other'; if(!subjectAgg[subj]) subjectAgg[subj]={cards:0,sessions:0}; subjectAgg[subj].cards+=(set.cards||[]).length; }); sessions.forEach(s=>{ const subj=s.subject||'Other'; if(!subjectAgg[subj]) subjectAgg[subj]={cards:0,sessions:0}; subjectAgg[subj].sessions++; });
   // Extended analytics
   const attempts = loadAttempts();
   // Test performance per subject
@@ -360,7 +323,7 @@ function renderFlashcardStats(){ const primary=document.getElementById('primaryA
 }
 
 // --- Dictionary Stats ---
-function renderDictionaryStats(){ const primary=document.getElementById('primaryArea'); if(!primary) return; destroyStatsCharts(); let stats={}; try{ stats=JSON.parse(localStorage.getItem('fpDictionaryStats')||'{}'); }catch{};
+function renderDictionaryStats(){ const primary=document.getElementById('statsContent'); if(!primary) return; destroyStatsCharts(); let stats={}; try{ stats=JSON.parse(localStorage.getItem('fpDictionaryStats')||'{}'); }catch{};
   // Normalize structure
   stats.searches = stats.searches||{ total:0, byWord:{}, timeFocusedMs:0 };
   stats.searches.bySubjectAdd = stats.searches.bySubjectAdd||{};
@@ -457,7 +420,7 @@ function renderDictionaryStats(){ const primary=document.getElementById('primary
 }
 
 // --- Home (was Trophy content) ---
-function renderHome(){ const primary=document.getElementById('primaryArea'); if(!primary) return; destroyStatsCharts(); const attempts=loadAttempts(); const sessions=loadFlashcardSessions(); const tests=loadTests(); const testById=new Map(tests.map(t=>[String(t.id),t]));
+function renderHome(){ const primary=document.getElementById('statsContent'); if(!primary) return; destroyStatsCharts(); const attempts=loadAttempts(); const sessions=loadFlashcardSessions(); const tests=loadTests(); const testById=new Map(tests.map(t=>[String(t.id),t]));
   let highestScore=null; attempts.forEach(a=>{ const pct=a.total? (a.score/a.total)*100:0; if(!highestScore || pct>highestScore.pct) highestScore={pct,testId:a.testId,date:a.date,score:a.score,total:a.total}; });
   let maxCardsSession=null; sessions.forEach(s=>{ if(!maxCardsSession || (s.cardsSeen||0) > (maxCardsSession.cardsSeen||0)) maxCardsSession=s; });
   let longestSession=null; sessions.forEach(s=>{ if(!longestSession || (s.durationSeconds||0) > (longestSession.durationSeconds||0)) longestSession=s; });
@@ -472,7 +435,7 @@ function renderHome(){ const primary=document.getElementById('primaryArea'); if(
     <div class='grid gap-6 sm:grid-cols-2 lg:grid-cols-3'>
       ${trophyCard('Highest Test Score', highestScore? highestScore.pct.toFixed(1)+'%':'—', highestScore?`On ${(testById.get(String(highestScore.testId))||{}).name||'a test'} (${highestScore.score}/${highestScore.total})`:'Take a test to unlock this!', '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="text-amber-500"><path d="M5 3h14v3h2a1 1 0 0 1 1 1c0 4.418-2.239 8-5 8-1.357 0-2.59-.71-3.5-1.874A4.494 4.494 0 0 1 9 15C6.239 15 4 11.418 4 7a1 1 0 0 1 1-1h0V3Zm2 2v1c0 3.309 1.567 6 3 6 .42 0 1.362-.675 2-1.657V5H7Zm6 0v5.343C13.638 11.325 14.58 12 15 12c1.433 0 3-2.691 3-6V5h-5ZM8 17h8v2a4 4 0 0 1-4 4 4 4 0 0 1-4-4v-2Z"/></svg>')}
       ${trophyCard('Most Cards in Session', maxCardsSession? maxCardsSession.cardsSeen:'—', maxCardsSession?`In set: ${maxCardsSession.setName||'Unknown'} (${maxCardsSession.cardsSeen}/${maxCardsSession.totalCards} seen)`:'Study flashcards to unlock.', '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="text-emerald-500"><path d="M4 4h16v12H4zM4 20h16v-2H4z"/></svg>')}
-      ${trophyCard('Longest Flashcard Session', longestSession? fmtSecondsToHMS(longestSession.durationSeconds):'—', longestSession?`Duration with ${(longestSession.cardsSeen||0)} cards studied.`:'Finish a session to unlock.', '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="text-sky-500"><path d="M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8Zm0-6a1 1 0 0 1 1 1v2.07A8.001 8.001 0 0 1 12 22a8.001 8.001 0 0 1-1-15.93V3a1 1 0 0 1 1-1Z"/></svg>')}
+      ${trophyCard('Longest Flashcard Session', longestSession? fmtSecondsToHMS(longestSession.durationSeconds):'—', longestSession?`Duration with ${(longestSession.cardsSeen||0)} cards studied.`:'Finish a session to unlock.', '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="text-sky-500"><path d="M12 8a4 4 0 1  1 1 0 0 1 0 8 4 4 0 0 1 0-8Zm0-6a1 1 0 0 1 1 1v2.07A8.001 8.001 0 0 1 12 22a8.001 8.001 0 0 1-1-15.93V3a1 1 0 0 1 1-1Z"/></svg>')}
       ${trophyCard('Study Days', totalStudyDays, 'Unique calendar days you engaged with tests or flashcards.', '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="text-indigo-500"><path d="M6 2a1 1 0 0 0-1 1v1H4a2 2 0 0 0-2 2v2h20V6a2 2 0 0 0-2-2h-1V3a1 1 0 1 0-2 0v1H7V3a1 1 0 0 0-1-1ZM22 10H2v8a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-8ZM8 13h3v3H8v-3Z"/></svg>')}
       ${trophyCard('Total Tests Taken', attempts.length, 'All recorded test attempts. Keep practicing!', '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="text-pink-500"><path d="M5 9h3v10H5zM10.5 4h3v15h-3zM16 13h3v6h-3z"/></svg>')}
       ${trophyCard('Flashcard Sessions', sessions.length, 'Completed flashcard study sessions logged.', '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="text-teal-500"><path d="M4 4h16v12H4zM4 20h16v-2H4z"/></svg>')}
@@ -481,7 +444,7 @@ function renderHome(){ const primary=document.getElementById('primaryArea'); if(
   </div>`; }
 
 // Trophy Room with 50 unlockable badges
-function renderTrophies(){ const primary=document.getElementById('primaryArea'); if(!primary) return; destroyStatsCharts();
+function renderTrophies(){ const primary=document.getElementById('statsContent'); if(!primary) return; destroyStatsCharts();
   const tests=loadTests(); const attempts=loadAttempts(); const sets=loadCardSets(); const sessions=loadFlashcardSessions();
   // --- Concept Typer stats ---
   let ctStats=[];
@@ -505,6 +468,9 @@ function renderTrophies(){ const primary=document.getElementById('primaryArea');
   const dictionarySubjectsUsedForAdds = Object.keys(dictStats.searches.bySubjectAdd||{}).length;
   const dictionarySearches = dictStats.searches.total||0;
   const dictionarySearchTimeSeconds = Math.floor((dictStats.searches.timeFocusedMs||0)/1000);
+  // Book Snake (game) metrics
+  const bookSnakeHigh = (function(){ try { return parseInt(localStorage.getItem('bookSnakeHigh')||'0',10) || 0; } catch { return 0; } })();
+  const bookSnakeWins = (function(){ try { return parseInt(localStorage.getItem('bookSnakeWins')||'0',10) || 0; } catch { return 0; } })();
   const totalTests=tests.length; const totalQuestions=tests.reduce((s,t)=> s+(t.questions?.length||0),0); const totalAttempts=attempts.length; const totalSets=sets.length; const totalCards=sets.reduce((s,st)=> s+(st.cards?.length||0),0); const totalSessions=sessions.length; const totalCardsStudied=sessions.reduce((s,a)=> s+(a.cardsSeen||0),0); const totalStudySeconds=sessions.reduce((s,a)=> s+(a.durationSeconds||0),0);
   const longestSession=sessions.reduce((m,s)=> (s.durationSeconds||0)>(m?.durationSeconds||0)?s:m,null); const maxCardsSession=sessions.reduce((m,s)=> (s.cardsSeen||0)>(m?.cardsSeen||0)?s:m,null);
   const highestScoreAttempt = attempts.reduce((m,a)=>{ const pct=a.total? (a.score/a.total)*100:0; return (!m||pct>m.pct)? {pct,attempt:a}:m; }, null);
@@ -516,7 +482,7 @@ function renderTrophies(){ const primary=document.getElementById('primaryArea');
   const daySet=new Set([...attempts.map(a=>dayKeyLocal(a.date)), ...sessions.map(s=>dayKeyLocal(s.date))]); const allDays=[...daySet].sort(); let longestStreak=0,currentStreak=0,prevDate=null; allDays.forEach(d=>{ const dt=new Date(d); if(prevDate){ const nx=new Date(prevDate); nx.setDate(nx.getDate()+1); const isConsecutive=dayKeyLocal(nx)===dayKeyLocal(dt); currentStreak=isConsecutive? currentStreak+1:1; } else currentStreak=1; if(currentStreak>longestStreak) longestStreak=currentStreak; prevDate=dt; });
   const totalSubjectCards=Object.values(flashBySubject).reduce((s,o)=> s+o.cards,0); let balancedStudy=false; if(totalSubjectCards>0){ const shares=Object.values(flashBySubject).map(o=> o.cards/totalSubjectCards); const avgShare=shares.reduce((a,b)=>a+b,0)/shares.length; balancedStudy=shares.every(sh=> sh>=avgShare*0.4); }
   function hours(h){ return h*3600; } function minutes(m){ return m*60; }
-  const ctx={tests,attempts,sets,sessions,totalTests,totalQuestions,totalAttempts,totalSets,totalCards,totalSessions,totalCardsStudied,totalStudySeconds,longestSession,maxCardsSession,highestScoreAttempt,perfectScores,avgScore,testBySubject,flashBySubject,distinctFlashSubjects,trendDelta,longestStreak,balancedStudy};
+  const ctx={tests,attempts,sets,sessions,totalTests,totalQuestions,totalAttempts,totalSets,totalCards,totalSessions,totalCardsStudied,totalStudySeconds,longestSession,maxCardsSession,highestScoreAttempt,perfectScores,avgScore,testBySubject,flashBySubject,distinctFlashSubjects,trendDelta,longestStreak,balancedStudy,bookSnakeHigh,bookSnakeWins};
   // Merge dictionary metrics into ctx
   Object.assign(ctx,{dictionaryListsCreated,dictionaryListsDeleted,dictionaryExports,dictionaryExportCards,dictionarySubjectsCount,dictionarySubjectsUsedForAdds,dictionarySearches,dictionarySearchTimeSeconds});
   const badges=[
@@ -579,6 +545,13 @@ function renderTrophies(){ const primary=document.getElementById('primaryArea');
     {id:'flash_marathon',name:'Flashcard Marathon',icon:'🏁',check:c=> (c.maxCardsSession?.cardsSeen||0)>=100,desc:'100 cards single session.'},
     {id:'streak_3',name:'Spark Streak',icon:'📆',check:c=> c.longestStreak>=3,desc:'3-day study streak.'},
   {id:'streak_7',name:'Weekly Warrior',icon:'🗓️',check:c=> c.longestStreak>=7,desc:'7-day study streak.'},
+    // --- Book Snake Achievements ---
+    {id:'snake_first_bite',name:'First Bite',icon:'🐍',check:c=> (c.bookSnakeHigh||0)>=1,desc:'Score 1 point in Book Snake.'},
+    {id:'snake_bookworm',name:'Bookworm',icon:'📚',check:c=> (c.bookSnakeHigh||0)>=10,desc:'Reach 10 in Book Snake.'},
+    {id:'snake_bibliophile',name:'Bibliophile Serpent',icon:'🐍📖',check:c=> (c.bookSnakeHigh||0)>=25,desc:'Reach 25 in Book Snake.'},
+    {id:'snake_library',name:'Library Constrictor',icon:'📚🐍',check:c=> (c.bookSnakeHigh||0)>=50,desc:'Reach 50 in Book Snake.'},
+    {id:'snake_archivist',name:'Archivist Anaconda',icon:'🏛️',check:c=> (c.bookSnakeHigh||0)>=100,desc:'Reach 100 in Book Snake.'},
+    {id:'snake_win',name:'1997 Snake Movie',icon:'🎬',check:c=> (c.bookSnakeWins||0)>=1,desc:'Win a full Book Snake game.'},
   // --- Dictionary Achievements ---
   {id:'dict_list_first',name:'Term Trailblazer',icon:'📘',check:c=> c.dictionaryListsCreated>=1,desc:'Create your first term list.'},
   {id:'dict_list_10',name:'Lexicon Architect',icon:'🏗️',check:c=> c.dictionaryListsCreated>=10,desc:'Create 10 term lists.'},
@@ -592,11 +565,13 @@ function renderTrophies(){ const primary=document.getElementById('primaryArea');
   // Previously earned (persisted) list from resets
   let persistedBadges=[]; try{ persistedBadges=JSON.parse(localStorage.getItem('fpPersistedBadges')||'[]'); }catch{}
   const allNonSecretEarnedWithPersisted = visibleBadges.every(b=> b.check(ctx) || persistedBadges.includes(b.id));
+  const DEV = (window.FPDev && window.FPDev.isDev && window.FPDev.isDev());
   // Force unlock flag (left in place from earlier feature)
   const focusMasterUnlockedFlagStored = false; // disabled
   const secretPersisted = false; // disabled
-  const earnedCountVisible = visibleBadges.filter(b=> b.check(ctx) || persistedBadges.includes(b.id)).length;
-  const earnedCount = badges.filter(b=> (b.check(ctx) || persistedBadges.includes(b.id))).length;
+  // In Developer Mode, display all achievements as unlocked for debugging
+  const earnedCountVisible = DEV ? visibleBadges.length : visibleBadges.filter(b=> b.check(ctx) || persistedBadges.includes(b.id)).length;
+  const earnedCount = DEV ? badges.length : badges.filter(b=> (b.check(ctx) || persistedBadges.includes(b.id))).length;
   primary.innerHTML=`<div class='space-y-6'>
     <div class='flex items-center justify-between flex-wrap gap-4'>
       <h3 class='text-xl font-semibold text-[var(--text-primary)]'>Trophy Room</h3>
@@ -608,14 +583,14 @@ function renderTrophies(){ const primary=document.getElementById('primaryArea');
   const grid=document.getElementById('badgeGrid');
   const focusMasterUnlockedFlag = false; // disabled
   badges.forEach(b=>{
-    // Earned if criteria met OR persisted
-  const earned = (b.check(ctx) || persistedBadges.includes(b.id));
+    // Earned if criteria met OR persisted; in Dev Mode, all appear as earned
+    const earned = DEV ? true : (b.check(ctx) || persistedBadges.includes(b.id));
     const btn=document.createElement('button');
     btn.type='button';
     btn.dataset.id=b.id;
     btn.className=`group relative flex flex-col items-center gap-2 p-3 rounded-xl border text-center transition ${earned? 'bg-white border-[var(--primary-color)] shadow':'bg-white border-[var(--border-color)] opacity-70'} hover:opacity-100`;
     btn.innerHTML=`<div class='text-2xl'>${b.icon}</div><div class='text-[11px] font-semibold tracking-wide ${earned? 'text-[var(--primary-color)]':'text-[var(--text-secondary)]'}'>${b.name}</div><div class='absolute top-2 right-2 text-[10px] ${earned? 'text-emerald-500':'text-gray-300'}'>${earned?'✔':''}</div>`;
-  btn.addEventListener('click',()=>{ const detail=document.getElementById('badgeDetail'); const earnedNow = b.secret ? (allNonSecretEarned || focusMasterUnlockedFlag) : b.check(ctx); detail.innerHTML=badgeDetailHTML(b,ctx,earnedNow); detail.classList.remove('hidden'); detail.scrollIntoView({behavior:'smooth',block:'nearest'}); });
+    btn.addEventListener('click',()=>{ const detail=document.getElementById('badgeDetail'); const earnedNow = DEV ? true : (b.secret ? (allNonSecretEarned || focusMasterUnlockedFlag) : b.check(ctx)); detail.innerHTML=badgeDetailHTML(b,ctx,earnedNow); detail.classList.remove('hidden'); detail.scrollIntoView({behavior:'smooth',block:'nearest'}); });
     grid.appendChild(btn);
   });
   function badgeDetailHTML(b,c,earned){ const progress = progressText(b,c,earned); return `<div class='flex items-start gap-4'><div class='text-4xl'>${b.icon}</div><div class='flex-1'><div class='font-semibold text-[var(--text-primary)] text-sm mb-1'>${b.name} ${earned? '<span class="ml-2 text-emerald-600 text-[10px] font-medium px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200">UNLOCKED</span>':''}</div><div class='text-[var(--text-secondary)] text-xs leading-relaxed'>${progress}</div></div></div>`; }
@@ -629,6 +604,12 @@ function renderTrophies(){ const primary=document.getElementById('primaryArea');
       case 'cardsStudied_2000': return earned? `${c.totalCardsStudied} cards studied.` : `Cards studied ${c.totalCardsStudied}/2000.`;
       case 'flash_marathon': return earned? `Best session ${c.maxCardsSession.cardsSeen} cards.` : `Best ${(c.maxCardsSession?.cardsSeen||0)}/100 cards.`;
       case 'streak_7': return earned? `Longest streak ${c.longestStreak} days.` : `Longest streak ${c.longestStreak}/7 days.`;
+  case 'snake_first_bite': return earned? `High score ${c.bookSnakeHigh}.` : `High score ${c.bookSnakeHigh}/1.`;
+  case 'snake_bookworm': return earned? `High score ${c.bookSnakeHigh}.` : `High score ${c.bookSnakeHigh}/10.`;
+  case 'snake_bibliophile': return earned? `High score ${c.bookSnakeHigh}.` : `High score ${c.bookSnakeHigh}/25.`;
+  case 'snake_library': return earned? `High score ${c.bookSnakeHigh}.` : `High score ${c.bookSnakeHigh}/50.`;
+  case 'snake_archivist': return earned? `High score ${c.bookSnakeHigh}.` : `High score ${c.bookSnakeHigh}/100.`;
+  case 'snake_win': return earned? `Wins ${c.bookSnakeWins}.` : `Win a full game (wins: ${c.bookSnakeWins}/1).`;
   case 'dict_list_first': return earned? `Lists created ${c.dictionaryListsCreated}.` : `Progress: ${c.dictionaryListsCreated}/1 list.`;
   case 'dict_list_10': return earned? `${c.dictionaryListsCreated} lists created.` : `Progress: ${c.dictionaryListsCreated}/10 lists.`;
   case 'dict_export_first': return earned? `Exports ${c.dictionaryExports}.` : `Progress: ${c.dictionaryExports}/1 export.`;
@@ -718,7 +699,6 @@ function fullDataResetPreserveAchievements(){
   renderStats('home');
 }
 </script>
-<script type="module" src="./nova-widget.js"></script>
 
 </body>
 </html>

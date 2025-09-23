@@ -40,29 +40,13 @@
     setTimeout(function() {
       document.body.style.opacity = '1';
     }, 30);
-    // Personalize welcome message
+    // Personalize welcome message (single-user model)
     var user = JSON.parse(localStorage.getItem('fpTestUser') || '{}');
     var header = document.getElementById('welcomeHeader');
-    if(user.firstName && header) {
-      header.textContent = 'Welcome ' + user.firstName + '!';
+    if(user.name && header) {
+      header.textContent = 'Welcome ' + user.name + '!';
     }
-    // Logout wiring
-    var logoutBtn = document.getElementById('logoutBtn');
-    if(logoutBtn){
-      logoutBtn.addEventListener('click', function(){
-        // Clear relevant stored data (adjust keys as needed)
-        try {
-          localStorage.removeItem('fpTestUser');
-        } catch{}
-        // Basic visual feedback
-        logoutBtn.disabled = true;
-        logoutBtn.textContent = 'Logging out…';
-        setTimeout(function(){
-          // Redirect to index (or login) page
-          window.location.href = 'index.html';
-        }, 450);
-      });
-    }
+    // Single-user model: no logout action
   });
 </script>
 <div class="flex min-h-screen">
@@ -83,15 +67,6 @@
 <path d="M216,40H64a8,8,0,0,0,0,16H216V176a8,8,0,0,0,16,0V56A16,16,0,0,0,216,40Z"></path>
 </svg>
 <span>Flash Cards</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-md text-[var(--text-secondary)] hover-bg-primary-light hover:text-[var(--primary-color)] font-medium transition-colors" href="library.html">
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
-    <path d="M4 19.5V6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v13a.5.5 0 0 1-.5.5H6.5A2.5 2.5 0 0 1 4 19.5z" fill="#fff"/>
-    <path d="M4 19.5V6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v13a.5.5 0 0 1-.5.5H6.5A2.5 2.5 0 0 1 4 19.5z"/>
-    <path d="M8 4v16"/>
-    <path d="M16 4v16"/>
-  </svg>
-  <span>Library</span>
 </a>
 <a class="flex items-center gap-3 px-4 py-3 rounded-md text-[var(--text-secondary)] hover-bg-primary-light hover:text-[var(--primary-color)] font-medium transition-colors" href="test.html">
 <svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg">
@@ -115,10 +90,17 @@
 </a>
 <div class="mt-4">
   <h3 class="text-[var(--text-primary)] text-xs font-semibold mb-2">Upcoming Events</h3>
-  <div id="upcomingList" class="space-y-2 overflow-auto pr-1" style="max-height: 180px;"></div>
+  <div id="upcomingList" class="space-y-2 overflow-auto pr-1" style="max-height: 260px;"></div>
 </div>
 </nav>
 </div>
+  <!-- Upcoming Holidays pinned near bottom -->
+  <div class="px-6 w-full">
+    <div class="mt-4">
+      <h3 class="text-[var(--text-primary)] text-xs font-semibold mb-2">Upcoming Holidays</h3>
+      <div id="upcomingHolidaysList" class="space-y-2 overflow-auto pr-1" style="max-height: 160px;"></div>
+    </div>
+  </div>
   <div class="mt-auto pt-6 flex flex-col items-center">
     <a href="helper.html" class="text-xs text-[var(--text-secondary)] hover:text-[var(--primary-color)] px-4 py-2 rounded transition-colors border border-transparent hover:border-[var(--primary-color)]">Help</a>
   </div>
@@ -149,12 +131,10 @@
       </button>
       <div id="themeMenu" class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border border-[var(--border-color)] py-1 z-50 hidden"></div>
     </div>
-    <button id="logoutBtn" class="ml-1 px-3 py-2 text-sm rounded-md text-[var(--text-secondary)] hover:bg-[var(--background-color)] hover:text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:ring-offset-1" title="Logout" aria-label="Logout">
-      Logout
-    </button>
+    <!-- logout removed for single-user model -->
   </div>
 </header>
-<main class="flex-1 p-6 lg:p-8">
+<main id="primaryArea" class="flex-1 p-6 lg:p-8" style="position:relative;">
 <div class="mb-8">
   <h2 class="text-[var(--text-primary)] text-3xl font-bold" id="welcomeHeader">Welcome!</h2>
 </div>
@@ -179,7 +159,203 @@
 <div id="calGrid" class="grid grid-cols-7 gap-1 text-center"></div>
 </div>
 </div>
+<!-- Snow overlay container (added dynamically) -->
+<div id="fpSnowOverlay" style="position:absolute;inset:0;pointer-events:none;overflow:hidden;display:none;z-index:5;"></div>
 </main>
+<style>
+  .christmas-primary-area {
+    background: linear-gradient(to bottom, #05070d 0%, #0a1830 80%, #0a2340 100%);
+  }
+</style>
+<script>
+function updatePrimaryAreaTheme(theme) {
+  var area = document.getElementById('primaryArea');
+  if (!area) return;
+  if (theme === 'christmas') {
+    area.classList.add('christmas-primary-area');
+  } else {
+    area.classList.remove('christmas-primary-area');
+  }
+}
+function enableSnow(active){
+  const host = document.getElementById('primaryArea');
+  const overlay = document.getElementById('fpSnowOverlay');
+  if(!host || !overlay) return;
+  // Clear previous content and (re)create layers
+  overlay.innerHTML = '';
+  overlay.style.display = active ? 'block' : 'none';
+  if(!active) return;
+
+  // Define layers for parallax: back, mid, front
+  const layers = [
+    { count: 30, sizeMin: 2, sizeMax: 5, durMin: 10, durMax: 18, blur: 1.2, opacity: 0.6, z: 1 },
+    { count: 40, sizeMin: 3, sizeMax: 7, durMin: 8,  durMax: 14, blur: 0.8, opacity: 0.8, z: 2 },
+    { count: 30, sizeMin: 5, sizeMax: 10,durMin: 6,  durMax: 10, blur: 0.2, opacity: 0.95, z: 3 }
+  ];
+
+  layers.forEach(layer => {
+    const layerEl = document.createElement('div');
+    layerEl.style.cssText = `position:absolute; inset:0; pointer-events:none; z-index:${layer.z};`;
+    overlay.appendChild(layerEl);
+    for(let i=0;i<layer.count;i++){
+      const flake = document.createElement('span');
+      const size = layer.sizeMin + Math.random()*(layer.sizeMax-layer.sizeMin);
+      const left = Math.random()*100;
+      const dur = layer.durMin + Math.random()*(layer.durMax-layer.durMin);
+      const delay = Math.random()*6;
+      const drift = (Math.random()*60 - 30); // -30 to 30 px
+      const sway = (Math.random()*30 + 10); // sway amplitude
+      flake.style.cssText = `
+        position:absolute; top:-12px; left:${left}%;
+        width:${size}px; height:${size}px; border-radius:50%;
+        background: rgba(255,255,255,${layer.opacity});
+        box-shadow:0 0 ${Math.max(4,size)}px rgba(255,255,255,0.6);
+        filter: blur(${layer.blur}px);
+        will-change: transform, opacity;
+        animation: fpSnowFall ${dur}s linear ${delay}s infinite, fpSnowSway ${dur*0.7}s ease-in-out ${Math.random()*5}s infinite alternate;
+      `;
+      flake.style.setProperty('--drift', drift+'px');
+      flake.style.setProperty('--sway', sway+'px');
+      layerEl.appendChild(flake);
+    }
+  });
+
+  // Add keyframes once
+  if(!document.getElementById('fpSnowStyles')){
+    const style = document.createElement('style');
+    style.id = 'fpSnowStyles';
+    style.textContent = `
+      @keyframes fpSnowFall {
+        0% { transform: translate3d(0, -10px, 0); opacity: 0.85; }
+        60% { transform: translate3d(var(--drift), 60vh, 0); opacity: 0.92; }
+        100% { transform: translate3d(calc(var(--drift) * 1.4), 100vh, 0); opacity: 0.8; }
+      }
+      @keyframes fpSnowSway {
+        0% { margin-left: 0; }
+        100% { margin-left: var(--sway); }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+}
+document.addEventListener('DOMContentLoaded', function() {
+  updatePrimaryAreaTheme(window.ThemeManager?.getTheme?.());
+  enableSnow(window.ThemeManager?.getTheme?.() === 'christmas');
+  if(window.ThemeManager?.setTheme){
+    const origSetTheme = window.ThemeManager.setTheme;
+    window.ThemeManager.setTheme = function(t){
+      origSetTheme.apply(this, arguments);
+      updatePrimaryAreaTheme(t);
+      enableSnow(t === 'christmas');
+      updateCalendarLights(t === 'christmas');
+    };
+  }
+  // Ensure calendar lights reflect initial theme
+  updateCalendarLights(window.ThemeManager?.getTheme?.() === 'christmas');
+});
+
+// Christmas lights border around the calendar card
+function updateCalendarLights(active){
+  const card = document.getElementById('calendarCard');
+  if(!card) return;
+  // Remove if present
+  const existing = card.querySelector('#fpLightsBorder');
+  if(existing) existing.remove();
+  if(!active) return;
+
+  // Create an absolutely positioned SVG overlay as a border
+  const wrapper = document.createElement('div');
+  wrapper.id = 'fpLightsBorder';
+  wrapper.style.position = 'absolute';
+  wrapper.style.inset = '0';
+  wrapper.style.pointerEvents = 'none';
+  wrapper.style.zIndex = '6';
+  wrapper.style.borderRadius = getComputedStyle(card).borderRadius || '0.5rem';
+  wrapper.style.overflow = 'hidden';
+
+  // Ensure the card can host absolute children
+  const prevPos = getComputedStyle(card).position;
+  if(prevPos === 'static' || !prevPos){ card.style.position = 'relative'; }
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('width', '100%');
+  svg.setAttribute('height', '100%');
+  svg.setAttribute('viewBox', '0 0 1000 700');
+  svg.setAttribute('preserveAspectRatio', 'none');
+
+  const defs = document.createElementNS(svg.namespaceURI, 'defs');
+  const glow = document.createElementNS(svg.namespaceURI, 'filter');
+  glow.setAttribute('id', 'fpLightGlow');
+  glow.innerHTML = `
+    <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur"/>
+    <feMerge>
+      <feMergeNode in="blur"/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  `;
+  defs.appendChild(glow);
+
+  const bulbColors = ['#ff3b30','#ffcc00','#34c759','#5ac8fa','#ff2d55'];
+
+  // Create a path around the rectangle edges for the wire
+  const wire = document.createElementNS(svg.namespaceURI, 'path');
+  wire.setAttribute('d', 'M30 30 H970 V670 H30 Z');
+  wire.setAttribute('fill', 'none');
+  wire.setAttribute('stroke', '#2b2b2b');
+  wire.setAttribute('stroke-width', '3');
+  wire.setAttribute('stroke-linejoin', 'round');
+
+  // Place bulbs at intervals along each side
+  const bulbsGroup = document.createElementNS(svg.namespaceURI, 'g');
+  bulbsGroup.setAttribute('filter', 'url(#fpLightGlow)');
+
+  function addBulb(cx, cy, color, rotate){
+    const g = document.createElementNS(svg.namespaceURI, 'g');
+    g.setAttribute('transform', `translate(${cx},${cy}) rotate(${rotate||0})`);
+    const cap = document.createElementNS(svg.namespaceURI, 'rect');
+    cap.setAttribute('x', '-4'); cap.setAttribute('y', '-10'); cap.setAttribute('width', '8'); cap.setAttribute('height', '6');
+    cap.setAttribute('rx', '1'); cap.setAttribute('fill', '#444');
+    const bulb = document.createElementNS(svg.namespaceURI, 'ellipse');
+    bulb.setAttribute('cx', '0'); bulb.setAttribute('cy', '6'); bulb.setAttribute('rx', '6'); bulb.setAttribute('ry', '10');
+    bulb.setAttribute('fill', color);
+    bulb.setAttribute('opacity', '0.95');
+    bulb.style.animation = `fpBulbTwinkle ${1.6 + Math.random()}s ease-in-out ${Math.random()}s infinite alternate`;
+    g.appendChild(cap); g.appendChild(bulb);
+    bulbsGroup.appendChild(g);
+  }
+
+  // Top and bottom (x varies)
+  for(let x=60; x<=940; x+=60){
+    addBulb(x, 30, bulbColors[(x/60)%bulbColors.length], 0);
+    addBulb(x, 670, bulbColors[(x/60+2)%bulbColors.length], 180);
+  }
+  // Left and right (y varies)
+  for(let y=60; y<=640; y+=60){
+    addBulb(30, y, bulbColors[(y/60+1)%bulbColors.length], -90);
+    addBulb(970, y, bulbColors[(y/60+3)%bulbColors.length], 90);
+  }
+
+  svg.appendChild(defs);
+  svg.appendChild(wire);
+  svg.appendChild(bulbsGroup);
+
+  wrapper.appendChild(svg);
+  card.appendChild(wrapper);
+
+  // Add styles for bulb twinkle once
+  if(!document.getElementById('fpLightsStyles')){
+    const style = document.createElement('style');
+    style.id = 'fpLightsStyles';
+    style.textContent = `
+      @keyframes fpBulbTwinkle {
+        0% { filter: drop-shadow(0 0 0px rgba(255,255,255,0.2)) brightness(0.9); opacity: 0.9; }
+        100% { filter: drop-shadow(0 0 8px rgba(255,255,255,0.9)) brightness(1.25); opacity: 1; }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+}
+</script>
 </div>
  </div>
 
@@ -393,7 +569,12 @@
         const list = window.ThemeManager?.listThemes ? window.ThemeManager.listThemes() : [];
         const unlockedStarWars = list.includes('star-wars');
         themeMenu.innerHTML = '';
+        const now = new Date();
+        const month = now.getMonth(); // October is 9
+        const DEV = !!(window.FPDev && window.FPDev.isDev && window.FPDev.isDev());
         list.forEach((key,idx) => {
+          // In normal mode, hide Halloween outside October; in Dev Mode always show
+          if(key==='halloween' && month!==9 && !DEV) return;
           if(idx===3){ // after dark add divider
             const div=document.createElement('div'); div.className='my-1 h-px bg-[var(--border-color)]'; themeMenu.appendChild(div);
           }
@@ -461,6 +642,115 @@
     let viewYear = today.getFullYear();
     let viewMonth = today.getMonth(); // 0-11
 
+    // Detect holiday region (very light heuristic). User can override via localStorage key `fpHolidaysRegion`.
+    const holidayRegion = (localStorage.getItem('fpHolidaysRegion') || detectHolidayRegion());
+
+    function detectHolidayRegion(){
+      try {
+        const lang = (navigator.language || '').toLowerCase();
+        if (lang.includes('us')) return 'US';
+        if (lang.includes('gb') || lang.includes('uk')) return 'GB';
+        if (lang.includes('ca')) return 'CA';
+      } catch {}
+      return 'US'; // default
+    }
+
+    function toISO(y,m,d){ // m: 1-12
+      return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    }
+    function observedFixedDate(y, m0, d){ // month 0-11; US observed rule for fixed-date holidays
+      const dt = new Date(y, m0, d);
+      const wd = dt.getDay(); // 0 Sun .. 6 Sat
+      if (wd === 6) { // Saturday -> observed Friday
+        const obs = new Date(dt); obs.setDate(dt.getDate() - 1);
+        return obs;
+      }
+      if (wd === 0) { // Sunday -> observed Monday
+        const obs = new Date(dt); obs.setDate(dt.getDate() + 1);
+        return obs;
+      }
+      return dt;
+    }
+    function nthWeekdayOfMonth(y, m0, weekday, n){ // weekday 0-6, n>=1
+      const first = new Date(y, m0, 1);
+      const firstW = first.getDay();
+      const offset = (7 + weekday - firstW) % 7;
+      const day = 1 + offset + (n-1)*7;
+      return new Date(y, m0, day);
+    }
+    function lastWeekdayOfMonth(y, m0, weekday){
+      const last = new Date(y, m0+1, 0); // last day of month m0
+      const delta = (last.getDay() - weekday + 7) % 7; // how many days to step back
+      last.setDate(last.getDate() - delta);
+      return last;
+    }
+    function getUSFederalHolidaysMap(y){
+      const map = {};
+      // New Year's Day (Observed)
+      { const obs = observedFixedDate(y, 0, 1); map[obs.toISOString().slice(0,10)] = "New Year's Day" + (obs.getDate()!==1||obs.getMonth()!==0? ' (Observed)':'' ); }
+      // Martin Luther King Jr. Day – 3rd Monday in January
+      { const dt = nthWeekdayOfMonth(y, 0, 1, 3); map[dt.toISOString().slice(0,10)] = 'Martin Luther King Jr. Day'; }
+      // Presidents' Day – 3rd Monday in February
+      { const dt = nthWeekdayOfMonth(y, 1, 1, 3); map[dt.toISOString().slice(0,10)] = "Presidents' Day"; }
+      // Memorial Day – last Monday in May
+      { const dt = lastWeekdayOfMonth(y, 4, 1); map[dt.toISOString().slice(0,10)] = 'Memorial Day'; }
+      // Juneteenth – June 19 (Observed)
+      { const obs = observedFixedDate(y, 5, 19); map[obs.toISOString().slice(0,10)] = 'Juneteenth National Independence Day' + (obs.getDate()!==19||obs.getMonth()!==5? ' (Observed)':'' ); }
+      // Independence Day – July 4 (Observed)
+      { const obs = observedFixedDate(y, 6, 4); map[obs.toISOString().slice(0,10)] = 'Independence Day' + (obs.getDate()!==4||obs.getMonth()!==6? ' (Observed)':'' ); }
+      // Labor Day – first Monday in September
+      { const dt = nthWeekdayOfMonth(y, 8, 1, 1); map[dt.toISOString().slice(0,10)] = 'Labor Day'; }
+      // Columbus Day – second Monday in October
+      { const dt = nthWeekdayOfMonth(y, 9, 1, 2); map[dt.toISOString().slice(0,10)] = 'Columbus Day'; }
+      // Veterans Day – Nov 11 (Observed)
+      { const obs = observedFixedDate(y, 10, 11); map[obs.toISOString().slice(0,10)] = 'Veterans Day' + (obs.getDate()!==11||obs.getMonth()!==10? ' (Observed)':'' ); }
+      // Thanksgiving – fourth Thursday in November
+      { const dt = nthWeekdayOfMonth(y, 10, 4, 4); map[dt.toISOString().slice(0,10)] = 'Thanksgiving Day'; }
+      // Christmas – Dec 25 (Observed)
+      { const obs = observedFixedDate(y, 11, 25); map[obs.toISOString().slice(0,10)] = 'Christmas Day' + (obs.getDate()!==25||obs.getMonth()!==11? ' (Observed)':'' ); }
+      return map;
+    }
+    function getGenericHolidaysMap(y){
+      const map = {};
+      { const obs = observedFixedDate(y, 0, 1); map[obs.toISOString().slice(0,10)] = "New Year's Day" + (obs.getDate()!==1||obs.getMonth()!==0? ' (Observed)':'' ); }
+      { const obs = observedFixedDate(y, 11, 25); map[obs.toISOString().slice(0,10)] = 'Christmas Day' + (obs.getDate()!==25||obs.getMonth()!==11? ' (Observed)':'' ); }
+      return map;
+    }
+    function getHolidayMap(y, region){
+      if (region === 'US') return getUSFederalHolidaysMap(y);
+      // TODO: add GB/CA sets later; use generic for now
+      return getGenericHolidaysMap(y);
+    }
+    function getHolidayEventsForYear(y, region){
+      const map = getHolidayMap(y, region);
+      const list = [];
+      Object.entries(map).forEach(([iso, name]) => {
+        list.push({
+          id: `holiday:${iso}`,
+          date: iso,
+          start: `${iso}T00:00:00`,
+          end: `${iso}T23:59:59`,
+          from: '', to: '', allDay: true,
+          type: 'Holiday',
+          subject: name,
+          desc: '', location: ''
+        });
+      });
+      return list;
+    }
+    function getHolidayEventsBetween(startDate, endDate, region){
+      const ys = startDate.getFullYear();
+      const ye = endDate.getFullYear();
+      let list = [];
+      for (let y=ys; y<=ye; y++) list = list.concat(getHolidayEventsForYear(y, region));
+      const startMs = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()).getTime();
+      const endMs = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), 23,59,59,999).getTime();
+      return list.filter(ev => {
+        const t = new Date(ev.start).getTime();
+        return t >= startMs && t <= endMs;
+      });
+    }
+
     function formatMonthYear(y, m) {
       return new Date(y, m, 1).toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
     }
@@ -481,6 +771,7 @@
     function render() {
       titleEl.textContent = formatMonthYear(viewYear, viewMonth);
       gridEl.innerHTML = '';
+      const holidayMap = getHolidayMap(viewYear, holidayRegion);
 
       // Weekday headers (Sun..Sat)
       const weekdays = Array.from({length:7}, (_,i) => new Date(2021,7, i+1).toLocaleDateString(undefined, { weekday: 'narrow' }));
@@ -540,6 +831,18 @@
           cell.appendChild(dotWrap);
         }
 
+        // Mark holidays with a small star badge and tooltip
+        const holidayName = holidayMap[dayIso];
+        if (holidayName) {
+          const badge = document.createElement('div');
+          badge.className = 'absolute top-0 right-0 text-[10px] leading-none pr-0.5 pt-0.5';
+          badge.style.color = '#0ea5e9'; // sky blue
+          badge.title = holidayName;
+          badge.setAttribute('aria-label', `Holiday: ${holidayName}`);
+          badge.textContent = '★';
+          cell.appendChild(badge);
+        }
+
         gridEl.appendChild(cell);
   }
   // After building calendar adjust square
@@ -550,11 +853,13 @@
       viewMonth -= 1;
       if (viewMonth < 0) { viewMonth = 11; viewYear -= 1; }
       render();
+      renderUpcomingHolidays();
     });
   btnNext.addEventListener('click', () => {
       viewMonth += 1;
       if (viewMonth > 11) { viewMonth = 0; viewYear += 1; }
       render();
+      renderUpcomingHolidays();
     });
 
     // Form helpers
@@ -595,6 +900,7 @@
         case 'study time': return '#22c55e';   // green
         case 'group activity': return '#eab308'; // yellow
         case 'practice': return '#f97316';     // orange
+        case 'holiday': return '#0ea5e9';      // sky blue
         case 'other': return '#a855f7';        // purple
         default: return 'var(--primary-color)';
       }
@@ -622,6 +928,11 @@
         const time = e.allDay ? 'All day' : `${formatTime(e.from)} - ${formatTime(e.to)}`;
         const item = document.createElement('div');
         item.className = 'flex items-start gap-3';
+        const canDelete = true;
+        const deleteBtn = canDelete ? `
+          <button class="ml-auto p-1.5 rounded hover:bg-red-50 text-red-500 hover:text-red-700" data-id="${e.id}" aria-label="Delete event" title="Delete">
+            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"w-5 h-5\"><path fill-rule=\"evenodd\" d=\"M9 2a1 1 0 00-1 1v1H5.5a.5.5 0 000 1h9a.5.5 0 000-1H12V3a1 1 0 00-1-1H9zm-4 5h10l-.8 9.2A2 2 0 0112.21 18H7.79a2 2 0 01-1.99-1.8L5 7zm3 2a.75.75 0 011.5 0v5a.75.75 0 01-1.5 0V9zm4 0a.75.75 0 10-1.5 0v5a.75.75 0 001.5 0V9z\" clip-rule=\"evenodd\"/></svg>
+          </button>` : '';
         item.innerHTML = `
           <div class="w-1.5 h-10 rounded-full mt-1" style="background-color:${color}"></div>
           <div class="flex-1 min-w-0">
@@ -631,19 +942,52 @@
             ${e.type ? `<p class=\"text-[var(--text-secondary)] text-xs\">${escapeHtml(e.type)}</p>` : ''}
             ${e.desc ? `<p class=\"text-xs text-[var(--text-secondary)] mt-1\">${escapeHtml(e.desc)}</p>` : ''}
           </div>
-          <button class="ml-auto p-1.5 rounded hover:bg-red-50 text-red-500 hover:text-red-700" data-id="${e.id}" aria-label="Delete event" title="Delete">
-            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"w-5 h-5\"><path fill-rule=\"evenodd\" d=\"M9 2a1 1 0 00-1 1v1H5.5a.5.5 0 000 1h9a.5.5 0 000-1H12V3a1 1 0 00-1-1H9zm-4 5h10l-.8 9.2A2 2 0 0112.21 18H7.79a2 2 0 01-1.99-1.8L5 7zm3 2a.75.75 0 011.5 0v5a.75.75 0 01-1.5 0V9zm4 0a.75.75 0 10-1.5 0v5a.75.75 0 001.5 0V9z\" clip-rule=\"evenodd\"/></svg>
-          </button>`;
+          ${deleteBtn}`;
         upcomingList.appendChild(item);
 
         const delBtn = item.querySelector('button[data-id]');
-        delBtn?.addEventListener('click', () => {
-          const list = loadEvents();
-          const next = list.filter(ev => ev.id !== e.id);
-          saveEvents(next);
-          renderUpcoming();
-          render();
-        });
+        if (delBtn) {
+          delBtn.addEventListener('click', () => {
+            const list = loadEvents();
+            const next = list.filter(ev => ev.id !== e.id);
+            saveEvents(next);
+            renderUpcoming();
+            renderUpcomingHolidays();
+            render();
+          });
+        }
+      });
+    }
+
+    function renderUpcomingHolidays() {
+      const holidaysList = document.getElementById('upcomingHolidaysList');
+      if (!holidaysList) return;
+      const now = new Date(); now.setHours(0,0,0,0);
+      const in180 = new Date(now); in180.setDate(in180.getDate()+180);
+      const holidays = getHolidayEventsBetween(now, in180, holidayRegion)
+        .sort((a,b) => new Date(a.start).getTime() - new Date(b.start).getTime())
+        .slice(0, 10);
+      holidaysList.innerHTML = '';
+      if (!holidays.length) {
+        const empty = document.createElement('div');
+        empty.className = 'text-[var(--text-secondary)] text-sm';
+        empty.textContent = 'No upcoming holidays.';
+        holidaysList.appendChild(empty);
+        return;
+      }
+
+      holidays.forEach(e => {
+        const color = typeColor('Holiday');
+        const time = 'All day';
+        const item = document.createElement('div');
+        item.className = 'flex items-start gap-3';
+        item.innerHTML = `
+          <div class="w-1.5 h-10 rounded-full mt-1" style="background-color:${color}"></div>
+          <div class="flex-1 min-w-0">
+            <p class="text-[var(--text-primary)] font-medium">${escapeHtml(e.subject)}</p>
+            <p class="text-[var(--text-secondary)] text-sm">${new Date(e.start).toLocaleDateString()} • ${time}</p>
+          </div>`;
+        holidaysList.appendChild(item);
       });
     }
 
@@ -705,6 +1049,7 @@
   render();
   window.addEventListener('resize', () => { adjustCalendarSquare(); });
     renderUpcoming();
+    renderUpcomingHolidays();
   })();
  </script>
 <script>
@@ -725,7 +1070,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <div id="fpFooter" style="font-size:11px; color:var(--text-secondary); text-align:center; position:absolute; left:16rem; right:0; bottom:0; z-index:9999; background:rgba(240,242,245,0.95); pointer-events:none; box-shadow:0 -2px 8px rgba(0,0,0,0.04);">© FocusPath 2025. 4a4152564953 Applications EST. 2025</div>
-<script type="module" src="./nova-widget.js"></script>
 
 </body>
 </html>

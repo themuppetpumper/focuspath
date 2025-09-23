@@ -131,7 +131,7 @@
       <div class="welcome-desc" id="welcomeDesc">Where Studying Shouldn't Break the Bank.<br>Organize, learn, and achieve your goals for free.<br><span style="font-size:1.1rem;color:#0d78f2;font-weight:600;">Your journey starts here.</span></div>
       <div class="welcome-btn-group" style="display:flex;flex-direction:column;gap:1rem;align-items:center;animation:fadeIn 2.2s 1.2s both;">
         <a href="signup.html" class="welcome-btn" id="newUserBtn">New User</a>
-        <a href="login.html" class="welcome-btn" id="loginBtn" style="background:linear-gradient(90deg,#4f8cff 60%,#0d78f2 100%);">Login</a>
+        <button id="resetAppBtn" style="background:transparent;color:#60748a;border:none;font-size:0.9rem;text-decoration:underline;cursor:pointer;padding:0.25rem 0;">Reset App</button>
       </div>
     </div>
     <!-- Animated bubbles -->
@@ -149,33 +149,15 @@
       <span class="close" onclick="closeSignupModal()" style="position:absolute;top:1rem;right:1rem;">&times;</span>
       <h3>Create Account</h3>
       <form id="signupForm" style="display:flex;flex-direction:column;align-items:center;gap:1rem;">
-        <input id="signupFirstName" type="text" placeholder="First Name" required style="width:90%;padding:0.7rem;">
-        <input id="signupLastName" type="text" placeholder="Last Name" required style="width:90%;padding:0.7rem;">
+        <input id="signupName" type="text" placeholder="Name" required style="width:90%;padding:0.7rem;">
         <input id="signupUsername" type="text" placeholder="Username" required style="width:90%;padding:0.7rem;">
-        <input id="signupAge" type="number" min="10" max="120" placeholder="Age" required style="width:90%;padding:0.7rem;">
-        <input id="signupSchool" type="text" placeholder="School" required style="width:90%;padding:0.7rem;">
-        <input id="signupEmail" type="email" placeholder="Email" required style="width:90%;padding:0.7rem;">
         <input id="signupPassword" type="password" placeholder="Password" required style="width:90%;padding:0.7rem;">
         <button type="submit" style="width:100%;padding:0.9rem 0;background:#0d78f2;color:#fff;font-weight:600;border:none;border-radius:0.5rem;font-size:1.1rem;">Sign Up</button>
       </form>
     </div>
   </div>
 
-  <!-- Login Modal -->
-  <div id="loginModal" class="modal">
-    <div class="modal-content" id="loginModalContent" style="position:relative;">
-      <span class="close" onclick="closeLoginModal()" style="position:absolute;top:1rem;right:1rem;">&times;</span>
-      <h3>Login</h3>
-      <form id="loginForm" style="display:flex;flex-direction:column;align-items:center;gap:1rem;">
-        <input id="loginEmail" type="email" placeholder="Email" required style="width:90%;padding:0.7rem;">
-        <input id="loginPassword" type="password" placeholder="Password" required style="width:90%;padding:0.7rem;">
-        <label style="width:90%;text-align:left;font-size:0.98rem;color:#60748a;display:flex;align-items:center;gap:0.5rem;">
-          <input id="loginRemember" type="checkbox" style="margin-right:0.5rem;"> Remember Me
-        </label>
-        <button type="submit" style="width:100%;padding:0.9rem 0;background:#4f8cff;color:#fff;font-weight:600;border:none;border-radius:0.5rem;font-size:1.1rem;">Login</button>
-      </form>
-    </div>
-  </div>
+  
 
   <script>
     // Language switching
@@ -184,49 +166,29 @@
         title: "Welcome to FocusPath!",
         desc: "Where Studying Shouldn't Break the Bank.<br>Organize, learn, and achieve your goals for free.<br><span style='font-size:1.1rem;color:#0d78f2;font-weight:600;'>Your journey starts here.</span>",
         newUser: "New User",
-        login: "Login",
+  login: "Login",
         signup: {
-          firstName: "First Name",
-          lastName: "Last Name",
+          name: "Name",
           username: "Username",
-          age: "Age",
-          school: "School",
-          email: "Email",
           password: "Password",
           button: "Sign Up",
           title: "Create Account"
         },
-        loginModal: {
-          email: "Email",
-          password: "Password",
-          remember: "Remember Me",
-          button: "Login",
-          title: "Login"
-        }
+        
       },
       es: {
         title: "¡Bienvenido a FocusPath!",
         desc: "Donde estudiar no debería costar una fortuna.<br>Organiza, aprende y alcanza tus metas gratis.<br><span style='font-size:1.1rem;color:#0d78f2;font-weight:600;'>Tu viaje comienza aquí.</span>",
         newUser: "Nuevo Usuario",
-        login: "Iniciar Sesión",
+  login: "Iniciar Sesión",
         signup: {
-          firstName: "Nombre",
-          lastName: "Apellido",
+          name: "Nombre",
           username: "Usuario",
-          age: "Edad",
-          school: "Escuela",
-          email: "Correo electrónico",
           password: "Contraseña",
           button: "Registrarse",
           title: "Crear Cuenta"
         },
-        loginModal: {
-          email: "Correo electrónico",
-          password: "Contraseña",
-          remember: "Recuérdame",
-          button: "Iniciar Sesión",
-          title: "Iniciar Sesión"
-        }
+        
       }
     };
     document.addEventListener('DOMContentLoaded', function() {
@@ -234,30 +196,22 @@
       var welcomeTitle = document.getElementById('welcomeTitle');
       var welcomeDesc = document.getElementById('welcomeDesc');
       var newUserBtn = document.getElementById('newUserBtn');
-      var loginBtn = document.getElementById('loginBtn');
+  var loginBtn = null;
       // Load language from localStorage
       var lang = localStorage.getItem('fpLang') || 'en';
       langSelect.value = lang;
       welcomeTitle.innerHTML = languageData[lang].title;
       welcomeDesc.innerHTML = languageData[lang].desc;
       newUserBtn.textContent = languageData[lang].newUser;
-      loginBtn.textContent = languageData[lang].login;
+      
       function updateInputs(lang) {
         // Signup modal
         var signupTitle = document.querySelector('#signupModalContent h3');
         if(signupTitle) signupTitle.textContent = languageData[lang].signup.title;
-        var signupFirstName = document.getElementById('signupFirstName');
-        if(signupFirstName) signupFirstName.placeholder = languageData[lang].signup.firstName;
-        var signupLastName = document.getElementById('signupLastName');
-        if(signupLastName) signupLastName.placeholder = languageData[lang].signup.lastName;
+        var signupName = document.getElementById('signupName');
+        if(signupName) signupName.placeholder = languageData[lang].signup.name;
         var signupUsername = document.getElementById('signupUsername');
         if(signupUsername) signupUsername.placeholder = languageData[lang].signup.username;
-        var signupAge = document.getElementById('signupAge');
-        if(signupAge) signupAge.placeholder = languageData[lang].signup.age;
-        var signupSchool = document.getElementById('signupSchool');
-        if(signupSchool) signupSchool.placeholder = languageData[lang].signup.school;
-        var signupEmail = document.getElementById('signupEmail');
-        if(signupEmail) signupEmail.placeholder = languageData[lang].signup.email;
         var signupPassword = document.getElementById('signupPassword');
         if(signupPassword) signupPassword.placeholder = languageData[lang].signup.password;
         var signupBtn = document.querySelector('#signupForm button[type="submit"]');
@@ -265,8 +219,8 @@
         // Login modal
         var loginTitle = document.querySelector('#loginModalContent h3');
         if(loginTitle) loginTitle.textContent = languageData[lang].loginModal.title;
-        var loginEmail = document.getElementById('loginEmail');
-        if(loginEmail) loginEmail.placeholder = languageData[lang].loginModal.email;
+        var loginUsername = document.getElementById('loginUsername');
+        if(loginUsername) loginUsername.placeholder = languageData[lang].loginModal.username;
         var loginPassword = document.getElementById('loginPassword');
         if(loginPassword) loginPassword.placeholder = languageData[lang].loginModal.password;
         var loginRemember = document.getElementById('loginRemember');
@@ -275,14 +229,34 @@
         if(loginBtnModal) loginBtnModal.textContent = languageData[lang].loginModal.button;
       }
       updateInputs(lang);
+      // If an account already exists (single-user model), change New User to Continue and hide Login
+      try {
+        const existing = localStorage.getItem('fpTestUser');
+        const dev = (localStorage.getItem('fpDevMode') === '1');
+        if (existing || dev) {
+          newUserBtn.textContent = (lang === 'es') ? 'Continuar' : 'Continue';
+          newUserBtn.addEventListener('click', function(e){ e.preventDefault(); window.location.href = 'home.html'; });
+          if (loginBtn) loginBtn.style.display = 'none';
+        }
+      } catch {}
       langSelect.addEventListener('change', function() {
         var lang = langSelect.value;
         localStorage.setItem('fpLang', lang);
         welcomeTitle.innerHTML = languageData[lang].title;
         welcomeDesc.innerHTML = languageData[lang].desc;
         newUserBtn.textContent = languageData[lang].newUser;
-        loginBtn.textContent = languageData[lang].login;
+        if (loginBtn) loginBtn.textContent = languageData[lang].login;
         updateInputs(lang);
+        try {
+          const existing = localStorage.getItem('fpTestUser');
+          const dev = (localStorage.getItem('fpDevMode') === '1');
+          if (existing || dev) {
+            newUserBtn.textContent = (lang === 'es') ? 'Continuar' : 'Continue';
+            if (loginBtn) loginBtn.style.display = 'none';
+          } else {
+            if (loginBtn) loginBtn.style.display = '';
+          }
+        } catch {}
       });
     });
     // System theme detection
@@ -306,14 +280,18 @@
           window.location.href = url;
         }, 700);
       }
-      if(newUserBtn) newUserBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        openSignupModal();
-      });
-      if(loginBtn) loginBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        openLoginModal();
-      });
+      if(newUserBtn) {
+        // Only open signup when there is no existing account
+        let hasUser = false; let dev = false;
+        try { hasUser = !!localStorage.getItem('fpTestUser'); dev = (localStorage.getItem('fpDevMode') === '1'); } catch {}
+        if(!hasUser && !dev){
+          newUserBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            openSignupModal();
+          });
+        }
+      }
+      
       // Signup form submit
       var signupForm = document.getElementById('signupForm');
       if(signupForm) {
@@ -323,14 +301,78 @@
         });
       }
       // Login form submit
-      var loginForm = document.getElementById('loginForm');
-      if(loginForm) {
-        loginForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          login();
-        });
-      }
+      
     });
+    // Index-only Developer Mode arming (Ctrl+Shift+D => "Dev Login")
+    (function(){
+      function computeNormalLabel(){
+        const lang = (function(){ try { return localStorage.getItem('fpLang') || 'en'; } catch { return 'en'; } })();
+        const hasUser = (function(){ try { return !!localStorage.getItem('fpTestUser'); } catch { return false; } })();
+        if(hasUser) return (lang === 'es') ? 'Continuar' : 'Continue';
+        return (lang === 'es') ? 'Nuevo Usuario' : 'New User';
+      }
+      function tryEnableDevWithPrompt(){
+        const DEFAULT = 'focusdev';
+        const code = prompt('Enter developer code');
+        if(code==null) return false;
+        let ok=false;
+        try {
+          const stored = localStorage.getItem('fpDevCode');
+          ok = (code && stored && code===stored) || (!stored && code===DEFAULT);
+        } catch { ok = (code===DEFAULT); }
+        if(ok){
+          try { localStorage.setItem('fpDevMode', '1'); } catch {}
+          alert('Developer Mode enabled');
+          return true;
+        } else {
+          alert('Invalid developer code');
+          return false;
+        }
+      }
+      document.addEventListener('DOMContentLoaded', function(){
+        const btn = document.getElementById('newUserBtn');
+        if(!btn) return;
+        let armed = false;
+        let devClick;
+        function arm(){
+          if(armed) return;
+          armed = true;
+          btn.dataset.originalLabel = btn.textContent;
+          btn.textContent = 'Dev Login';
+          devClick = function(e){
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            const enabled = tryEnableDevWithPrompt();
+            // restore normal label regardless of success
+            btn.textContent = computeNormalLabel();
+            if(enabled){
+              // go straight in when Dev is enabled
+              window.location.href = 'home.html';
+              return;
+            }
+            if(devClick){ btn.removeEventListener('click', devClick, true); }
+            armed = false;
+          };
+          // capture to intercept before existing listeners
+          btn.addEventListener('click', devClick, true);
+        }
+        function disarm(){
+          if(!armed) return;
+          if(devClick){ btn.removeEventListener('click', devClick, true); }
+          btn.textContent = computeNormalLabel();
+          armed = false;
+        }
+        // If language changes while armed, disarm to keep things consistent
+        const langSel = document.getElementById('languageSelect');
+        if(langSel){ langSel.addEventListener('change', disarm); }
+        window.addEventListener('keydown', function(e){
+          if(e.ctrlKey && e.shiftKey && (e.key === 'D' || e.key === 'd')){
+            e.preventDefault();
+            if(armed) disarm(); else arm();
+          }
+        });
+      });
+    })();
     // Modal logic
     window.openSignupModal = function() {
       document.getElementById("signupModal").style.display = "flex";
@@ -338,65 +380,55 @@
     window.closeSignupModal = function() {
       document.getElementById("signupModal").style.display = "none";
     };
-    window.openLoginModal = function() {
-      document.getElementById("loginModal").style.display = "flex";
-    };
-    window.closeLoginModal = function() {
-      document.getElementById("loginModal").style.display = "none";
+    
+    // Reset App: clear all user-created data and settings relevant to content
+    function clearUserData(){
+      const KEYS = [
+        'fpTestUser','fpLoginUsername','fpLoginRemember','fpCurrentUsername',
+        'tests','testAttempts','flashcardSets','flashcardSessions',
+        'fpDictionaryTerms','fpDictionaryLists','fpDictionaryStats',
+        'fpSubjectColors','fpCustomSubjects','fpRemovedDefaultSubjects',
+        'fpPersistedBadges','fpNotifiedBadges','fpFocusMasterUnlocked',
+        'bookSnakeHigh','fpConceptTyperStats','fpEvents',
+        'fpSoftResetTests','fpSoftResetTestsTs','fpSoftResetFlash','fpSoftResetFlashTs'
+      ];
+      try { KEYS.forEach(k => localStorage.removeItem(k)); } catch {}
+    }
+    window.resetApp = function(){
+      if(confirm('This will erase all locally saved data (tests, flashcards, dictionary, stats). Continue?')){
+        clearUserData();
+        alert('App reset. You can create a new local account now.');
+        location.reload();
+      }
     };
     window.signup = async function() {
-      const firstName = document.getElementById("signupFirstName").value.trim();
-      const lastName = document.getElementById("signupLastName").value.trim();
+      const name = document.getElementById("signupName").value.trim();
       const username = document.getElementById("signupUsername").value.trim();
-      const age = document.getElementById("signupAge").value.trim();
-      const school = document.getElementById("signupSchool").value.trim();
-      const email = document.getElementById("signupEmail").value.trim();
       const password = document.getElementById("signupPassword").value;
-      if(!firstName || !lastName || !username || !age || !school || !email || !password) {
+      if(!name || !username || !password) {
         alert("Please fill out all fields.");
         return;
       }
+      // Single-user: prevent creating a second account on this device
+      try {
+        if(localStorage.getItem('fpTestUser')){
+          alert('An account already exists on this device. Use "Reset App" to start fresh.');
+          return;
+        }
+      } catch {}
       // Store user info in localStorage for testing
-      const user = { firstName, lastName, username, age, school, email, password };
+      const user = { name, username, password };
       localStorage.setItem('fpTestUser', JSON.stringify(user));
-      alert(`Signed up as ${firstName} ${lastName} (Username: ${username}, Age: ${age}, School: ${school}, Email: ${email})`);
+      alert(`Signed up as ${name} (Username: ${username})`);
       closeSignupModal();
       setTimeout(function(){ window.location.href = 'home.html'; }, 500);
     };
-    window.login = async function() {
-      const email = document.getElementById("loginEmail").value.trim();
-      const password = document.getElementById("loginPassword").value;
-      const remember = document.getElementById("loginRemember").checked;
-      if(!email || !password) {
-        alert("Please enter email and password.");
-        return;
-      }
-      // Validate against localStorage user
-      const user = JSON.parse(localStorage.getItem('fpTestUser') || '{}');
-      if(user.email === email && user.password === password) {
-        if(remember) {
-          localStorage.setItem('fpLoginEmail', email);
-          localStorage.setItem('fpLoginRemember', '1');
-        } else {
-          localStorage.removeItem('fpLoginEmail');
-          localStorage.removeItem('fpLoginRemember');
-        }
-        alert(`Logged in as ${email}${remember ? ' (Remembered)' : ''}`);
-        closeLoginModal();
-        // Simulate redirect to app
-        setTimeout(function(){ window.location.href = 'home.html'; }, 500);
-      } else {
-        alert("Invalid email or password.");
-      }
-    };
+    
     // Autofill remembered login
     document.addEventListener('DOMContentLoaded', function() {
-      if(localStorage.getItem('fpLoginRemember') === '1') {
-        var loginEmail = document.getElementById('loginEmail');
-        if(loginEmail) loginEmail.value = localStorage.getItem('fpLoginEmail') || '';
-        var loginRemember = document.getElementById('loginRemember');
-        if(loginRemember) loginRemember.checked = true;
-      }
+      // Wire up Reset App link
+      var resetBtn = document.getElementById('resetAppBtn');
+      if(resetBtn){ resetBtn.addEventListener('click', function(e){ e.preventDefault(); window.resetApp(); }); }
     });
   </script>
 </body>

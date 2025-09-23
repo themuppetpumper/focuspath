@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Motivator Character Beta Test</title>
+  <style>
+    body {
+      background: #222;
+      color: #fff;
+      font-family: 'Lexend', 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .character-container {
+      position: relative;
+      width: 120px;
+      height: 160px;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .pixel-character {
+      image-rendering: pixelated;
+      width: 100px;
+      height: 100px;
+      background: none;
+      display: block;
+    }
+    .speech-bubble {
+      position: absolute;
+      left: 50%;
+      top: -40px;
+      transform: translateX(-50%);
+      background: #fff;
+      color: #222;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 1rem;
+      min-width: 120px;
+      max-width: 180px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.5s;
+      pointer-events: none;
+    }
+    .speech-bubble.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <h1>Motivator Character Beta Test</h1>
+  <div class="character-container">
+    <canvas id="pixelChar" class="pixel-character" width="100" height="100"></canvas>
+    <div id="bubble" class="speech-bubble"></div>
+  </div>
+  <script>
+    // Animate pixelated character with fluid arm movement
+    const canvas = document.getElementById('pixelChar');
+    const ctx = canvas.getContext('2d');
+
+    function drawArm(x, y, angles, segmentLength, segmentSize) {
+      ctx.save();
+      ctx.translate(x, y);
+      for (let i = 0; i < angles.length; i++) {
+        ctx.rotate(angles[i]);
+        ctx.fillStyle = '#ffe066';
+        ctx.fillRect(-segmentSize/2, -segmentSize/2, segmentSize, segmentSize);
+        ctx.translate(0, segmentLength);
+      }
+      ctx.restore();
+    }
+
+    function drawCharacter(leftArmAngles, rightArmAngles) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Head
+      ctx.fillStyle = '#ffe066';
+      ctx.fillRect(30, 10, 40, 40);
+      // Body
+      ctx.fillStyle = '#ffe066';
+      ctx.fillRect(38, 50, 24, 30);
+      // Eyes
+      ctx.fillStyle = '#222';
+      ctx.fillRect(40, 25, 6, 6);
+      ctx.fillRect(54, 25, 6, 6);
+      // Smile
+      ctx.fillStyle = '#222';
+      ctx.fillRect(46, 38, 8, 4);
+      // Arms (jointed)
+  drawArm(29, 59, leftArmAngles, 8, 10); // left (segment length reduced)
+  drawArm(71, 59, rightArmAngles, 8, 10); // right (segment length reduced)
+      // Legs
+      ctx.fillStyle = '#ffe066';
+      ctx.fillRect(42, 80, 6, 14);
+      ctx.fillRect(52, 80, 6, 14);
+    }
+
+    let startTime = null;
+    function animateArms(ts) {
+      if (!startTime) startTime = ts;
+      const t = (ts - startTime) / 1000;
+      // Each arm has 3 segments (shoulder, elbow, wrist)
+      const leftArmAngles = [
+        Math.sin(t * 2) * 0.5, // shoulder
+        Math.sin(t * 2 + 1) * 0.4, // elbow
+        Math.sin(t * 2 + 2) * 0.3 // wrist
+      ];
+      const rightArmAngles = [
+        Math.cos(t * 2) * 0.5, // shoulder
+        Math.cos(t * 2 + 1) * 0.4, // elbow
+        Math.cos(t * 2 + 2) * 0.3 // wrist
+      ];
+      drawCharacter(leftArmAngles, rightArmAngles);
+      requestAnimationFrame(animateArms);
+    }
+    requestAnimationFrame(animateArms);
+
+    // Motivational quotes
+    const quotes = [
+      "You’ve got this!",
+      "Keep going, champion!",
+      "Every try makes you better!",
+      "Focus and win!",
+      "Mistakes are proof you’re learning!",
+      "Small steps, big progress!",
+      "Believe in yourself!"
+    ];
+    let idx = 0;
+    const bubble = document.getElementById('bubble');
+    function showQuote() {
+      bubble.textContent = quotes[idx];
+      bubble.classList.add('show');
+      setTimeout(() => bubble.classList.remove('show'), 2200);
+      idx = (idx + 1) % quotes.length;
+    }
+    setInterval(showQuote, 3000);
+    setTimeout(showQuote, 800);
+  </script>
+</body>
+</html>

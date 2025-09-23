@@ -104,11 +104,9 @@
       <h2 id="pageTitle" class="text-[var(--text-primary)] text-3xl font-bold mb-6">Tests</h2>
 
       <div id="centerGrid" class="grid grid-cols-1 gap-8">
-  <div id="primaryArea" class="rounded-lg p-6 bg-[var(--background-color)]">
-    <!-- ...existing content... -->
-  <!-- Copyright footer moved to fixed position below -->
-  </div>
-
+        <div id="testContent" class="rounded-lg p-0">
+          <!-- Dynamic test dashboard / builder / runner content injected here -->
+        </div>
         <div id="secondaryArea" class="bg-white rounded-lg shadow p-6 hidden">
           <h3 class="text-xl font-semibold mb-4 text-[var(--text-primary)]">Test Info</h3>
           <div class="grid sm:grid-cols-2 gap-3 text-[var(--text-secondary)] text-sm">
@@ -216,7 +214,7 @@
   function destroyCharts() { try { __charts.forEach(c => c && c.destroy && c.destroy()); } catch {} __charts = []; }
 
   window.renderDashboard = function renderDashboard() {
-    const primary = document.getElementById("primaryArea");
+    const primary = document.getElementById("testContent");
     if (!primary) return;
 
   const tests = loadTests();
@@ -731,7 +729,7 @@ function renderTestList() {
       document.querySelectorAll('#testList .test-item').forEach(n => n.classList.toggle('selected', n.dataset.id === String(test.id)));
   const btnExportTest = document.getElementById('btnExportTest');
   if (btnExportTest) btnExportTest.disabled = false;
-      const primary = document.getElementById("primaryArea");
+  const primary = document.getElementById("testContent");
       primary.innerHTML = `
         <div class="flex justify-center items-center w-full h-full p-6">
           <div class="bg-white rounded-2xl shadow-lg p-8 max-w-md w-full text-center space-y-6">
@@ -754,7 +752,7 @@ function renderTestList() {
 
       document.getElementById("btnStartTest").addEventListener("click", async () => {
         // Load the test runner UI into primary area
-        await loadUI("test-runner.html", "primaryArea");
+  await loadUI("test-runner.html", "testContent");
 
         // Pass test data to runner after load
         const tests = loadTests(); // FIX: use loadTests(), not loadTestsFromStorage()
@@ -774,7 +772,7 @@ function renderTestList() {
       }
       editBtn.addEventListener("click", () => {
         if (test.locked) return; // block editing locked tests
-        loadUI("test-builder.html", "primaryArea", "initTestBuilder");
+  loadUI("test-builder.html", "testContent", "initTestBuilder");
         setTimeout(() => {
           const tests = loadTests();
           const match = tests.find(t => t.id === test.id);
@@ -809,7 +807,7 @@ async function loadUI(file, containerId, initFn) {
 }
 
 document.getElementById("btnNewTest").addEventListener("click", () => {
-  loadUI("test-builder.html", "primaryArea", "initTestBuilder");
+  loadUI("test-builder.html", "testContent", "initTestBuilder");
 });
 
 // Test Home button: clear selection and render dashboard
@@ -824,8 +822,8 @@ document.getElementById("btnTestHome").addEventListener("click", () => {
   if (typeof renderDashboard === 'function') {
     renderDashboard();
   } else {
-    const primary = document.getElementById('primaryArea');
-    if (primary) primary.innerHTML = '<div class="min-h-[46vh] flex items-center justify-center text-gray-500">Home</div>';
+  const primary = document.getElementById('testContent');
+  if (primary) primary.innerHTML = '<div class="min-h-[46vh] flex items-center justify-center text-gray-500">Home</div>';
   }
 });
 
@@ -843,7 +841,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (list) observer.observe(list, { childList: true });
 });
 </script>
-<script type="module" src="./nova-widget.js"></script>
 
 </body>
 </html>
