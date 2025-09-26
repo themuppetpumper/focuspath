@@ -199,11 +199,11 @@
     // Dynamic glow (lightsaber colors) on hover/focus
     const glowColors=['#ff2f2f','#1f8bff','#19ff6a','#a855f7','#ffffff','#f97316','#ffe81f']; // red, blue, green, purple, white, orange, yellow
     function overHandler(e){
-      const el=e.target.closest('button, a, [role=\"button\"], input, select, textarea, .nav-group');
+      const el=e.target.closest('button, a, [role="button"], input, select, textarea, .nav-group');
       if(!el) return;
       const c=glowColors[Math.floor(Math.random()*glowColors.length)];
       if(!el.dataset.swGlow){
-        el.dataset.origBoxShadow=el.style.boxShadow||'';
+        // Store only if we haven't yet (inline styles only)
         el.dataset.origBg=el.style.background||'';
       }
       const computedBg = getComputedStyle(el).backgroundColor||'';
@@ -211,22 +211,23 @@
       if(!isPrimaryYellow){
         el.style.background='transparent';
       } else {
-        // Ensure good contrast on yellow buttons
         el.style.color='#000';
       }
       el.style.setProperty('--sw-glow-c',c);
-      el.style.boxShadow=`0 0 0 1px ${c}, 0 0 6px 2px ${c}, 0 0 14px 4px ${c}`;
+      // Use !important to override theme bubble box-shadows that also use !important
+      el.style.setProperty('box-shadow',`0 0 0 1px ${c}, 0 0 6px 2px ${c}, 0 0 14px 4px ${c}`,'important');
       el.classList.add('fp-sw-pulse');
       el.dataset.swGlow='1';
     }
     function outHandler(e){
       const el=e.target.closest('[data-sw-glow]');
       if(!el) return;
-      el.style.boxShadow=el.dataset.origBoxShadow||'';
+      // Remove glow so stylesheet (important) shadows reapply
+      el.style.removeProperty('box-shadow');
       el.style.background=el.dataset.origBg||'';
       el.classList.remove('fp-sw-pulse');
       el.style.removeProperty('--sw-glow-c');
-      delete el.dataset.swGlow; delete el.dataset.origBoxShadow; delete el.dataset.origBg;
+      delete el.dataset.swGlow; delete el.dataset.origBg;
     }
     if(active){
       if(!window.__fpSWGlow){
@@ -279,7 +280,7 @@
     if(active && !existing){
       const overlay=document.createElement('div');
       overlay.id='fp-halloween-overlay';
-      overlay.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.35;mix-blend-mode:normal;';
+  overlay.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.35;mix-blend-mode:normal;';
       const pumpkinPattern = encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path fill='%23ff7518' d='M16 4c-1.1 0-2 .9-2 2v1.1c-1.3-.4-2.7-.6-4-.3-2.3.5-4.4 2-5.5 4.1C2 13 1.7 15.7 2.3 18.2c.6 2.5 2 4.9 4.3 6.2 2.2 1.2 4.9 1.3 7.3.7.7-.2 1.4-.4 2.1-.7.7.3 1.4.5 2.1.7 2.4.6 5.1.5 7.3-.7 2.3-1.3 3.7-3.7 4.3-6.2.6-2.5.3-5.2-1.2-7.3-1.1-2.1-3.2-3.6-5.5-4.1-1.3-.3-2.7-.1-4 .3V6c0-1.1-.9-2-2-2h-2Z'/><path fill='%23cc5e12' d='M14 6.1c-3.8 6.5-3.8 13.3 0 20-2.1-.1-4.2-.5-5.9-1.5C6 23.4 4.8 21.6 4.2 19.3 3.6 17 3.8 14.4 5 12.4c1-1.7 2.7-3 4.5-3.5 1.5-.4 3-.2 4.5.2Z'/><path fill='%23cc5e12' d='M18 6.1c3.8 6.5 3.8 13.3 0 20 2.1-.1 4.2-.5 5.9-1.5 2.1-1.2 3.3-3 3.9-5.3.6-2.3.4-4.9-.8-6.9-1-1.7-2.7-3-4.5-3.5-1.5-.4-3-.2-4.5.2Z'/><path fill='%232a1f2f' d='M13 17c0 .6-.4 1-1 1s-1-.4-1-1 .4-1 1-1 1 .4 1 1Zm8 0c0 .6-.4 1-1 1s-1-.4-1-1 .4-1 1-1 1 .4 1 1Zm-4.9 4.6c.6.5 1.6.5 2.2 0 .4-.3 1 .3.6.7-1 .9-2.4.9-3.4 0-.4-.4.2-1 .6-.7Z'/></svg>");
       overlay.style.background = `radial-gradient(circle at 30% 40%, rgba(255,117,24,0.12), transparent 60%),radial-gradient(circle at 70% 65%, rgba(255,158,66,0.10), transparent 65%), #1b0f20`;
       overlay.style.backgroundImage += `, url("data:image/svg+xml,${pumpkinPattern}")`;
@@ -288,9 +289,9 @@
       document.body.prepend(overlay);
       // Floating decor container
       const decor=document.createElement('div');
-      decor.id='fp-halloween-decor';
-      decor.setAttribute('aria-hidden','true');
-  decor.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:-1;';
+    decor.id='fp-halloween-decor';
+    decor.setAttribute('aria-hidden','true');
+    decor.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:40;';
       document.body.appendChild(decor);
       if(!document.getElementById('fp-halloween-style')){
         const style=document.createElement('style');
@@ -338,6 +339,28 @@
       }
       applyHalloweenLogo();
       // Only ghosts move; pumpkins are stationary in header
+      // Ghost SVG generator with rounded head and variable faces
+      function makeGhostSVG(opts){
+        const color = opts?.color || '#ffe9d6';
+        const face = opts?.face || 'smile';
+        const eyeColor = '#2a1f2f';
+        const body = `<path fill='${color}' d='M32 6c-10.5 0-19 8.5-19 19v15c0 2 .8 3.7 2.2 4.9 1.4 1.2 3.3 1.6 5 1.1l3.4-1c1-.3 2-.2 2.9.3l3.8 2c1.6.8 3.5.8 5.1 0l3.8-2c.9-.4 1.9-.5 2.9-.3l3.4 1c1.7.5 3.6.1 5-1.1 1.4-1.2 2.2-2.9 2.2-4.9V25C51 14.5 42.5 6 32 6Z'/>`;
+        // Eyes
+        let eyes = `<circle cx='24' cy='28' r='3.4' fill='${eyeColor}'/><circle cx='40' cy='28' r='3.4' fill='${eyeColor}'/>`;
+        if(face==='wink'){
+          eyes = `<circle cx='24' cy='28' r='3.4' fill='${eyeColor}'/><rect x='37' y='27.2' width='6' height='2.4' rx='1.2' fill='${eyeColor}'/>`;
+        }
+        // Mouth
+        let mouth = `<path d='M24 36 q8 8 16 0' stroke='${eyeColor}' stroke-width='3' stroke-linecap='round' fill='none'/>`; // smile
+        if(face==='frown') mouth = `<path d='M24 40 q8 -8 16 0' stroke='${eyeColor}' stroke-width='3' stroke-linecap='round' fill='none'/>`;
+        if(face==='surprised') mouth = `<circle cx='32' cy='37.5' r='3.2' fill='${eyeColor}'/>`;
+        if(face==='smirk') mouth = `<path d='M28 37 q6 4 12 0' stroke='${eyeColor}' stroke-width='3' stroke-linecap='round' fill='none'/>`;
+        return `<svg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg' aria-hidden='true'>${body}${eyes}${mouth}</svg>`;
+      }
+      function randomFace(){
+        const faces = ['smile','frown','surprised','wink','smirk'];
+        return faces[Math.floor(Math.random()*faces.length)];
+      }
       function spawnGhosts(){
         if(document.documentElement.getAttribute('data-theme')!=='halloween') return;
         decor.innerHTML='';
@@ -351,8 +374,6 @@
           right: W - margin,
           bottom: H - margin
         };
-        const ghostSVG = "<svg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'><path fill='#ffe9d6' d='M32 6c-9.9 0-18 8.1-18 18v24.6c0 2 .9 3.9 2.5 5.2 1.6 1.3 3.6 1.7 5.6 1.1l4.4-1.2c1-.3 2.1-.2 3 .3l4.8 2.4c1.7.8 3.6.8 5.3 0l4.8-2.4c.9-.4 2-.5 3-.3l4.4 1.2c2 .6 4 .1 5.6-1.1 1.6-1.3 2.5-3.2 2.5-5.2V24C50 14.1 41.9 6 32 6Z'/><circle cx='24' cy='28' r='4' fill='#2a1f2f'/><circle cx='40' cy='28' r='4' fill='#2a1f2f'/><path fill='#2a1f2f' d='M26 38c1.9 2 5.1 2 7 0 1.1-1.2 2.9 0 2.2 1.4-1.5 2.9-5.3 3.6-7.9 1.4-.4-.3-.5-1 0-1.4Z'/></svg>";
-        const greenGhostSVG = "<svg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'><path fill='#19ff6a' d='M32 6c-9.9 0-18 8.1-18 18v24.6c0 2 .9 3.9 2.5 5.2 1.6 1.3 3.6 1.7 5.6 1.1l4.4-1.2c1-.3 2.1-.2 3 .3l4.8 2.4c1.7.8 3.6.8 5.3 0l4.8-2.4c.9-.4 2-.5 3-.3l4.4 1.2c2 .6 4 .1 5.6-1.1 1.6-1.3 2.5-3.2 2.5-5.2V24C50 14.1 41.9 6 32 6Z'/><circle cx='24' cy='28' r='4' fill='#2a1f2f'/><circle cx='40' cy='28' r='4' fill='#2a1f2f'/><path fill='#2a1f2f' d='M26 38c1.9 2 5.1 2 7 0 1.1-1.2 2.9 0 2.2 1.4-1.5 2.9-5.3 3.6-7.9 1.4-.4-.3-.5-1 0-1.4Z'/></svg>";
         // Setup moving ghost objects
         const ghostItems = [
           {s:1}, {s:.85}, {s:1.15}, {s:.95}, {s:1.05}
@@ -360,7 +381,7 @@
         ghostItems.forEach((it,i)=>{
           const el=document.createElement('div');
           el.className='spooky-fx ghost';
-          el.innerHTML= ghostSVG;
+          el.innerHTML= makeGhostSVG({color:'#ffe9d6', face: randomFace()});
           el.style.position='absolute';
           el.style.width='80px';
           el.style.height='80px';
@@ -386,7 +407,7 @@
           if (greenGhost) return;
           greenGhost = document.createElement('div');
           greenGhost.className = 'spooky-fx ghost';
-          greenGhost.innerHTML = greenGhostSVG;
+          greenGhost.innerHTML = makeGhostSVG({color:'#19ff6a', face: randomFace()});
           greenGhost.style.position = 'absolute';
           greenGhost.style.width = '80px';
           greenGhost.style.height = '80px';
@@ -531,7 +552,10 @@
       const style = document.createElement('style');
       style.id = 'fp-christmas-style';
       style.textContent = `
+        /* Gradient for main content area */
         .christmas-primary-area { background: linear-gradient(to bottom, #05070d 0%, #0a1830 80%, #0a2340 100%); }
+        /* Page-wide gradient to cover sidebar/top regions */
+        body.christmas-page-bg { background: linear-gradient(to bottom, #05070d 0%, #0a1830 80%, #0a2340 100%) !important; }
         @keyframes fpSnowFall { 0% { transform: translate3d(0, -10px, 0); opacity: 0.85; } 60% { transform: translate3d(var(--drift), 60vh, 0); opacity: 0.92; } 100% { transform: translate3d(calc(var(--drift) * 1.4), 100vh, 0); opacity: 0.8; } }
         @keyframes fpSnowSway { 0% { margin-left: 0; } 100% { margin-left: var(--sway); } }
       `;
@@ -539,21 +563,23 @@
     }
     // Pick the main container: prefer #primaryArea, fallback to first <main>
     const area = document.getElementById('primaryArea') || document.querySelector('main');
-    if(!area) return;
-    // Toggle gradient class
-    if(active){ area.classList.add('christmas-primary-area'); }
-    else { area.classList.remove('christmas-primary-area'); }
+    if(area){
+      if(active){ area.classList.add('christmas-primary-area'); } else { area.classList.remove('christmas-primary-area'); }
+    }
+    // Toggle page-wide background
+    if(active){ document.body.classList.add('christmas-page-bg'); } else { document.body.classList.remove('christmas-page-bg'); }
 
-    // Manage snowfall overlay
-    let overlay = area.querySelector('#fpSnowOverlay');
+    // Remove/hide any legacy per-page overlay if present
+    const legacy = document.getElementById('fpSnowOverlay');
+    if(legacy){ legacy.style.display = 'none'; }
+
+    // Manage GLOBAL snowfall overlay (fixed, full page)
+    let overlay = document.getElementById('fp-snow-global');
     if(!overlay){
       overlay = document.createElement('div');
-      overlay.id = 'fpSnowOverlay';
-      overlay.style.cssText = 'position:absolute;inset:0;pointer-events:none;overflow:hidden;display:none;z-index:5;';
-      // Ensure area is positioned to anchor overlay
-      const pos = getComputedStyle(area).position;
-      if(pos === 'static' || !pos){ area.style.position = 'relative'; }
-      area.appendChild(overlay);
+      overlay.id = 'fp-snow-global';
+  overlay.style.cssText = 'position:fixed;inset:0;pointer-events:none;overflow:hidden;display:none;z-index:40;';
+      document.body.prepend(overlay);
     }
     overlay.style.display = active ? 'block' : 'none';
     if(!active) return;
@@ -594,9 +620,8 @@
       document.documentElement.setAttribute('data-theme', key);
     }
     applyVars(vars);
-    // Layering: bump main layout above canvas
-    document.body.style.position='relative';
-    document.body.style.zIndex='1';
+  // Layering: avoid forcing body above overlays; let overlays manage their own z-index
+  try { document.body.style.position=''; document.body.style.zIndex=''; } catch {}
     // Apply or remove Star Wars extras
   applyStarWarsExtras(key==='star-wars');
   applyHalloweenExtras(key==='halloween');
@@ -655,6 +680,74 @@
         .border-gray-300 { border-color: var(--border-color) !important; }
         .text-gray-800, .text-gray-900, .text-black { color: var(--text-primary) !important; }
         .text-gray-400, .text-gray-500, .text-gray-600, .text-gray-700 { color: var(--text-secondary) !important; }
+        
+        /* Bubbly, rounded look upgrades */
+        /* Increase radii app-wide, but avoid distorting native input controls */
+        .rounded:not(input):not(select):not(textarea) { border-radius: 12px !important; }
+        .rounded-sm:not(input):not(select):not(textarea) { border-radius: 10px !important; }
+        .rounded-md:not(input):not(select):not(textarea) { border-radius: 14px !important; }
+        .rounded-lg:not(input):not(select):not(textarea) { border-radius: 18px !important; }
+        .rounded-xl:not(input):not(select):not(textarea) { border-radius: 24px !important; }
+        .rounded-2xl:not(input):not(select):not(textarea) { border-radius: 28px !important; }
+        /* Do not touch .rounded-full so avatars and pills remain circular */
+
+        /* Softer, floatier card shadows */
+        .shadow { box-shadow: 0 8px 22px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04) !important; }
+        .shadow-sm { box-shadow: 0 6px 16px rgba(0,0,0,0.05), 0 1px 6px rgba(0,0,0,0.04) !important; }
+        .shadow-md { box-shadow: 0 12px 28px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05) !important; }
+        .shadow-lg { box-shadow: 0 18px 42px rgba(0,0,0,0.12), 0 6px 18px rgba(0,0,0,0.06) !important; }
+        
+        /* Slightly round theme menus and popovers even if utilities are missing */
+  #themeMenu, .popover, .menu, .dropdown { border-radius: 14px !important; z-index: 50; }
+
+        /* Floating bubble components */
+        .fp-bubble {
+          background: var(--white) !important;
+          color: var(--text-primary) !important;
+          border: 1px solid var(--border-color) !important;
+          border-radius: 18px !important;
+          box-shadow: 0 12px 28px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05) !important;
+          transition: transform .12s ease, box-shadow .12s ease, background-color .2s ease;
+        }
+        .fp-bubble:hover { transform: translateY(-1px); box-shadow: 0 16px 36px rgba(0,0,0,0.10), 0 6px 16px rgba(0,0,0,0.06) !important; }
+        .fp-bubble:active { transform: translateY(0); }
+        .fp-bubble-primary {
+          background: var(--primary-color) !important;
+          color: #fff !important;
+          border: 1px solid color-mix(in srgb, var(--primary-color) 55%, transparent) !important;
+          border-radius: 18px !important;
+          box-shadow: 0 14px 30px color-mix(in srgb, var(--primary-color) 20%, transparent), 0 4px 10px rgba(0,0,0,0.06) !important;
+          transition: transform .12s ease, box-shadow .12s ease, filter .2s ease;
+        }
+        .fp-bubble-primary:hover { transform: translateY(-1px); filter: brightness(0.98); }
+        /* Circular bubble button (icon button) */
+        .fp-bubble-circle {
+          width: 44px; height: 44px; border-radius: 9999px !important; padding: 0 !important;
+          display: inline-flex; align-items: center; justify-content: center;
+          background: var(--white) !important;
+          color: var(--text-primary) !important;
+          border: 1px solid var(--border-color) !important;
+          box-shadow: 0 12px 28px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05) !important;
+          transition: transform .12s ease, box-shadow .12s ease, background-color .2s ease;
+        }
+        .fp-bubble-circle:hover { transform: translateY(-1px); box-shadow: 0 16px 36px rgba(0,0,0,0.10), 0 6px 16px rgba(0,0,0,0.06) !important; }
+        .fp-bubble-circle:active { transform: translateY(0); }
+        .fp-section-card {
+          background: var(--white) !important;
+          color: var(--text-primary) !important;
+          border: 1px solid var(--border-color) !important;
+          border-radius: 18px !important;
+          box-shadow: 0 12px 28px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05) !important;
+          padding: 0.75rem !important;
+        }
+        /* On page-wide Christmas gradient, keep panels readable but floaty */
+        body.christmas-page-bg .fp-bubble,
+        body.christmas-page-bg .fp-section-card {
+          background: color-mix(in srgb, var(--white) 92%, transparent) !important;
+          border-color: color-mix(in srgb, var(--border-color) 70%, transparent) !important;
+          box-shadow: 0 16px 36px rgba(0,0,0,0.20), 0 6px 16px rgba(0,0,0,0.10) !important;
+        }
+
           /* Modern input styling */
     input[type=text], input[type=search], input[type=number], input[type=email], input[type=password], input[type=date], input[type=time], textarea, select, .modern-input {
             border-radius: 14px !important;

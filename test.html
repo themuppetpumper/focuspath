@@ -25,80 +25,72 @@
   .test-item { border: 1px solid var(--border-color); border-radius: 0.5rem; transition: background-color .2s ease, border-color .2s ease; }
   .test-item:hover { background: var(--surface-hover); }
   .test-item.selected { background: rgba(13,120,242,0.10); border-color: var(--primary-color); }
-  /* Sidebar Soft Reset */
-  #btnSoftResetTests { width:100%; }
+  /* (Soft Reset button removed; logic now in stats page) */
 </style>
 </head>
 <body class="bg-[var(--background-color)]">
 <div class="flex min-h-screen">
   <!-- Sidebar -->
-  <aside class="w-64 bg-[var(--white)] shadow-md flex-col justify-between hidden md:flex">
-    <div class="p-6 flex flex-col h-full">
-      <div class="flex items-center gap-3 mb-8">
-        <div class="w-8 h-8 text-[var(--primary-color)]">
-          <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"/></svg>
-        </div>
-  <h1 class="text-[var(--text-primary)] text-2xl font-bold">FocusPath</h1>
+  <aside class="w-64 hidden md:flex flex-col gap-4 p-4">
+    <div class="fp-section-card p-4 flex items-center gap-3">
+      <div class="w-8 h-8 text-[var(--primary-color)]">
+        <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"/></svg>
       </div>
+      <h1 class="text-[var(--text-primary)] text-2xl font-bold">FocusPath</h1>
+    </div>
 
-      <div class="flex flex-col gap-2 mb-6">
-        <button id="btnTestHome" class="flex items-center gap-3 px-4 py-3 rounded-md text-[var(--text-secondary)] hover:text-[var(--primary-color)] hover-bg-primary-light font-medium text-left">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-8.5z"/></svg>
-          <span>Test Home</span>
-        </button>
-        <button id="btnNewTest" class="flex items-center gap-3 px-4 py-3 rounded-md text-[var(--text-secondary)] hover:text-[var(--primary-color)] hover-bg-primary-light font-medium text-left">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M11 11V6h2v5h5v2h-5v5h-2v-5H6v-2h5z"/></svg>
-          <span>New Test</span>
-        </button>
-        <button id="btnImportTest" class="flex items-center gap-3 px-4 py-3 rounded-md text-[var(--text-secondary)] hover:text-[var(--primary-color)] hover-bg-primary-light font-medium text-left">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3v10m0 0 4-4m-4 4-4-4M20 18v2H4v-2"/></svg>
-          <span>Import Tests</span>
-        </button>
-        <button id="btnExportTest" class="flex items-center gap-3 px-4 py-3 rounded-md text-[var(--text-secondary)] hover:text-[var(--primary-color)] hover-bg-primary-light font-medium text-left" disabled>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21V9m0 0 4 4m-4-4-4 4M4 18v2h16v-2"/></svg>
-          <span>Export Test</span>
-        </button>
-      </div>
+    <div class="flex flex-col gap-3">
+  <button id="btnTestHome" class="fp-bubble w-full flex items-center gap-3 px-4 py-3 font-medium transition-colors">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-8.5z"/></svg>
+        <span>Test Home</span>
+      </button>
+  <button id="btnNewTest" class="fp-bubble w-full flex items-center gap-3 px-4 py-3 font-medium transition-colors">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M11 11V6h2v5h5v2h-5v5h-2v-5H6v-2h5z"/></svg>
+        <span>New Test</span>
+      </button>
+  <button id="btnImportTest" class="fp-bubble w-full flex items-center gap-3 px-4 py-3 font-medium transition-colors">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3v10m0 0 4-4m-4 4-4-4M20 18v2H4v-2"/></svg>
+        <span>Import Tests</span>
+      </button>
+  <button id="btnExportTest" class="fp-bubble w-full flex items-center gap-3 px-4 py-3 font-medium transition-colors" disabled>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21V9m0 0 4 4m-4-4-4 4M4 18v2h16v-2"/></svg>
+        <span>Export Test</span>
+      </button>
+    </div>
 
-      <div class="mt-6">
-        <div class="flex items-center justify-between px-3 mb-2">
-          <h4 class="text-[var(--text-secondary)] text-xs font-semibold uppercase">Tests</h4>
-          <button id="btnTrashAll" class="text-red-500 hover:text-red-700 text-xs font-medium flex items-center gap-1">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 7h12M9 7V4h6v3m2 0v12a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V7z"/>
-            </svg>
-            Trash All
-          </button>
-        </div>
-        <div id="testList" class="flex flex-col gap-2 px-2 max-h-[55vh] overflow-auto"></div>
+    <div class="fp-section-card p-4">
+      <div class="flex items-center justify-between mb-2">
+        <h4 class="text-[var(--text-secondary)] text-xs font-semibold uppercase">Tests</h4>
+        <button id="btnTrashAll" class="text-red-500 hover:text-red-700 text-xs font-medium flex items-center gap-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 7h12M9 7V4h6v3m2 0v12a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V7z"/>
+          </svg>
+          Trash All
+        </button>
       </div>
-      
-      <div class="mt-auto pt-6">
-  <button id="btnSoftResetTests" title="Soft Reset (hide existing tests locally; stats keep history)" class="w-full px-4 py-2 rounded-md bg-red-600 text-white text-sm font-semibold shadow hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 mb-4">Soft Reset</button>
-  <a href="helper.html" class="text-xs text-[var(--text-secondary)] hover:text-[var(--primary-color)] px-4 py-2 rounded transition-colors border border-transparent hover:border-[var(--primary-color)]">Help</a>
-      </div>
+      <div id="testList" class="flex flex-col gap-2 max-h-[55vh] overflow-auto"></div>
+    </div>
+
+    <div class="mt-auto pt-2 flex flex-col items-center gap-3">
+  <!-- Soft Reset moved to Statistics > Test Stats -->
+      <a href="helper.html" class="fp-bubble px-4 py-2 text-xs">Help</a>
     </div>
   </aside>
 
   <!-- Main column -->
   <div class="flex-1 flex flex-col">
+    <script src="icons.js"></script>
     <!-- Top nav -->
-    <header class="bg-[var(--white)] shadow-sm flex items-center justify-between p-4">
-      <div class="flex-1 flex justify-center items-center">
-        <div class="flex gap-4">
-          <a href="home.html" title="Home" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11.5z"/></svg>
-          </a>
-          <a href="flashcards.html" title="Flashcards" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v12H4zM4 20h16v-2H4z"/></svg></a>
-          <a href="games.html" title="Games" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 3h12a3 3 0 0 1 3 3v9.5a3 3 0 0 1-4.34 2.65l-1.97-.99a1 1 0 0 0-.89 0l-1.97.99a3 3 0 0 1-2.66 0l-1.97-.99a1 1 0 0 0-.89 0l-1.97.99A3 3 0 0 1 3 15.5V6a3 3 0 0 1 3-3Zm2.5 5A1.5 1.5 0 1 0 8.5 8 1.5 1.5 0 0 0 8.5 8Zm7 0A1.5 1.5 0 1 0 15.5 8 1.5 1.5 0 0 0 15.5 8Z"/></svg></a>
-          <a href="dictionary.html" title="Dictionary" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 2h9.5a4.5 4.5 0 0 1 0 9H8v9a1 1 0 0 1-2 0V3a1 1 0 0 1 1-1Zm2 2v5h7.5a2.5 2.5 0 0 0 0-5H8Z"/><path d="M18 6v13a3 3 0 0 1-3 3H7.5a1.5 1.5 0 0 1 0-3H15a1 1 0 0 0 1-1V6h2Z"/></svg></a>
-          <a href="stats.html" title="Statistics" class="p-2 rounded hover:bg-[var(--background-color)] text-[var(--text-secondary)]"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M5 9h3v10H5zM10.5 4h3v15h-3zM16 13h3v6h-3z"/></svg></a>
-        </div>
-      </div>
-      <div class="flex items-center gap-4">
-        <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCAMzclmWsDYh9STHWC4bYSZWCP2ZqUSi2Tv7hk1t__UQisqFXVQ847TNl6gP_A6HiQhQKr_CJBhEgo17C6MNYopaP4i-ShKU-5ZtGp3UlaHub43muyWTbIPvF09V7hMR6ttWWZOJlbuGFkda_-y7WD-UZj9QHUwjJmdGKiTPHxGhdQPd-ppbdiZGRGqmykWE5pGrwNm08sSVmw8vLTURway5Ulqo9Aw6Vcbldg3SiZ4WZxAvQTNxsRzlS3YRuejEy822RS");'></div>
-      </div>
-    </header>
+  <div class="px-4 pt-4 flex items-center justify-center">
+      <nav class="flex gap-3">
+        <a href="home.html" title="Home" aria-label="Home" class="fp-bubble-circle"><svg class="fp-icon" aria-hidden="true"><use href="#ico-home"/></svg></a>
+        <a href="flashcards.html" title="Flashcards" aria-label="Flashcards" class="fp-bubble-circle"><svg class="fp-icon" aria-hidden="true"><use href="#ico-flashcards"/></svg></a>
+        <a href="games.html" title="Games" aria-label="Games" class="fp-bubble-circle"><svg class="fp-icon" aria-hidden="true"><use href="#ico-games"/></svg></a>
+        <a href="dictionary.html" title="Dictionary" aria-label="Dictionary" class="fp-bubble-circle"><svg class="fp-icon" aria-hidden="true"><use href="#ico-dictionary"/></svg></a>
+        <a href="stats.html" title="Statistics" aria-label="Statistics" class="fp-bubble-circle"><svg class="fp-icon" aria-hidden="true"><use href="#ico-stats"/></svg></a>
+      </nav>
+      <!-- Removed trailing profile bubble -->
+    </div>
 
     <main class="flex-1 p-6 lg:p-8">
       <h2 id="pageTitle" class="text-[var(--text-primary)] text-3xl font-bold mb-6">Tests</h2>
@@ -184,8 +176,7 @@
   const __origLoadAttempts = function(){ try { return JSON.parse(localStorage.getItem('testAttempts')||'[]'); } catch { return []; } };
   window.loadTests = function(){ const arr=__origLoadTests(); if(!softResetActive()) return arr; const ts=softResetTimestamp(); return arr.filter(t=> testIdToTs(t.id)>=ts); };
   window.loadAttempts = function(){ const arr=__origLoadAttempts(); if(!softResetActive()) return arr; const ts=softResetTimestamp(); return arr.filter(a=>{ const time=new Date(a.date).getTime(); return time>=ts; }); };
-  function executeSoftResetTests(){ if(!confirm('Soft reset tests? Existing tests/attempts will be hidden here but remain in global stats.')) return; try { localStorage.setItem('fpSoftResetTests','1'); localStorage.setItem('fpSoftResetTestsTs', Date.now().toString()); } catch {} alert('Soft reset applied. This page now shows a fresh slate.'); location.reload(); }
-  document.getElementById('btnSoftResetTests')?.addEventListener('click', executeSoftResetTests);
+  // (Soft reset trigger moved to stats page; masking logic below remains active when flags set)
   // Ensure button visible whenever dashboard renders
   // Dashboard helpers and renderer
   function loadAttempts() {
